@@ -56,10 +56,15 @@ export async function login(req, res) {
   try {
     const user = await findUserByEmail(email);
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
-    if (!user.is_approved)
-      return res.status(403).json({ message: "Account pending approval" });
+    
+    // Check password FIRST
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
+    
+    // THEN check if approved (only after password is verified)
+    if (!user.is_approved)
+      return res.status(403).json({ message: "Account pending approval" });
+      
     const token = generateToken(user);
     res.cookie("token", token, COOKIE_OPTIONS);
     res.json({
