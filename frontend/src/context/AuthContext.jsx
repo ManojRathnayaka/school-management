@@ -29,7 +29,10 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const res = await api.post("/login", { email, password });
-    setUser(res.data.user);
+    // Only set user if login is successful and not mustResetPassword
+    if (!res.data.mustResetPassword) {
+      setUser(res.data.user);
+    }
     return res.data;
   };
 

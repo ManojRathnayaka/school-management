@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 import {
   findUserByEmail,
   createUser,
-  getPendingUsers,
-  approveUser,
 } from "../models/userModel.js";
+import crypto from "crypto";
+import { createTeacher } from "../models/teacherModel.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "changeme";
 
@@ -13,7 +13,6 @@ const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 function generateToken(user) {
@@ -26,29 +25,8 @@ function generateToken(user) {
       last_name: user.last_name,
     },
     JWT_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: "1h" }
   );
-}
-
-export async function signup(req, res) {
-  const { first_name, last_name, email, password, role } = req.body;
-  if (!["student", "parent"].includes(role)) {
-    return res
-      .status(400)
-      .json({ message: "Only students and parents can self-register" });
-  }
-  try {
-    const user = await findUserByEmail(email);
-    if (user)
-      return res.status(409).json({ message: "Email already registered" });
-    const password_hash = await bcrypt.hash(password, 10);
-    await createUser({ first_name, last_name, email, password_hash, role });
-    res
-      .status(201)
-      .json({ message: "Signup successful, pending admin approval" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
 }
 
 export async function login(req, res) {
@@ -62,8 +40,16 @@ export async function login(req, res) {
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
     
     // THEN check if approved (only after password is verified)
-    if (!user.is_approved)
-      return res.status(403).json({ message: "Account pending approval" });
+    if (user.must_reset_password) {
+      return res.status(200).json({
+        mustResetPassword: true,
+        message: "Password reset required. Please set a new password.",
+        user: {
+          email: user.email,
+          role: user.role,
+        },
+      });
+    }
       
     const token = generateToken(user);
     res.cookie("token", token, COOKIE_OPTIONS);
@@ -114,24 +100,70 @@ export async function approvePendingUser(req, res) {
 }
 
 export async function createAdminUser(req, res) {
-  const { first_name, last_name, email, password, role } = req.body;
+  const { first_name, last_name, email, role, contact_number, grade } = req.body;
   if (!["admin", "principal", "teacher"].includes(role)) {
     return res.status(400).json({ message: "Invalid role for admin creation" });
+  }
+  if (role === "teacher" && !contact_number) {
+    return res.status(400).json({ message: "Contact number is required for teachers" });
   }
   try {
     const user = await findUserByEmail(email);
     if (user)
       return res.status(409).json({ message: "Email already registered" });
-    const password_hash = await bcrypt.hash(password, 10);
-    await createUser({
+    // Generate random temp password
+    const tempPassword = crypto.randomBytes(5).toString("base64").replace(/[^a-zA-Z0-9]/g, '').slice(0, 10);
+    const password_hash = await bcrypt.hash(tempPassword, 10);
+    // Create user
+    const userResult = await createUser({
       first_name,
       last_name,
       email,
       password_hash,
       role,
-      is_approved: 1,
+      must_reset_password: true,
+      returnInsertedId: true,
     });
-    res.status(201).json({ message: "User created and approved" });
+    const user_id = userResult.insertId || userResult[0]?.insertId;
+    if (role === "teacher") {
+      await createTeacher({ user_id, contact_number, grade });
+    }
+    res.status(201).json({ message: "User created", tempPassword });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+// New: Reset password on first login
+export async function resetPasswordFirstLogin(req, res) {
+  const { email, tempPassword, newPassword, confirmPassword } = req.body;
+  if (!email || !tempPassword || !newPassword || !confirmPassword)
+    return res.status(400).json({ message: "All fields are required." });
+  if (newPassword !== confirmPassword)
+    return res.status(400).json({ message: "Passwords do not match." });
+  try {
+    const user = await findUserByEmail(email);
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+    if (!user.must_reset_password)
+      return res.status(400).json({ message: "Password reset not required." });
+    const match = await bcrypt.compare(tempPassword, user.password_hash);
+    if (!match) return res.status(401).json({ message: "Invalid temporary password." });
+    const password_hash = await bcrypt.hash(newPassword, 10);
+    // Update user password and clear must_reset_password
+    await import('../models/userModel.js').then(m => m.updateUserPasswordAndClearReset(user.user_id, password_hash));
+    // Fetch updated user
+    const updatedUser = await findUserByEmail(email);
+    const token = generateToken(updatedUser);
+    res.cookie("token", token, COOKIE_OPTIONS);
+    res.json({
+      message: "Password reset successful",
+      user: {
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

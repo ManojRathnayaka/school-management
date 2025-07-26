@@ -10,7 +10,6 @@ export default function Scholarships() {
   useEffect(() => {
     if (!loading) {
       if (!user) navigate("/login");
-      else if (user && user.is_approved === false) navigate("/pending");
     }
   }, [user, loading, navigate]);
 

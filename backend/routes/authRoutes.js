@@ -1,12 +1,10 @@
 import { Router } from "express";
 import {
-  signup,
   login,
   logout,
   getCurrentUser,
-  listPendingUsers,
-  approvePendingUser,
   createAdminUser,
+  resetPasswordFirstLogin,
 } from "../controllers/authController.js";
 
 import {
@@ -16,23 +14,11 @@ import {
 
 const router = Router();
 
-router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
 router.get("/me", authenticateJWT, getCurrentUser);
+router.post("/reset-password-first-login", resetPasswordFirstLogin);
 
-router.get(
-  "/pending-users",
-  authenticateJWT,
-  authorizeRoles("admin"),
-  listPendingUsers
-);
-router.post(
-  "/approve-user",
-  authenticateJWT,
-  authorizeRoles("admin"),
-  approvePendingUser
-);
 router.post(
   "/create-user",
   authenticateJWT,

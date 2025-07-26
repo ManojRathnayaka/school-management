@@ -13,23 +13,20 @@ export async function createUser({
   email,
   password_hash,
   role,
-  is_approved = 0,
+  must_reset_password = false,
+  returnInsertedId = false,
 }) {
-  await pool.query(
-    "INSERT INTO users (first_name, last_name, email, password_hash, role, is_approved) VALUES (?, ?, ?, ?, ?, ?)",
-    [first_name, last_name, email, password_hash, role, is_approved]
+  const [result] = await pool.query(
+    "INSERT INTO users (first_name, last_name, email, password_hash, role, must_reset_password) VALUES (?, ?, ?, ?, ?, ?)",
+    [first_name, last_name, email, password_hash, role, must_reset_password]
   );
+  if (returnInsertedId) return result;
 }
 
-export async function getPendingUsers() {
-  const [rows] = await pool.query(
-    "SELECT user_id, first_name, last_name, email, role FROM users WHERE is_approved = 0"
+export async function updateUserPasswordAndClearReset(user_id, password_hash) {
+  const [result] = await pool.query(
+    "UPDATE users SET password_hash = ?, must_reset_password = 0, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+    [password_hash, user_id]
   );
-  return rows;
-}
-
-export async function approveUser(user_id) {
-  await pool.query("UPDATE users SET is_approved = 1 WHERE user_id = ?", [
-    user_id,
-  ]);
+  return result;
 }
