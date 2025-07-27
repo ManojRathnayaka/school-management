@@ -1,69 +1,70 @@
+// React imports
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// Context imports
 import { useAuth } from "../context/AuthContext";
+
+// Service imports
 import axios from "axios";
+import { useForm } from "../hooks/useForm";
+import Alert from "../components/Alert";
+import Button from "../components/Button";
+import Input from "../components/Input";
+
+const initialForm = {
+  email: "",
+  password: "",
+  newPassword: "",
+  confirmPassword: "",
+};
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [serverMessage, setServerMessage] = useState("");
   const [mustReset, setMustReset] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tempPassword, setTempPassword] = useState(""); // Store the temp password separately
+  const { form, error, setFormError, handleInputChange, resetForm } =
+    useForm(initialForm);
   const { login, setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setFormError("");
     setServerMessage("");
-    setIsSubmitting(true);
-    
+
     try {
       if (!mustReset) {
-        const data = await login(email, password);
+        const data = await login(form.email, form.password);
         if (data.mustResetPassword) {
           setMustReset(true);
+          setTempPassword(form.password); // Store the password as temp password
           setServerMessage(data.message);
-          setIsSubmitting(false);
-          return;
-        }
-        if (data.user && data.user.role === "admin") {
+        } else if (data.user?.role === "admin") {
           navigate("/admin");
         } else {
           navigate("/dashboard");
         }
       } else {
-        // Handle password reset
-        const response = await axios.post("/api/reset-password-first-login", {
-          email,
-          tempPassword: password,
-          newPassword,
-          confirmPassword,
-        }, {
-          headers: { "Content-Type": "application/json" }
-        });
-        
+        const response = await axios.post(
+          "/api/reset-password-first-login",
+          {
+            email: form.email,
+            tempPassword: tempPassword, // Use stored temp password
+            newPassword: form.newPassword,
+            confirmPassword: form.confirmPassword,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
         setUser(response.data.user);
-        if (response.data.user && response.data.user.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
-        setMustReset(false);
-        setServerMessage("");
-        setEmail("");
-        setPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
+        resetForm();
+        navigate("/dashboard");
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Login failed. Please try again.";
-      setError(errorMessage);
+      const errorMessage =
+        err.response?.data?.message || "An error occurred.";
+      setFormError(errorMessage);
     }
-    setIsSubmitting(false);
   };
 
   return (
@@ -73,52 +74,61 @@ export default function Login() {
         className="bg-white p-8 rounded shadow-md w-full max-w-sm"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
-        {serverMessage && <div className="mb-4 text-blue-600 text-sm">{serverMessage}</div>}
-        <input
+        <Alert type="error" message={error} />
+        <Alert type="info" message={serverMessage} />
+
+        <Input
           type="email"
+          name="email"
           placeholder="Email"
-          className="w-full mb-4 p-2 border rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          className="mb-4"
+          value={form.email}
+          onChange={handleInputChange}
           required
           autoFocus
         />
-        <input
-          type="password"
-          placeholder={mustReset ? "Temporary Password" : "Password"}
-          className="w-full mb-4 p-2 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        
+        {!mustReset && (
+          <Input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="mb-4"
+            value={form.password}
+            onChange={handleInputChange}
+            required
+          />
+        )}
+
         {mustReset && (
           <>
-            <input
+            <Input
               type="password"
+              name="newPassword"
               placeholder="New Password"
-              className="w-full mb-4 p-2 border rounded"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              className="mb-4"
+              value={form.newPassword}
+              onChange={handleInputChange}
               required
             />
-            <input
+            <Input
               type="password"
+              name="confirmPassword"
               placeholder="Confirm New Password"
-              className="w-full mb-6 p-2 border rounded"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="mb-6"
+              value={form.confirmPassword}
+              onChange={handleInputChange}
               required
             />
           </>
         )}
-        <button
+        <Button
           type="submit"
-          className={mustReset ? "w-full bg-green-600 text-white py-2 rounded hover:bg-green-700" : "w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"}
-          disabled={isSubmitting}
+          variant={mustReset ? "secondary" : "primary"}
+          className="w-full"
         >
           {mustReset ? "Set New Password" : "Login"}
-        </button>
+        </Button>
       </form>
     </div>
   );

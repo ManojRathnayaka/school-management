@@ -7,10 +7,7 @@ import {
   resetPasswordFirstLogin,
 } from "../controllers/authController.js";
 
-import {
-  authenticateJWT,
-  authorizeRoles,
-} from "../middleware/authMiddleware.js";
+import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
@@ -23,7 +20,7 @@ router.post(
   "/create-user",
   authenticateJWT,
   authorizeRoles("admin"),
-  createAdminUser
+  createAdminUser,
 );
 
 export default router;

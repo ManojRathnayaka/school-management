@@ -1,13 +1,25 @@
 import jwt from "jsonwebtoken";
+
 const JWT_SECRET = process.env.JWT_SECRET || "changeme";
+
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+}
 
 export function authenticateJWT(req, res, next) {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: "Not authenticated" });
+  if (!token) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
   try {
-    req.user = jwt.verify(token, JWT_SECRET);
+    const decoded = verifyToken(token);
+    req.user = decoded;
     next();
-  } catch {
+  } catch (error) {
     res.status(401).json({ message: "Invalid token" });
   }
 }

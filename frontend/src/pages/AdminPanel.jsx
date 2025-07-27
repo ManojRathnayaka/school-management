@@ -1,158 +1,105 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// React imports
+import { useState } from "react";
+
+// Context imports
 import { useAuth } from "../context/AuthContext";
+
+// Service imports
 import axios from "axios";
+import { useForm } from "../hooks/useForm";
+import { USER_ROLES, GRADES } from "../constants";
+import Alert from "../components/Alert";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import Select from "../components/Select";
+
+const initialForm = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  role: USER_ROLES.TEACHER,
+  grade: "",
+  contact_number: "",
+};
 
 export default function AdminPanel() {
-  const { user, logout, loading } = useAuth();
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    role: "teacher",
-    // Teacher-specific fields
-    grade: "",
-    contact_number: "",
-  });
+  const { logout } = useAuth();
   const [tempPassword, setTempPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  useEffect(() => {
-    if (!loading) {
-      if (!user || user.role !== "admin") navigate("/login");
-    }
-    // eslint-disable-next-line
-  }, [user, loading]);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const {
+    form,
+    error,
+    success,
+    setFormError,
+    setFormSuccess,
+    handleInputChange,
+    resetForm,
+  } = useForm(initialForm);
 
   const handleRoleChange = (e) => {
-    const newRole = e.target.value;
-    // Reset teacher-specific fields when role changes from teacher
-    if (form.role === "teacher" && newRole !== "teacher") {
-      setForm({
-        ...form,
-        role: newRole,
-        grade: "",
-        contact_number: "",
-      });
-    } else {
-      setForm({ ...form, role: newRole });
+    handleInputChange(e);
+    if (e.target.value !== USER_ROLES.TEACHER) {
+      handleInputChange({ target: { name: "grade", value: "" } });
+      handleInputChange({ target: { name: "contact_number", value: "" } });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setFormError("");
+    setFormSuccess("");
     setTempPassword("");
-    
-    // Prepare form data - only include teacher fields if role is teacher
-    const submitData = {
-      first_name: form.first_name,
-      last_name: form.last_name,
-      email: form.email,
-      role: form.role,
-    };
 
-    // Add teacher-specific fields if role is teacher
-    if (form.role === "teacher") {
-      submitData.grade = form.grade;
-      submitData.contact_number = form.contact_number;
+    const submitData = { ...form };
+    if (form.role !== USER_ROLES.TEACHER) {
+      delete submitData.grade;
+      delete submitData.contact_number;
     }
 
     try {
       const response = await axios.post("/api/create-user", submitData, {
         withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
-      
-      setSuccess("User created successfully!");
+      setFormSuccess("User created successfully!");
       setTempPassword(response.data.tempPassword || "");
-      setForm({
-        first_name: "",
-        last_name: "",
-        email: "",
-        role: "teacher",
-        grade: "",
-        contact_number: "",
-      });
+      resetForm();
     } catch (err) {
-      // Axios automatically throws for HTTP error status codes
-      const errorMessage = err.response?.data?.message || "User creation failed. Email may already be registered.";
-      setError(errorMessage);
+      const errorMessage =
+        err.response?.data?.message || "User creation failed.";
+      setFormError(errorMessage);
     }
   };
 
-  if (loading || !user) return null;
-
-  const isTeacher = form.role === "teacher";
+  const isTeacher = form.role === USER_ROLES.TEACHER;
+  const roleOptions = [
+    { value: USER_ROLES.TEACHER, label: "Teacher" },
+    { value: USER_ROLES.PRINCIPAL, label: "Principal" },
+    { value: USER_ROLES.ADMIN, label: "Admin" },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-4xl">
-        <h2 className="text-2xl font-bold mb-6 text-center">Admin Panel - Create New User</h2>
-        {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
-        {success && (
-          <div className="mb-4 text-green-600 text-sm">{success}</div>
-        )}
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Admin Panel - Create New User
+        </h2>
+        <Alert type="error" message={error} />
+        <Alert type="success" message={success} />
+
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
-          {/* Basic Information */}
           <div className="md:col-span-2">
             <h3 className="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">
               Basic Information
             </h3>
           </div>
-          
-          <input
-            type="text"
-            name="first_name"
-            placeholder="First Name"
-            className="p-2 border rounded"
-            value={form.first_name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="last_name"
-            placeholder="Last Name"
-            className="p-2 border rounded"
-            value={form.last_name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            className="p-2 border rounded"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          <select
-            name="role"
-            className="p-2 border rounded"
-            value={form.role}
-            onChange={handleRoleChange}
-            required
-          >
-            <option value="teacher">Teacher</option>
-            <option value="principal">Principal</option>
-            <option value="admin">Admin</option>
-          </select>
 
-          {/* Teacher-specific fields */}
+          <Input name="first_name" placeholder="First Name" value={form.first_name} onChange={handleInputChange} required />
+          <Input name="last_name" placeholder="Last Name" value={form.last_name} onChange={handleInputChange} required />
+          <Input type="email" name="email" placeholder="Email" value={form.email} onChange={handleInputChange} required />
+          <Select name="role" value={form.role} onChange={handleRoleChange} options={roleOptions} required />
+
           {isTeacher && (
             <>
               <div className="md:col-span-2 mt-4">
@@ -160,52 +107,35 @@ export default function AdminPanel() {
                   Teacher Information
                 </h3>
               </div>
-              
-              <input
-                type="text"
-                name="grade"
-                placeholder="Grade (optional - e.g., 5A / 6B)"
-                className="p-2 border rounded"
-                value={form.grade}
-                onChange={handleChange}
-              />
-              <input
-                type="tel"
-                name="contact_number"
-                placeholder="Contact Number"
-                className="p-2 border rounded"
-                value={form.contact_number}
-                onChange={handleChange}
-              />
+              <Select name="grade" value={form.grade} onChange={handleInputChange} options={[{ value: "", label: "Select Grade" }, ...GRADES]} required />
+              <Input type="tel" name="contact_number" placeholder="Contact Number" value={form.contact_number} onChange={handleInputChange} />
             </>
           )}
 
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 md:col-span-2 mt-4"
-          >
-            Create User
-          </button>
+          <div className="md:col-span-2 mt-4">
+            <Button type="submit" className="w-full">
+              Create User
+            </Button>
+          </div>
         </form>
-        
+
         {tempPassword && (
           <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
-            <p className="text-green-800 font-semibold mb-2">User Created Successfully!</p>
-            <p className="text-green-700">
-              Temporary Password: <span className="font-mono bg-green-100 px-2 py-1 rounded">{tempPassword}</span>
+            <p className="text-green-800 font-semibold mb-2">
+              User Created Successfully!
             </p>
-            <p className="text-sm text-green-600 mt-2">
-              Please share this temporary password with the user. They will be required to change it on first login.
+            <p className="text-green-700">
+              Temporary Password:{" "}
+              <span className="font-mono bg-green-100 px-2 py-1 rounded">
+                {tempPassword}
+              </span>
             </p>
           </div>
         )}
       </div>
-      <button
-        onClick={logout}
-        className="mt-8 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-      >
+      <Button variant="danger" className="mt-8" onClick={logout}>
         Logout
-      </button>
+      </Button>
     </div>
   );
 }
