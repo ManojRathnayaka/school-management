@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import {
   findUserByEmail,
   createUser,
+  updateUserPasswordAndClearReset,
 } from "../models/userModel.js";
 import crypto from "crypto";
 import { createTeacher } from "../models/teacherModel.js";
@@ -39,7 +40,7 @@ export async function login(req, res) {
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
     
-    // THEN check if approved (only after password is verified)
+    // THEN check if password reset is required (only after password is verified)
     if (user.must_reset_password) {
       return res.status(200).json({
         mustResetPassword: true,
@@ -63,7 +64,8 @@ export async function login(req, res) {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.error('Login error:', err);
+    res.status(500).json({ message: "Server error" });
   }
 }
 
@@ -78,25 +80,6 @@ export function logout(req, res) {
 
 export function getCurrentUser(req, res) {
   res.json({ user: req.user });
-}
-
-export async function listPendingUsers(req, res) {
-  try {
-    const users = await getPendingUsers();
-    res.json({ users });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-}
-
-export async function approvePendingUser(req, res) {
-  const { user_id } = req.body;
-  try {
-    await approveUser(user_id);
-    res.json({ message: "User approved" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
 }
 
 export async function createAdminUser(req, res) {
@@ -124,17 +107,24 @@ export async function createAdminUser(req, res) {
       must_reset_password: true,
       returnInsertedId: true,
     });
-    const user_id = userResult.insertId || userResult[0]?.insertId;
+    
+    // Standardized database ID handling
+    const user_id = userResult.insertId;
+    if (!user_id) {
+      throw new Error("Failed to create user - no ID returned");
+    }
+    
     if (role === "teacher") {
       await createTeacher({ user_id, contact_number, grade });
     }
     res.status(201).json({ message: "User created", tempPassword });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.error('Create admin user error:', err);
+    res.status(500).json({ message: "Server error" });
   }
 }
 
-// New: Reset password on first login
+// Reset password on first login
 export async function resetPasswordFirstLogin(req, res) {
   const { email, tempPassword, newPassword, confirmPassword } = req.body;
   if (!email || !tempPassword || !newPassword || !confirmPassword)
@@ -149,8 +139,10 @@ export async function resetPasswordFirstLogin(req, res) {
     const match = await bcrypt.compare(tempPassword, user.password_hash);
     if (!match) return res.status(401).json({ message: "Invalid temporary password." });
     const password_hash = await bcrypt.hash(newPassword, 10);
+    
     // Update user password and clear must_reset_password
-    await import('../models/userModel.js').then(m => m.updateUserPasswordAndClearReset(user.user_id, password_hash));
+    await updateUserPasswordAndClearReset(user.user_id, password_hash);
+    
     // Fetch updated user
     const updatedUser = await findUserByEmail(email);
     const token = generateToken(updatedUser);
@@ -165,6 +157,7 @@ export async function resetPasswordFirstLogin(req, res) {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.error('Password reset error:', err);
+    res.status(500).json({ message: "Server error" });
   }
 }

@@ -164,7 +164,7 @@ export default function AdminPanel() {
               <input
                 type="text"
                 name="grade"
-                placeholder="Grade (optional - e.g., 5th, High School)"
+                placeholder="Grade (optional - e.g., 5A / 6B)"
                 className="p-2 border rounded"
                 value={form.grade}
                 onChange={handleChange}
