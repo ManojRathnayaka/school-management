@@ -41,9 +41,9 @@ export default function Login() {
           setTempPassword(form.password); // Store the password as temp password
           setServerMessage(data.message);
         } else if (data.user?.role === "admin") {
-          navigate("/admin");
+          navigate("/admin", { replace: true });
         } else {
-          navigate("/dashboard");
+          navigate("/dashboard", { replace: true });
         }
       } else {
         const response = await axios.post(
@@ -58,7 +58,7 @@ export default function Login() {
         );
         setUser(response.data.user);
         resetForm();
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       }
     } catch (err) {
       const errorMessage =
