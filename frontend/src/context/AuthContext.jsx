@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get("/me");
+        const res = await api.get("/auth/me");
         setUser(res.data.user);
       } catch {
         setUser(null);
@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const res = await api.post("/login", { email, password });
+    const res = await api.post("/auth/login", { email, password });
     // Only set user if login is successful and not mustResetPassword
     if (!res.data.mustResetPassword) {
       setUser(res.data.user);
@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await api.post("/logout");
+    await api.post("/auth/logout");
     setUser(null);
   };
 

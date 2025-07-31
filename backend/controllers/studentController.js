@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { findUserByEmail, createUser } from "../models/userModel.js";
-import { findStudentByAdmissionNumber, createStudent } from "../models/studentModel.js";
+import { findStudentByAdmissionNumber, createStudent, getStudentsList, getStudentsCount } from "../models/studentModel.js";
 import { createParent, linkStudentToParent } from "../models/parentModel.js";
 import crypto from "crypto";
 
@@ -111,3 +111,52 @@ export async function registerStudent(req, res) {
     res.status(500).json({ message: "Server error" });
   }
 } 
+
+export async function getStudents(req, res) {
+  try {
+    const {
+      page = 1,
+      limit = 15,
+      search = '',
+      grade = '',
+      section = ''
+    } = req.query;
+
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    // Call model methods
+    const students = await getStudentsList({
+      search,
+      grade,
+      section,
+      limit: parseInt(limit),
+      offset
+    });
+
+    const totalCount = await getStudentsCount({
+      search,
+      grade,
+      section
+    });
+
+    const totalPages = Math.ceil(totalCount / parseInt(limit));
+
+    res.status(200).json({
+      students,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalRecords: totalCount,
+        limit: parseInt(limit),
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({
+      message: 'Error fetching students'
+    });
+  }
+}

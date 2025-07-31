@@ -47,7 +47,7 @@ export default function Login() {
         }
       } else {
         const response = await axios.post(
-          "/api/reset-password-first-login",
+          "/api/auth/reset-password-first-login",
           {
             email: form.email,
             tempPassword: tempPassword, // Use stored temp password
@@ -58,7 +58,13 @@ export default function Login() {
         );
         setUser(response.data.user);
         resetForm();
-        navigate("/dashboard", { replace: true });
+        
+        // Navigate based on role after password reset
+        if (response.data.user?.role === "admin") {
+          navigate("/admin", { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
       }
     } catch (err) {
       const errorMessage =

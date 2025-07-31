@@ -30,9 +30,18 @@ function LoginWrapper() {
   }
   
   if (user) {
-    // Get intended destination or default to dashboard
-    const from = location.state?.from?.pathname || '/dashboard';
-    return <Navigate to={from} replace />;
+    // Get intended destination from location state
+    const from = location.state?.from?.pathname;
+    
+    if (from) {
+      return <Navigate to={from} replace />;
+    }
+    
+    if (user.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    }
+    
+    return <Navigate to="/dashboard" replace />;
   }
   
   return <Login />;

@@ -55,7 +55,7 @@ export default function StudentRegistration() {
     setSharedPassword("");
 
     try {
-      const response = await axios.post("/api/register-student", form, {
+      const response = await axios.post("/api/students/register-student", form, {
         withCredentials: true,
       });
       setFormSuccess("Student and parent registered successfully!");
@@ -88,14 +88,66 @@ export default function StudentRegistration() {
               Student Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input name="student.first_name" placeholder="First Name" value={form.student.first_name} onChange={handleInputChange} required />
-              <Input name="student.last_name" placeholder="Last Name" value={form.student.last_name} onChange={handleInputChange} required />
-              <Input name="student.email" type="email" placeholder="Email" value={form.student.email} onChange={handleInputChange} required />
-              <Input name="student.admission_number" placeholder="Admission Number" value={form.student.admission_number} onChange={handleInputChange} required />
-              <Input name="student.date_of_birth" type="date" placeholder="Date of Birth" value={form.student.date_of_birth} onChange={handleInputChange} required />
-              <Select name="student.grade" value={form.student.grade} onChange={handleInputChange} options={gradeOptions} required />
-              <Select name="student.section" value={form.student.section} onChange={handleInputChange} options={sectionOptions} required />
-              <textarea name="student.address" placeholder="Address" className="p-2 border rounded md:col-span-2" rows="3" value={form.student.address} onChange={handleInputChange} required />
+              <Input
+                name="student.first_name"
+                placeholder="First Name"
+                value={form.student.first_name}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="student.last_name"
+                placeholder="Last Name"
+                value={form.student.last_name}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="student.email"
+                type="email"
+                placeholder="Email"
+                value={form.student.email}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="student.admission_number"
+                placeholder="Admission Number"
+                value={form.student.admission_number}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="student.date_of_birth"
+                type="date"
+                placeholder="Date of Birth"
+                value={form.student.date_of_birth}
+                onChange={handleInputChange}
+                required
+              />
+              <Select
+                name="student.grade"
+                value={form.student.grade}
+                onChange={handleInputChange}
+                options={gradeOptions}
+                required
+              />
+              <Select
+                name="student.section"
+                value={form.student.section}
+                onChange={handleInputChange}
+                options={sectionOptions}
+                required
+              />
+              <textarea
+                name="student.address"
+                placeholder="Address"
+                className="p-2 border rounded md:col-span-2"
+                rows="3"
+                value={form.student.address}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
 
@@ -104,10 +156,36 @@ export default function StudentRegistration() {
               Parent Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input name="parent.first_name" placeholder="First Name" value={form.parent.first_name} onChange={handleInputChange} required />
-              <Input name="parent.last_name" placeholder="Last Name" value={form.parent.last_name} onChange={handleInputChange} required />
-              <Input name="parent.email" type="email" placeholder="Email" value={form.parent.email} onChange={handleInputChange} required />
-              <Input name="parent.contact_number" type="tel" placeholder="Contact Number" value={form.parent.contact_number} onChange={handleInputChange} required />
+              <Input
+                name="parent.first_name"
+                placeholder="First Name"
+                value={form.parent.first_name}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="parent.last_name"
+                placeholder="Last Name"
+                value={form.parent.last_name}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="parent.email"
+                type="email"
+                placeholder="Email"
+                value={form.parent.email}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="parent.contact_number"
+                type="tel"
+                placeholder="Contact Number"
+                value={form.parent.contact_number}
+                onChange={handleInputChange}
+                required
+              />
             </div>
           </div>
 
@@ -132,4 +210,4 @@ export default function StudentRegistration() {
       </div>
     </Layout>
   );
-} 
+}

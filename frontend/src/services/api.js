@@ -5,13 +5,12 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Auth API
 export const authAPI = {
-  login: (email, password) => api.post("/login", { email, password }),
-  logout: () => api.post("/logout"),
-  getCurrentUser: () => api.get("/me"),
+  login: (email, password) => api.post("/auth/login", { email, password }),
+  logout: () => api.post("/auth/logout"),
+  getCurrentUser: () => api.get("/auth/me"),
   resetPassword: (email, tempPassword, newPassword, confirmPassword) =>
-    api.post("/reset-password-first-login", {
+    api.post("/auth/reset-password-first-login", {
       email,
       tempPassword,
       newPassword,
@@ -19,14 +18,13 @@ export const authAPI = {
     }),
 };
 
-// User Management API
 export const userAPI = {
-  createUser: (userData) => api.post("/create-user", userData),
+  createUser: (userData) => api.post("/auth/create-user", userData),
 };
 
-// Student Management API
+
 export const studentAPI = {
-  registerStudent: (studentData) => api.post("/register-student", studentData),
+  registerStudent: (studentData) => api.post("/students/register", studentData),
 };
 
-export default api; 
+export default api;

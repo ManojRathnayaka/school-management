@@ -18,8 +18,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api", authRoutes);
-app.use("/api", studentRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/students", studentRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });

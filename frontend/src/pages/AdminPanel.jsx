@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 // Service imports
-import axios from "axios";
+import { userAPI } from "../services/api";
 import { useForm } from "../hooks/useForm";
 import { USER_ROLES, GRADES } from "../constants";
 import Alert from "../components/Alert";
@@ -56,9 +56,7 @@ export default function AdminPanel() {
     }
 
     try {
-      const response = await axios.post("/api/create-user", submitData, {
-        withCredentials: true,
-      });
+      const response = await userAPI.createUser(submitData);
       setFormSuccess("User created successfully!");
       setTempPassword(response.data.tempPassword || "");
       resetForm();
