@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 // Service imports
-import axios from "axios";
+import { studentAPI } from "../services/api";
 import { useForm } from "../hooks/useForm";
 import { GRADES, SECTIONS } from "../constants";
 import Alert from "../components/Alert";
@@ -15,6 +15,7 @@ import Input from "../components/Input";
 import Select from "../components/Select";
 import Layout from "../components/Layout";
 
+// Initial form shape
 const initialForm = {
   student: {
     first_name: "",
@@ -55,9 +56,7 @@ export default function StudentRegistration() {
     setSharedPassword("");
 
     try {
-      const response = await axios.post("/api/students/register-student", form, {
-        withCredentials: true,
-      });
+      const response = await studentAPI.registerStudent(form);
       setFormSuccess("Student and parent registered successfully!");
       setSharedPassword(response.data.sharedPassword);
       resetForm();

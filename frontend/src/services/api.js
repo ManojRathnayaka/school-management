@@ -22,9 +22,25 @@ export const userAPI = {
   createUser: (userData) => api.post("/auth/create-user", userData),
 };
 
-
 export const studentAPI = {
-  registerStudent: (studentData) => api.post("/students/register", studentData),
+  registerStudent: (studentData) => api.post("/students", studentData),
+
+  getStudents: (params = {}) => {
+    const { page = 1, limit = 15, search = '', grade = '', section = '' } = params;
+    return api.get("/students/", {
+      params: {
+        page,
+        limit,
+        search,
+        grade,
+        section
+      }
+    });
+  },
+
+  // Placeholder endpoints for future implementation
+  updateStudent: (studentId, studentData) => api.put(`/students/${studentId}`, studentData),
+  deleteStudent: (studentId) => api.delete(`/students/${studentId}`)
 };
 
 export default api;
