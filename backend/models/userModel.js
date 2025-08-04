@@ -27,3 +27,15 @@ export async function updatePassword(user_id, password_hash) {
   );
   return result;
 }
+
+export async function updateUser(user_id, userData) {
+  const { first_name, last_name, email } = userData;
+  
+  const [result] = await pool.query(`
+    UPDATE users 
+    SET first_name = ?, last_name = ?, email = ?
+    WHERE user_id = ?
+  `, [first_name, last_name, email, user_id]);
+  
+  return result;
+}

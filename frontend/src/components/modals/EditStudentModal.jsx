@@ -4,6 +4,7 @@ import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
 import { GRADES, SECTIONS } from "../../constants";
+import { studentAPI } from "../../services/api";
 
 export default function EditStudentModal({ show, student, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -12,7 +13,9 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
     email: "",
     grade: "",
     section: "",
-    admission_number: ""
+    admission_number: "",
+    date_of_birth: "",
+    address: ""
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,9 +28,13 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
         email: student.email || "",
         grade: student.grade || "",
         section: student.section || "",
-        admission_number: student.admission_number || ""
+        admission_number: student.admission_number || "",
+        date_of_birth: student.date_of_birth || "",
+        address: student.address || ""
       });
     }
+    // Clear error when modal opens
+    setError("");
   }, [student]);
 
   const handleInputChange = (e) => {
@@ -44,24 +51,40 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
     setError("");
 
     try {
-      // TODO: Implement actual update API call
-      // await studentAPI.updateStudent(student.student_id, formData);
+      const updateData = {
+        student: formData
+      };
+
+      await studentAPI.updateStudent(student.student_id, updateData);
       
-      // For now, just show success message
-      alert(`Update functionality for ${formData.first_name} ${formData.last_name} will be implemented soon.`);
+      // Call onSave to refresh the parent component's data
       onSave();
+      
+      // Close the modal
+      onClose();
+      
     } catch (err) {
+      console.error('Update error:', err);
       setError(err.response?.data?.message || "Failed to update student");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleClose = () => {
+    setError("");
+    onClose();
+  };
+
   if (!show || !student) return null;
+
+  // Prepare grade and section options
+  const gradeOptions = [{ value: "", label: "Select Grade" }, ...GRADES];
+  const sectionOptions = [{ value: "", label: "Select Section" }, ...SECTIONS];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <h3 className="text-xl font-bold mb-6 text-gray-800">Edit Student</h3>
         
         {error && (
@@ -104,12 +127,20 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
               onChange={handleInputChange}
               required
             />
+
+            <Input
+              name="date_of_birth"
+              type="date"
+              placeholder="Date of Birth"
+              value={formData.date_of_birth}
+              onChange={handleInputChange}
+            />
             
             <Select
               name="grade"
               value={formData.grade}
               onChange={handleInputChange}
-              options={GRADES}
+              options={gradeOptions}
               required
             />
             
@@ -117,16 +148,28 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
               name="section"
               value={formData.section}
               onChange={handleInputChange}
-              options={SECTIONS}
+              options={sectionOptions}
               required
             />
+
+            {/* Address field spanning two columns */}
+            <div className="md:col-span-2">
+              <textarea
+                name="address"
+                placeholder="Address"
+                className="w-full p-2 border rounded"
+                rows="3"
+                value={formData.address}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
           
           <div className="flex justify-end space-x-2">
             <Button
               type="button"
               variant="secondary"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={loading}
             >
               Cancel

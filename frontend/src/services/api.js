@@ -38,8 +38,8 @@ export const studentAPI = {
     });
   },
 
+  updateStudent: (studentId, data) => api.put(`/students/${studentId}`, data),
   // Placeholder endpoints for future implementation
-  updateStudent: (studentId, studentData) => api.put(`/students/${studentId}`, studentData),
   deleteStudent: (studentId) => api.delete(`/students/${studentId}`)
 };
 

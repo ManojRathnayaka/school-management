@@ -100,3 +100,26 @@ export async function getStudentsCount({ search, grade, section }) {
   const [rows] = await pool.query(query, params);
   return rows[0].total;
 }
+
+export async function findStudentById(student_id) {
+  const [rows] = await pool.query(`
+    SELECT s.*, u.first_name, u.last_name, u.email, u.role, u.user_id
+    FROM students s
+    JOIN users u ON s.user_id = u.user_id
+    WHERE s.student_id = ?
+  `, [student_id]);
+  
+  return rows[0];
+}
+
+export async function updateStudentInfo(student_id, studentData) {
+  const { admission_number, date_of_birth, grade, section, address } = studentData;
+  
+  const [result] = await pool.query(`
+    UPDATE students 
+    SET admission_number = ?, date_of_birth = ?, grade = ?, section = ?, address = ?
+    WHERE student_id = ?
+  `, [admission_number, date_of_birth, grade, section, address, student_id]);
+  
+  return result;
+}

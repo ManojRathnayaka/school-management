@@ -34,7 +34,7 @@ export default function Students() {
     currentPage: 1,
     totalPages: 1,
     totalRecords: 0,
-    limit: 15,
+    limit: 10,
     hasNext: false,
     hasPrev: false,
   });

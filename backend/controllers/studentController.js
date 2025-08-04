@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import { findUserByEmail, createUser } from "../models/userModel.js";
-import { findStudentByAdmissionNumber, createStudent, getStudentsList, getStudentsCount } from "../models/studentModel.js";
+import { findUserByEmail, createUser, updateUser } from "../models/userModel.js";
+import { findStudentByAdmissionNumber, createStudent, getStudentsList, getStudentsCount, findStudentById, updateStudentInfo } from "../models/studentModel.js";
 import { createParent, linkStudentToParent } from "../models/parentModel.js";
 import crypto from "crypto";
 
@@ -158,5 +158,79 @@ export async function getStudents(req, res) {
     res.status(500).json({
       message: 'Error fetching students'
     });
+  }
+}
+
+export async function updateStudent(req, res) {
+  try {
+    const { studentId } = req.params;
+    const { student } = req.body;
+
+    // Validate required fields
+    if (!student) {
+      return res.status(400).json({ message: "Student information is required" });
+    }
+
+    if (!student.email || !student.first_name || !student.last_name || !student.admission_number) {
+      return res.status(400).json({ message: "Student email, name, and admission number are required" });
+    }
+
+    // Get current student data to find user_id
+    const currentStudent = await findStudentById(studentId);
+    if (!currentStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Check if email is being changed and if new email already exists
+    if (student.email !== currentStudent.email) {
+      const existingUser = await findUserByEmail(student.email);
+      if (existingUser && existingUser.user_id !== currentStudent.user_id) {
+        return res.status(409).json({ message: "Email already exists" });
+      }
+    }
+
+    // Check if admission number is being changed and if new admission number already exists
+    if (student.admission_number !== currentStudent.admission_number) {
+      const existingAdmission = await findStudentByAdmissionNumber(student.admission_number);
+      if (existingAdmission && existingAdmission.student_id !== parseInt(studentId)) {
+        return res.status(409).json({ message: "Admission number already exists" });
+      }
+    }
+
+    // Update user information
+    await updateUser(currentStudent.user_id, {
+      first_name: student.first_name,
+      last_name: student.last_name,
+      email: student.email
+    });
+
+    // Update student information
+    await updateStudentInfo(studentId, {
+      admission_number: student.admission_number,
+      date_of_birth: student.date_of_birth,
+      grade: student.grade,
+      section: student.section,
+      address: student.address
+    });
+
+    // Get updated student data
+    const updatedStudent = await findStudentById(studentId);
+
+    res.status(200).json({
+      message: "Student updated successfully",
+      student: {
+        id: updatedStudent.student_id,
+        admission_number: updatedStudent.admission_number,
+        email: updatedStudent.email,
+        first_name: updatedStudent.first_name,
+        last_name: updatedStudent.last_name,
+        grade: updatedStudent.grade,
+        section: updatedStudent.section
+      }
+    });
+
+  } catch (err) {
+    console.error('Student update error:', err);
+    res.status(500).json({ message: "Server error" });
   }
 }
