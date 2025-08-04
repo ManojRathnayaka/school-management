@@ -39,3 +39,12 @@ export async function updateUser(user_id, userData) {
   
   return result;
 }
+
+export async function deleteUser(user_id) {
+  const [result] = await pool.query(`
+    DELETE FROM users 
+    WHERE user_id = ?
+  `, [user_id]);
+
+  return result;
+}

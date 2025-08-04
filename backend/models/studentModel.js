@@ -123,3 +123,33 @@ export async function updateStudentInfo(student_id, studentData) {
   
   return result;
 }
+
+export async function getParentIdsByStudentId(student_id) {
+  const [rows] = await pool.query(`
+    SELECT parent_id 
+    FROM student_parents 
+    WHERE student_id = ?
+  `, [student_id]);
+
+  return rows.map(row => row.parent_id);
+}
+
+export async function deleteStudentParentRelationship(student_id) {
+  // Delete the relationship first to avoid foreign key constraints
+  const [result] = await pool.query(`
+    DELETE FROM student_parents 
+    WHERE student_id = ?
+  `, [student_id]);
+
+  return result;
+}
+
+export async function deleteStudentOnly(student_id) {
+  // Delete only from students table (relationship already deleted)
+  const [result] = await pool.query(`
+    DELETE FROM students 
+    WHERE student_id = ?
+  `, [student_id]);
+
+  return result;
+}

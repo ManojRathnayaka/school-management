@@ -12,11 +12,7 @@ export default function DeleteStudentModal({ show, student, onClose, onConfirm }
     setError("");
 
     try {
-      // TODO: Implement actual delete API call
-      // await studentAPI.deleteStudent(student.student_id);
-      
-      // For now, just show success message
-      alert(`Delete functionality for ${student.first_name} ${student.last_name} will be implemented soon.`);
+      await studentAPI.deleteStudent(student.student_id);
       onConfirm();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to delete student");

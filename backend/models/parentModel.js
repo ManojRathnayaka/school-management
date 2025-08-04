@@ -30,3 +30,23 @@ export async function linkStudentToParent(student_id, parent_id) {
   
   return result;
 } 
+
+export async function findParentById(parent_id) {
+  const [rows] = await pool.query(`
+    SELECT p.*, u.first_name, u.last_name, u.email, u.role, u.user_id
+    FROM parents p
+    JOIN users u ON p.user_id = u.user_id
+    WHERE p.parent_id = ?
+  `, [parent_id]);
+
+  return rows[0];
+}
+
+export async function deleteParentRecord(parent_id) {
+  const [result] = await pool.query(`
+    DELETE FROM parents 
+    WHERE parent_id = ?
+  `, [parent_id]);
+
+  return result;
+}
