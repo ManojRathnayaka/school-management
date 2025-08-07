@@ -17,7 +17,7 @@ const initialForm = {
   first_name: "",
   last_name: "",
   email: "",
-  role: USER_ROLES.TEACHER,
+  role: "",
   grade: "",
   contact_number: "",
 };
@@ -76,45 +76,86 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-4xl">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Admin Panel - Create New User
-        </h2>
+      <div className="bg-white p-6 rounded shadow-md w-full max-w-2xl">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-center flex-1">
+            Admin Panel - Create New User
+          </h2>
+          <Button variant="danger" size="sm" onClick={logout}>
+            Logout
+          </Button>
+        </div>
         <Alert type="error" message={error} />
         <Alert type="success" message={success} />
 
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="space-y-4"
         >
-          <div className="md:col-span-2">
+          <div>
             <h3 className="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">
               Basic Information
             </h3>
           </div>
 
-          <Input name="first_name" placeholder="First Name" value={form.first_name} onChange={handleInputChange} required />
-          <Input name="last_name" placeholder="Last Name" value={form.last_name} onChange={handleInputChange} required />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input name="first_name" placeholder="First Name" value={form.first_name} onChange={handleInputChange} required />
+            <Input name="last_name" placeholder="Last Name" value={form.last_name} onChange={handleInputChange} required />
+          </div>
+          
           <Input type="email" name="email" placeholder="Email" value={form.email} onChange={handleInputChange} required />
-          <Select name="role" value={form.role} onChange={handleRoleChange} options={roleOptions} required />
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Role <span className="text-red-500">*</span>
+            </label>
+            <div className="flex flex-wrap gap-6">
+              {roleOptions.map((option) => (
+                <label key={option.value} className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value={option.value}
+                    checked={form.role === option.value}
+                    onChange={handleRoleChange}
+                    required
+                    className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
 
-          {isTeacher && (
-            <>
-              <div className="md:col-span-2 mt-4">
+          <div className="min-h-[100px]">
+            {isTeacher && (
+              <>
                 <h3 className="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">
                   Teacher Information
                 </h3>
-              </div>
-              <Select name="grade" value={form.grade} onChange={handleInputChange} options={[{ value: "", label: "Select Grade" }, ...GRADES]} required />
-              <Input type="tel" name="contact_number" placeholder="Contact Number" value={form.contact_number} onChange={handleInputChange} />
-            </>
-          )}
-
-          <div className="md:col-span-2 mt-4">
-            <Button type="submit" className="w-full">
-              Create User
-            </Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Select 
+                    name="grade" 
+                    value={form.grade} 
+                    onChange={handleInputChange} 
+                    options={[{ value: "", label: "Select Grade" }, ...GRADES]} 
+                    required
+                  />
+                  <Input 
+                    type="tel" 
+                    name="contact_number" 
+                    placeholder="Contact Number" 
+                    value={form.contact_number} 
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </>
+            )}
           </div>
+
+          <Button type="submit">
+            Create User
+          </Button>
         </form>
 
         {tempPassword && (
@@ -131,9 +172,6 @@ export default function AdminPanel() {
           </div>
         )}
       </div>
-      <Button variant="danger" className="mt-8" onClick={logout}>
-        Logout
-      </Button>
     </div>
   );
 }
