@@ -10,6 +10,7 @@ const sidebarConfig = {
     { path: "/scholarships", label: "Scholarship Management" },
     { path: "/events", label: "Event Management" },
     { path: "/academic-sports", label: "Academic & Sports" },
+    { path: "/auditorium-booking", label:"Auditorium Booking"}
   ],
   [USER_ROLES.TEACHER]: [
     { path: "/student-registration", label: "Student Registration" },
