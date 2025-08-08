@@ -58,7 +58,7 @@ export default function Login() {
         );
         setUser(response.data.user);
         resetForm();
-        
+
         // Navigate based on role after password reset
         if (response.data.user?.role === "admin") {
           navigate("/admin", { replace: true });
@@ -67,8 +67,7 @@ export default function Login() {
         }
       }
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "An error occurred.";
+      const errorMessage = err.response?.data?.message || "An error occurred.";
       setFormError(errorMessage);
     }
   };
@@ -93,7 +92,7 @@ export default function Login() {
           required
           autoFocus
         />
-        
+
         {!mustReset && (
           <Input
             type="password"
@@ -108,6 +107,9 @@ export default function Login() {
 
         {mustReset && (
           <>
+            <p className="text-sm text-gray-600 mb-2">
+              Password needs at least 6 characters including letters and numbers
+            </p>
             <Input
               type="password"
               name="newPassword"

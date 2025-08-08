@@ -33,14 +33,14 @@ function generateToken(user) {
 
 export async function login(req, res) {
   const { email, password } = req.body;
-  
+
   try {
     const user = await findUserByEmail(email);
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
-    
+
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
-    
+
     if (user.must_reset_password) {
       return res.status(200).json({
         mustResetPassword: true,
@@ -51,7 +51,7 @@ export async function login(req, res) {
         },
       });
     }
-      
+
     const token = generateToken(user);
     res.cookie("token", token, COOKIE_OPTIONS);
     res.json({
@@ -64,7 +64,7 @@ export async function login(req, res) {
       },
     });
   } catch (err) {
-    console.error('Login error:', err);
+    console.error("Login error:", err);
     res.status(500).json({ message: "Login failed. Please try again" });
   }
 }
@@ -79,25 +79,34 @@ export function getCurrentUser(req, res) {
 }
 
 export async function createAdminUser(req, res) {
-  const { first_name, last_name, email, role, contact_number, grade } = req.body;
-  
+  const { first_name, last_name, email, role, contact_number, grade } =
+    req.body;
+
   try {
     if (!["admin", "principal", "teacher"].includes(role)) {
-      return res.status(400).json({ message: "Invalid role for admin creation" });
+      return res
+        .status(400)
+        .json({ message: "Invalid role for admin creation" });
     }
-    
+
     if (role === "teacher" && !contact_number) {
-      return res.status(400).json({ message: "Contact number is required for teachers" });
+      return res
+        .status(400)
+        .json({ message: "Contact number is required for teachers" });
     }
-    
+
     const user = await findUserByEmail(email);
     if (user) {
       return res.status(409).json({ message: "Email already registered" });
     }
-    
-    const tempPassword = crypto.randomBytes(5).toString("base64").replace(/[^a-zA-Z0-9]/g, '').slice(0, 10);
+
+    const tempPassword = crypto
+      .randomBytes(5)
+      .toString("base64")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 10);
     const password_hash = await bcrypt.hash(tempPassword, 10);
-    
+
     const userResult = await createUser({
       first_name,
       last_name,
@@ -106,41 +115,55 @@ export async function createAdminUser(req, res) {
       role,
       must_reset_password: true,
     });
-    
+
     const user_id = userResult.insertId;
-    
+
     if (role === "teacher") {
       await createTeacher({ user_id, contact_number, grade });
     }
-    
-    res.status(201).json({ message: "User created successfully", tempPassword });
+
+    res
+      .status(201)
+      .json({ message: "User created successfully", tempPassword });
   } catch (err) {
-    console.error('Create admin user error:', err);
+    console.error("Create admin user error:", err);
     res.status(500).json({ message: "User creation failed. Please try again" });
   }
 }
 
+function isStrongPassword(password) {
+  const pattern = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/; // at least 6 characters, one letter and one number
+  return pattern.test(password);
+}
+
 export async function resetPasswordFirstLogin(req, res) {
   const { email, tempPassword, newPassword, confirmPassword } = req.body;
-  
+
   try {
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
-    
+
+    if (!isStrongPassword(newPassword)) {
+      return res.status(400).json({
+        message:"Password needs at least 6 characters including letters and numbers"
+      });
+    }
+
     const user = await findUserByEmail(email);
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
-    
+
     if (!user.must_reset_password) {
       return res.status(400).json({ message: "Password reset not required" });
     }
-    
+
     const match = await bcrypt.compare(tempPassword, user.password_hash);
-    if (!match) return res.status(401).json({ message: "Invalid temporary password" });
-    
+    if (!match)
+      return res.status(401).json({ message: "Invalid temporary password" });
+
     const password_hash = await bcrypt.hash(newPassword, 10);
     await updatePassword(user.user_id, password_hash);
-    
+
     const updatedUser = await findUserByEmail(email);
     const token = generateToken(updatedUser);
     res.cookie("token", token, COOKIE_OPTIONS);
@@ -154,7 +177,9 @@ export async function resetPasswordFirstLogin(req, res) {
       },
     });
   } catch (err) {
-    console.error('Password reset error:', err);
-    res.status(500).json({ message: "Password update failed. Please try again" });
+    console.error("Password reset error:", err);
+    res
+      .status(500)
+      .json({ message: "Password update failed. Please try again" });
   }
 }
