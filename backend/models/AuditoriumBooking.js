@@ -24,31 +24,31 @@ export const createBooking = async (data) => {
   return result.insertId;
 };
 
-export const getPendingBookings = async () => {
-  const [rows] = await pool.query(
-    "SELECT * FROM auditorium_bookings WHERE status = 'pending'"
-  );
-  return rows;
-};
+// export const getPendingBookings = async () => {
+//   const [rows] = await pool.query(
+//     "SELECT * FROM auditorium_bookings WHERE status = 'pending'"
+//   );
+//   return rows;
+// };
 
-export const getApprovedBookings = async () => {
-  const [rows] = await pool.query(
-    "SELECT * FROM auditorium_bookings WHERE status = 'approved'"
-  );
-  return rows;
-};
+// export const getApprovedBookings = async () => {
+//   const [rows] = await pool.query(
+//     "SELECT * FROM auditorium_bookings WHERE status = 'approved'"
+//   );
+//   return rows;
+// };
 
-export const updateBookingStatus = async (id, status) => {
-  await pool.query(
-    "UPDATE auditorium_bookings SET status = ? WHERE id = ?",
-    [status, id]
-  );
-};
+// export const updateBookingStatus = async (id, status) => {
+//   await pool.query(
+//     "UPDATE auditorium_bookings SET status = ? WHERE id = ?",
+//     [status, id]
+//   );
+// };
 
-export const getBookingsByTeacher = async (teacher_id) => {
-  const [rows] = await pool.query(
-    "SELECT * FROM auditorium_bookings WHERE teacher_id = ?",
-    [teacher_id]
-  );
-  return rows;
-};
+// export const getBookingsByTeacher = async (teacher_id) => {
+//   const [rows] = await pool.query(
+//     "SELECT * FROM auditorium_bookings WHERE teacher_id = ?",
+//     [teacher_id]
+//   );
+//   return rows;
+// };

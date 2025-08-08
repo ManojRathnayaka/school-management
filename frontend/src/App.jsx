@@ -17,10 +17,11 @@ import AdminPanel from './pages/AdminPanel';
 import Students from './pages/Students';
 import StudentRegistration from './pages/StudentRegistration';
 import Scholarships from './pages/Scholarships';
-import Events from './pages/Events';
+import Events from './pages/AuditoriumBooking2';
 import AcademicSports from './pages/AcademicSports';
 import ParentPortal from './pages/ParentPortal';
-import AuditoriumBookingForm from './pages/AuditoriumBooking';
+// import AuditoriumBookingForm from './pages/AuditoriumBooking';
+import AuditoriumBookingForm from './pages/AuditoriumBooking2';
 
 function LoginWrapper() {
   const { user, loading } = useAuth();

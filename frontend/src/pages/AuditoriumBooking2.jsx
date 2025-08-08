@@ -1,5 +1,10 @@
+// Component imports
+import Layout from "../components/Layout";
+
+
 import React, { useState } from "react";
 import axios from "axios";
+
 
 const AuditoriumBookingForm = () => {
   const [formData, setFormData] = useState({
@@ -32,8 +37,12 @@ const AuditoriumBookingForm = () => {
     }
   };
 
+
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl mx-auto mt-6">
+    <Layout activePage="events">
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-2xl font-bold mb-6">Events</h2>
+        <div className="bg-white p-6 rounded-xl shadow-lg max-w-3xl mx-auto mt-6">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">
         Book the Auditorium
       </h2>
@@ -109,7 +118,9 @@ const AuditoriumBookingForm = () => {
         </button>
       </form>
     </div>
+      </div>
+    </Layout>
   );
-};
+}
 
 export default AuditoriumBookingForm;
