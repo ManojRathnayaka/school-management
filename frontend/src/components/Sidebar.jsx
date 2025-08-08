@@ -17,6 +17,7 @@ const sidebarConfig = {
     { path: "/students", label: "Students" },
     { path: "/events", label: "Event Management" },
     { path: "/academic-sports", label: "Academic & Sports" },
+    { path: "/auditorium-booking", label:"Auditorium Booking"}
   ],
   [USER_ROLES.STUDENT]: [
     { path: "/scholarships", label: "Scholarships" },

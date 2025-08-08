@@ -20,7 +20,7 @@ import Scholarships from './pages/Scholarships';
 import Events from './pages/Events';
 import AcademicSports from './pages/AcademicSports';
 import ParentPortal from './pages/ParentPortal';
-import AuditoriumBooking from './pages/AuditoriumBooking';
+import AuditoriumBookingForm from './pages/AuditoriumBooking';
 
 function LoginWrapper() {
   const { user, loading } = useAuth();
@@ -64,7 +64,7 @@ function App() {
             <Route path="/events" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Events /></ProtectedRoute>} />
             <Route path="/academic-sports" element={<ProtectedRoute allowedRoles={['principal', 'teacher', 'student', 'parent']}><AcademicSports /></ProtectedRoute>} />
             <Route path="/parent-portal" element={<ProtectedRoute allowedRoles={['parent']}><ParentPortal /></ProtectedRoute>} />
-            <Route path="/auditorium-booking" element={<ProtectedRoute allowedRoles={['principal']}><AuditoriumBooking/></ProtectedRoute>}/>
+            <Route path="/auditorium-booking" element={<ProtectedRoute allowedRoles={['teacher']}><AuditoriumBookingForm/></ProtectedRoute>}/>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>

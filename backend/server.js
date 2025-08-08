@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import auditoriumRoutes from "./routes/auditoriumRoutes.js"
 
 dotenv.config({ quiet: true });
 const app = express();
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/auditorium",auditoriumRoutes)
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
