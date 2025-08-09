@@ -22,6 +22,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/auditorium",auditoriumRoutes)
+app.use("/api/approved", auditoriumRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });

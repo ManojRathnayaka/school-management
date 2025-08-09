@@ -1,5 +1,5 @@
 // 2️⃣ controllers/auditoriumController.js
-import { createBooking as createBookingModel } from "../models/AuditoriumBooking.js";
+import { createBooking as createBookingModel, getApprovedAndPendingBookings, getApprovedBookingSlots } from "../models/AuditoriumBooking.js";
 
 export const createBookings = async (req, res) => {
   try {
@@ -35,6 +35,81 @@ export const createBookings = async (req, res) => {
     res.status(500).json({ error: "Failed to submit booking request" });
   }
 };
+
+export async function handleGetApprovedAndPendingBookingss(req, res) {
+  try {
+    // get the raw result from the DB helper
+    const result = await getApprovedAndPendingBookings();
+
+    // If your helper returns [rows, fields], take the first element; otherwise use the result directly
+    const rows = Array.isArray(result) && Array.isArray(result[0])
+      ? result[0]
+      : result;
+
+    // Send the array of bookings directly; res.json can accept arrays:contentReference[oaicite:2]{index=2}
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching bookings:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+
+export async function handleGetAvailableSlotss(req, res) {
+  try {
+    const rows = await getApprovedBookingSlots();
+
+    // Helper to format Date objects as YYYY-MM-DD in local time
+    const formatDate = (d) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
+    // Build lookup of bookings by local date
+    const bookedMap = {};
+    rows.forEach((row) => {
+      // row.event_date can be a Date object or a string; handle both
+      const dateKey =
+        row.event_date instanceof Date
+          ? formatDate(row.event_date)
+          : String(row.event_date).split("T")[0];
+      if (!bookedMap[dateKey]) bookedMap[dateKey] = [];
+      bookedMap[dateKey].push({
+        start_time: row.start_time,
+        end_time: row.end_time,
+      });
+    });
+
+    // Build 14-day window using local dates
+    const today = new Date();
+    const slots = [];
+    for (let i = 0; i < 14; i++) {
+      const date = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() + i
+      );
+      const dateStr = formatDate(date);
+      const bookings = bookedMap[dateStr] || [];
+      slots.push({
+        date: dateStr,
+        status: bookings.length > 0 ? "booked" : "available",
+        bookings,
+      });
+    }
+
+    res.json(slots);
+  } catch (err) {
+    console.error("Error fetching available slots:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+
+
 
 // // Principal views pending requests
 // export const getPendingRequests = async (req, res) => {

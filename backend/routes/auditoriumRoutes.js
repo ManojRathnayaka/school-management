@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {createBookings} from "../controllers/auditoriumController.js";
+import {createBookings,handleGetApprovedAndPendingBookingss,handleGetAvailableSlotss, } from "../controllers/auditoriumController.js";
 import {
   authenticateJWT,
   authorizeRoles
@@ -14,6 +14,16 @@ router.post(
   authorizeRoles("teacher"),
   createBookings
 );
+
+router.get("/approved",
+  authenticateJWT,
+  authorizeRoles("teacher"),
+   handleGetApprovedAndPendingBookingss
+  );
+router.get("/slots",
+  authenticateJWT,
+  authorizeRoles("teacher"),
+   handleGetAvailableSlotss);
 
 // // Only Principal can view pending requests
 // router.get(

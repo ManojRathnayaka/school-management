@@ -61,6 +61,7 @@ export async function login(req, res) {
         last_name: user.last_name,
         email: user.email,
         role: user.role,
+        token: token,
       },
     });
   } catch (err) {
