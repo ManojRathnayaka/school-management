@@ -1,0 +1,23 @@
+CREATE TABLE scholarships (
+    scholarship_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    father_name VARCHAR(100) NOT NULL,
+    father_occupation VARCHAR(100),
+    father_income DECIMAL(10,2),
+    father_contact VARCHAR(15),
+    mother_name VARCHAR(100),
+    mother_occupation VARCHAR(100),
+    mother_income DECIMAL(10,2),
+    mother_contact VARCHAR(15),
+    school_name VARCHAR(255),
+    academic_year VARCHAR(20),
+    last_exam_passed VARCHAR(100),
+    percentage_grade VARCHAR(20),
+    reason_financial_need BOOLEAN DEFAULT FALSE,
+    reason_academic BOOLEAN DEFAULT FALSE,
+    reason_sports BOOLEAN DEFAULT FALSE,
+    reason_cultural BOOLEAN DEFAULT FALSE,
+    reason_other TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id)
+);

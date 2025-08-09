@@ -4,10 +4,14 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import scholarshipRoutes from "./routes/scholarshipRoutes.js";
 
 dotenv.config({ quiet: true });
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+
+app.use(cors());
 
 app.use(
   cors({
@@ -28,3 +32,5 @@ app.get("/api/health", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.use("/api/scholarships", scholarshipRoutes);

@@ -36,8 +36,9 @@ export async function updateUser(user_id, userData) {
     SET first_name = ?, last_name = ?, email = ?
     WHERE user_id = ?
   `, [first_name, last_name, email, user_id]);
-  
+    
   return result;
+  
 }
 
 export async function deleteUser(user_id) {
