@@ -20,6 +20,22 @@ export const authAPI = {
 
 export const userAPI = {
   createUser: (userData) => api.post("/auth/create-user", userData),
+  // Get users with pagination and filters
+  getUsers: (queryString) => {
+    return api.get(`/auth/users?${queryString}`);
+  },
+  // Update user details
+  updateUser: (userId, userData) => {
+    return api.put(`/auth/users/${userId}`, userData);
+  },
+  // Reset user password
+  resetUserPassword: (userId) => {
+    return api.post(`/auth/users/${userId}/reset-password`);
+  },
+  // Delete user
+  deleteUser: (userId) => {
+    return api.delete(`/auth/users/${userId}`);
+  },
 };
 
 export const studentAPI = {

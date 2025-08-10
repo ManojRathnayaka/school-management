@@ -5,6 +5,10 @@ import {
   getCurrentUser,
   createAdminUser,
   resetPasswordFirstLogin,
+  getAllUsers,
+  updateUserDetails,
+  resetUserPassword,
+  deleteUserAccount,
 } from "../controllers/authController.js";
 
 import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
@@ -21,6 +25,35 @@ router.post(
   authenticateJWT,
   authorizeRoles("admin"),
   createAdminUser,
+);
+
+// New user management routes
+router.get(
+  "/users",
+  authenticateJWT,
+  authorizeRoles("admin"),
+  getAllUsers,
+);
+
+router.put(
+  "/users/:id",
+  authenticateJWT,
+  authorizeRoles("admin"),
+  updateUserDetails,
+);
+
+router.post(
+  "/users/:id/reset-password",
+  authenticateJWT,
+  authorizeRoles("admin"),
+  resetUserPassword,
+);
+
+router.delete(
+  "/users/:id",
+  authenticateJWT,
+  authorizeRoles("admin"),
+  deleteUserAccount,
 );
 
 export default router;

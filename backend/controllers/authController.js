@@ -5,8 +5,13 @@ import {
   findUserByEmail,
   createUser,
   updatePassword,
+  resetUserPasswordByAdmin,
+  getUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
 } from "../models/userModel.js";
-import { createTeacher } from "../models/teacherModel.js";
+import { createTeacher, deleteTeacher } from "../models/teacherModel.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "changeme";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h";
@@ -181,5 +186,102 @@ export async function resetPasswordFirstLogin(req, res) {
     res
       .status(500)
       .json({ message: "Password update failed. Please try again" });
+  }
+}
+
+// New functions for user management
+export async function getAllUsers(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const roles = req.query.roles ? req.query.roles.split(',') : null;
+    const search = req.query.search || null;
+    
+    const result = await getUsers({ 
+      page, 
+      limit, 
+      roles, 
+      search,
+      excludeRoles: ['parent', 'student'] // Exclude parents and students from user management
+    });
+    
+    res.json(result);
+  } catch (err) {
+    console.error("Get users error:", err);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+}
+
+export async function updateUserDetails(req, res) {
+  try {
+    const { id } = req.params;
+    const { first_name, last_name, email } = req.body;
+
+    // Check if email is already taken by another user
+    if (email) {
+      const existingUser = await findUserByEmail(email);
+      if (existingUser && existingUser.user_id != id) {
+        return res.status(409).json({ message: "Email already in use" });
+      }
+    }
+
+    await updateUser(id, { first_name, last_name, email });
+    const updatedUser = await getUserById(id);
+    res.json({ message: "User updated successfully", user: updatedUser });
+  } catch (err) {
+    console.error("Update user error:", err);
+    res.status(500).json({ message: "Failed to update user" });
+  }
+}
+
+export async function resetUserPassword(req, res) {
+  try {
+    const { id } = req.params;
+    
+    // Generate new temp password
+    const tempPassword = crypto
+      .randomBytes(5)
+      .toString("base64")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 10);
+    
+    const password_hash = await bcrypt.hash(tempPassword, 10);
+    await resetUserPasswordByAdmin(id, password_hash);
+    
+    res.json({ message: "Password reset successfully", tempPassword });
+  } catch (err) {
+    console.error("Reset password error:", err);
+    res.status(500).json({ message: "Failed to reset password" });
+  }
+}
+
+export async function deleteUserAccount(req, res) {
+  try {
+    const { id } = req.params;
+    const currentUserId = req.user.user_id;
+
+    // Prevent self-deletion
+    if (parseInt(id) === currentUserId) {
+      return res.status(400).json({ message: "Cannot delete your own account" });
+    }
+
+    // Get user details to check role
+    const user = await getUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Handle cascade deletion based on role
+    if (user.role === 'teacher') {
+      await deleteTeacher(id);
+    }
+
+    // Finally delete from users table
+    await deleteUser(id);
+    
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error("Delete user error:", err);
+    res.status(500).json({ message: "Failed to delete user" });
   }
 }
