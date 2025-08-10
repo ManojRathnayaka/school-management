@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {createBookings,handleGetApprovedAndPendingBookingss,handleGetAvailableSlotss, } from "../controllers/auditoriumController.js";
+import {createBookings,handleGetApprovedAndPendingBookingss,handleGetAvailableSlotss, handleGetPendingBookings, handleUpdateBookingStatus} from "../controllers/auditoriumController.js";
 import {
   authenticateJWT,
   authorizeRoles
@@ -11,7 +11,7 @@ const router = Router();
 router.post(
   "/book",
   authenticateJWT,
-  authorizeRoles("teacher"),
+  authorizeRoles("teacher", "principal"),
   createBookings
 );
 
@@ -24,6 +24,23 @@ router.get("/slots",
   authenticateJWT,
   authorizeRoles("teacher"),
    handleGetAvailableSlotss);
+
+
+// Only principals can access these
+router.get("/pending",
+   authenticateJWT, authorizeRoles("principal"),
+    handleGetPendingBookings);
+
+router.put("/:id/approve",
+   authenticateJWT, 
+   authorizeRoles("principal"), (req, res) =>
+  handleUpdateBookingStatus({ ...req, body: { status: "approved" } }, res)
+);
+router.put("/:id/reject", 
+  authenticateJWT, authorizeRoles("principal"), (req, res) =>
+  handleUpdateBookingStatus({ ...req, body: { status: "rejected", reason: req.body.reason } }, res)
+);
+  
 
 // // Only Principal can view pending requests
 // router.get(

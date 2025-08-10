@@ -1,9 +1,11 @@
 // Component imports
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
+import Notifications from "../components/NotificationBell";
 
 
 import axios from "axios";
+import NotificationBell from "../components/NotificationBell";
 
 
 const AuditoriumBookingForm = () => {
@@ -105,6 +107,7 @@ const AuditoriumBookingForm = () => {
     <Layout activePage="events">
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-6">Auditorium Booking</h2>
+        <NotificationBell />
 
       <div className="flex gap-4 mb-4">
           <button

@@ -1,6 +1,6 @@
 // 2️⃣ controllers/auditoriumController.js
-import { createBooking as createBookingModel, getApprovedAndPendingBookings, getApprovedBookingSlots } from "../models/AuditoriumBooking.js";
-
+import { createBooking as createBookingModel, getApprovedAndPendingBookings, getApprovedBookingSlots,  getPendingBookings, updateBookingStatus} from "../models/AuditoriumBooking.js";
+import {pool} from "../config/db.js";
 export const createBookings = async (req, res) => {
   try {
     const tokenUser = req.user || {};
@@ -106,6 +106,71 @@ export async function handleGetAvailableSlotss(req, res) {
     res.status(500).json({ message: "Server error" });
   }
 }
+
+
+
+// principal GET /api/auditorium/pending
+export async function handleGetPendingBookings(req, res) {
+  try {
+    const rows = await getPendingBookings();
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching pending bookings:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+export async function handleUpdateBookingStatus(req, res) {
+  const { id } = req.params;
+  const { status, reason } = req.body;
+  try {
+    // Always fetch the booking so booking.event_name and booking.event_date are defined
+    const [rows] = await pool.query(
+      "SELECT requested_by, event_name, event_date FROM auditorium_bookings WHERE id = ?",
+      [id]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    const booking = rows[0];
+
+    // Look up the teacher’s numeric ID in the users table
+    const [userRows] = await pool.query(
+      "SELECT id FROM auditorium_bookings WHERE requested_by = ?",
+      [booking.requested_by]
+    );
+    if (userRows.length === 0) {
+      throw new Error("No user found with email " + booking.requested_by);
+    }
+    const teacherId = userRows[0].id;
+
+    // Update the booking’s status (and rejection reason if provided)
+    await updateBookingStatus(id, status, reason);
+
+    // Build a notification message for approvals or rejections
+    let message = "";
+    if (status === "approved") {
+      message = `Your booking '${booking.event_name}' on ${booking.event_date} has been approved`;
+    } else if (status === "rejected") {
+      message = `Your booking '${booking.event_name}' on ${booking.event_date} was rejected`;
+    }
+
+    // Insert a notification if there is a message
+    if (message) {
+      await pool.query(
+        "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
+        [teacherId, message]
+      );
+    }
+
+    res.json({ message: `Booking ${status}` });
+  } catch (err) {
+    console.error("Error updating booking status:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
 
 
 
