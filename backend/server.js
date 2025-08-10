@@ -6,6 +6,8 @@ import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import auditoriumRoutes from "./routes/auditoriumRoutes.js"
 import notificationsRoutes from "./routes/notificationsRoutes.js";
+import performanceRoutes from "./routes/performanceRoutes.js";
+import classRoutes from "./routes/classRoutes.js";
 dotenv.config({ quiet: true });
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -27,7 +29,8 @@ app.use("/api/approved", auditoriumRoutes);
 app.use("/api/pending", auditoriumRoutes);
 app.use("/api/notifications", notificationsRoutes);
 
-
+app.use('/api/class-performance', performanceRoutes);
+app.use('/api/classes', classRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
