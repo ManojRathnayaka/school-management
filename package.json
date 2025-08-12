@@ -11,9 +11,5 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^9.2.0"
-  },
-  "dependencies": {
-    "antd": "^5.26.7",
-    "cookie-parser": "^1.4.7"
   }
 }
