@@ -58,15 +58,15 @@ export default function ClassPerformance() {
       .then((response) => {
         setPerformance(response.data);
         // Fetch the audit logs for the selected student
-        axios
-          .get(`/api/student-performance/${studentId}/audit`)
-          .then((response) => {
-            setAuditLogs(response.data);
-          })
-          .catch((error) => {
-            console.error(error);
-            message.error('Error fetching audit logs.');
-          });
+        // axios
+        //   .get(`/api/student-performance/${studentId}/audit`)
+        //   .then((response) => {
+        //     setAuditLogs(response.data);
+        //   })
+        //   .catch((error) => {
+        //     console.error(error);
+        //     message.error('Error fetching audit logs.');
+        //   });
       })
       .catch((error) => {
         console.error(error);

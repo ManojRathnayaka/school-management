@@ -13,3 +13,4 @@
      FOREIGN KEY (updated_by) REFERENCES users(user_id),
      FOREIGN KEY (class_id) REFERENCES classes(class_id)
  );
+

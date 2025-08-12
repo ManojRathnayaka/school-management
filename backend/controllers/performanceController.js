@@ -2,7 +2,7 @@
 // const performanceModel = require('../models/performanceModel');
 // const classModel = require('../models/classModel');
 
-//  import pool from '../config/db';
+ import {pool} from '../config/db.js';
 //  import { getClassPerformance, updateStudentPerformance } from './classController';
 import { getClassById } from '../models/classModel.js';
 import { getClassPerformance, updateStudentPerformance, getStudentPerformance } from '../models/performanceModel.js';

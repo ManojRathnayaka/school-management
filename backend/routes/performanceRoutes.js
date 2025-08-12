@@ -20,7 +20,7 @@ router.put('/:studentId',
      updateStudentPerformances);
 
 // Get performance details for a specific student
-router.get('/student/:studentId',
+router.get('/:studentId',
     authenticateJWT,
   authorizeRoles("teacher"),
      getStudentPerformances);
