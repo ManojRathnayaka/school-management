@@ -26,6 +26,7 @@ const sidebarConfig = {
   [USER_ROLES.STUDENT]: [
     { path: "/scholarships", label: "Scholarships" },
     { path: "/academic-sports", label: "Academic & Sports" },
+    { path: "/hostal-application", label: "Hostel Application" },
   ],
   [USER_ROLES.PARENT]: [
     { path: "/scholarships", label: "Scholarships" },

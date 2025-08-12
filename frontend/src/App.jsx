@@ -77,7 +77,7 @@ function App() {
             
             <Route path="/class-performance" element={<ProtectedRoute allowedRoles={['teacher']}><ClassPerformance/></ProtectedRoute>}/>
             <Route path="*" element={<Navigate to="/" replace />} />
-            <Route path="/hostel" element={<HostelApplication />} />
+            <Route path="/hostal-application" element={<HostelApplication />} />
             <Route path="/HostelAdmin" element={<AdminDashboard />} />
             <Route path="/Achive" element={<AchievementsSystem />} />
 
