@@ -9,6 +9,7 @@ export default function Scholarships() {
 
   const [formData, setFormData] = useState({
     student_id: "",
+    student_name:"",
     father_name: "",
     father_occupation: "",
     father_income: "",
