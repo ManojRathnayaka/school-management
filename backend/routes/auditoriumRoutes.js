@@ -17,18 +17,18 @@ router.post(
 
 router.get("/approved",
   authenticateJWT,
-  authorizeRoles("teacher"),
+  authorizeRoles("teacher", "principal"),
    handleGetApprovedAndPendingBookingss
   );
 router.get("/slots",
   authenticateJWT,
-  authorizeRoles("teacher"),
+  authorizeRoles("teacher", "principal"),
    handleGetAvailableSlotss);
 
 
 // Only principals can access these
 router.get("/pending",
-   authenticateJWT, authorizeRoles("principal"),
+   authenticateJWT, authorizeRoles("principal", "principal"),
     handleGetPendingBookings);
 
 router.put("/:id/approve",

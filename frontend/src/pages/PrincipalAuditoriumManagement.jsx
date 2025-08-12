@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
+import AuditoriumBookingForm from "./AuditoriumBooking2"; // Adjust the import path as necessary
 
 const PrincipalAuditoriumManagement = () => {
   const [pendingBookings, setPendingBookings] = useState([]);
@@ -58,7 +59,9 @@ const PrincipalAuditoriumManagement = () => {
 
   return (
     <Layout activePage="events">
+    
       <div className="bg-white p-6 rounded-lg shadow">
+        
         <h2 className="text-2xl font-bold mb-6">
           Pending Auditorium Booking Requests
         </h2>
@@ -111,10 +114,14 @@ const PrincipalAuditoriumManagement = () => {
               ))}
             </tbody>
           </table>
+          
         )}
+        
       </div>
-    </Layout>
+      
+     </Layout>
   );
 };
+
 
 export default PrincipalAuditoriumManagement;
