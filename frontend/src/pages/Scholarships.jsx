@@ -40,7 +40,7 @@ export default function Scholarships() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:4000/api/scholarships", formData , { withCredentials: true });
+      await axios.post("/api/scholarships", formData , { withCredentials: true });
       alert("Scholarship application submitted!");
     } catch (err) {
       console.error(err);

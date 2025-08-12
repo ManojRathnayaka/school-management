@@ -18,19 +18,19 @@ export default function ScholarshipList({ /*user*/ }) {
 
 
     useEffect(() => {
-    axios.get("http://localhost:4000/api/scholarships", { withCredentials: true })
+    axios.get("/api/scholarships", { withCredentials: true })
       .then(res => setApplications(res.data))
       .catch(err => console.error(err));
   }, []);
 
 
   const handleApprove = (id) => {
-    axios.put(`http://localhost:4000/api/scholarships/${id}/approve`, {}, { withCredentials: true })
+    axios.put(`/api/scholarships/${id}/approve`, {}, { withCredentials: true })
       .then(() => setApplications(applications.map(a => a.scholarship_id === id ? { ...a, status: "approved" } : a)));
   };
 
   const handleReject = (id) => {
-    axios.put(`http://localhost:4000/api/scholarships/${id}/reject`, {}, { withCredentials: true })
+    axios.put(`/api/scholarships/${id}/reject`, {}, { withCredentials: true })
       .then(() => setApplications(applications.map(a => a.scholarship_id === id ? { ...a, status: "rejected" } : a)));
   };
 

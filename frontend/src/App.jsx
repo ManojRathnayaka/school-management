@@ -79,7 +79,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
             <Route path="/hostal-application" element={<HostelApplication />} />
             <Route path="/HostelAdmin" element={<AdminDashboard />} />
-            <Route path="/Achive" element={<AchievementsSystem />} />
+            <Route path="/academic-sports" element={<AchievementsSystem />} />
 
           </Routes>
         </Router>
