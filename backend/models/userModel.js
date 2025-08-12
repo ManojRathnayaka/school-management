@@ -51,6 +51,7 @@ export async function updateUser(user_id, userData) {
   `, [first_name, last_name, email, user_id]);
      
   return result;
+  
 }
 
 export async function deleteUser(user_id) {

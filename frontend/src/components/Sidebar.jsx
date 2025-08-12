@@ -7,9 +7,10 @@ const sidebarConfig = {
   [USER_ROLES.PRINCIPAL]: [
     { path: "/student-registration", label: "Student Registration" },
     { path: "/students", label: "Students" },
-    { path: "/scholarships", label: "Scholarship Management" },
+    // { path: "/scholarships", label: "Scholarship Management" },
     { path: "/events", label: "Event Management" },
     { path: "/academic-sports", label: "Academic & Sports" },
+    { path: "/scholarshipList", label: "Scholarship List" },
   ],
   [USER_ROLES.TEACHER]: [
     { path: "/student-registration", label: "Student Registration" },

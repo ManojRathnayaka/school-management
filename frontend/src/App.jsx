@@ -20,6 +20,7 @@ import Scholarships from './pages/Scholarships';
 import Events from './pages/Events';
 import AcademicSports from './pages/AcademicSports';
 import ParentPortal from './pages/ParentPortal';
+import ScholarshipList from './pages/ScholarshipPrinciple';
 
 function LoginWrapper() {
   const { user, loading } = useAuth();
@@ -59,10 +60,12 @@ function App() {
             <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminPanel /></ProtectedRoute>} />
             <Route path="/students" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Students /></ProtectedRoute>} />
             <Route path="/student-registration" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><StudentRegistration /></ProtectedRoute>} />
-            <Route path="/scholarships" element={<ProtectedRoute allowedRoles={['principal', 'teacher', 'student', 'parent']}><Scholarships /></ProtectedRoute>} />
+            <Route path="/scholarships" element={<ProtectedRoute allowedRoles={[ 'student']}><Scholarships /></ProtectedRoute>} />
             <Route path="/events" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Events /></ProtectedRoute>} />
             <Route path="/academic-sports" element={<ProtectedRoute allowedRoles={['principal', 'teacher', 'student', 'parent']}><AcademicSports /></ProtectedRoute>} />
             <Route path="/parent-portal" element={<ProtectedRoute allowedRoles={['parent']}><ParentPortal /></ProtectedRoute>} />
+            <Route path="/scholarshipList" element={<ProtectedRoute allowedRoles={[ 'principal']}><ScholarshipList /></ProtectedRoute>} />
+            
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
@@ -70,5 +73,5 @@ function App() {
     </ErrorBoundary>
   );
 }
-
+//gfgffff
 export default App;
