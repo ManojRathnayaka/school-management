@@ -5,22 +5,13 @@ export default function HostelApplication() {
   const [currentUser] = useState({ role: "student", name: "John Doe" }); // Simulate auth context
   const [formData, setFormData] = useState({
     // Personal Information
-    firstName: "",
-    lastName: "",
-    studentId: "",
+    first_name: "",
+    last_name: "",
+    student_id: "",
     email: "",
-    phoneNumber: "",
-    dateOfBirth: "",
-    gender: "",
-    bloodGroup: "",
-    
-    // Academic Information
-    program: "",
-    year: "",
-    semester: "",
-    department: "",
-    cgpa: "",
-    
+    dob: "",
+    blood_group: "",
+
     // Address Information
     permanentAddress: {
       street: "",
@@ -29,26 +20,22 @@ export default function HostelApplication() {
       zipCode: "",
       country: ""
     },
-    
+
     // Guardian Information
     guardianName: "",
     guardianRelation: "",
     guardianPhone: "",
     guardianEmail: "",
     guardianAddress: "",
-    
+
     // Hostel Preferences
-    preferredHostel: "",
-    roomType: "",
-    mealPlan: "",
-    specialRequirements: "",
-    medicalConditions: "",
-    
+    hostel_id: "",
+
     // Documents
     hasUploadedPhoto: false,
     hasUploadedId: false,
     hasUploadedMedical: false,
-    
+
     // Declaration
     agreeToTerms: false,
     declarationSigned: false
@@ -56,15 +43,15 @@ export default function HostelApplication() {
 
   const [errors, setErrors] = useState({});
   const [availableHostels] = useState([
-    { id: "boys-hostel-a", name: "Boys Hostel A", capacity: 200, available: 45 },
-    { id: "boys-hostel-b", name: "Boys Hostel B", capacity: 180, available: 23 },
-    { id: "girls-hostel-a", name: "Girls Hostel A", capacity: 150, available: 67 },
-    { id: "girls-hostel-b", name: "Girls Hostel B", capacity: 120, available: 34 }
+    { id: "1", name: "Boys Hostel A", capacity: 200, available: 45 },
+    { id: "2", name: "Boys Hostel B", capacity: 180, available: 23 },
+    { id: "3", name: "Girls Hostel A", capacity: 150, available: 67 },
+    { id: "4", name: "Girls Hostel B", capacity: 120, available: 34 }
   ]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
       setFormData(prev => ({
@@ -95,9 +82,9 @@ export default function HostelApplication() {
 
     // Required field validation
     const requiredFields = [
-      'firstName', 'lastName', 'studentId', 'email', 'phoneNumber',
-      'dateOfBirth', 'gender', 'program', 'year', 'department',
-      'guardianName', 'guardianPhone', 'preferredHostel', 'roomType'
+      'first_name', 'last_name', 'student_id', 'email',
+      'dob', 'grade', 'className',
+      'guardianName', 'guardianPhone', 'hostel_id'
     ];
 
     requiredFields.forEach(field => {
@@ -114,8 +101,8 @@ export default function HostelApplication() {
 
     // Phone validation
     const phoneRegex = /^\d{10}$/;
-    if (formData.phoneNumber && !phoneRegex.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be 10 digits";
+    if (formData.guardianPhone && !phoneRegex.test(formData.guardianPhone)) {
+      newErrors.guardianPhone = "Phone number must be 10 digits";
     }
 
     // Terms agreement validation
@@ -128,12 +115,12 @@ export default function HostelApplication() {
     }
 
     setErrors(newErrors);
+    console.log(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) {
       return;
     }
@@ -141,22 +128,37 @@ export default function HostelApplication() {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would typically send the data to your backend
-      console.log("Application submitted:", formData);
-      
+      setIsSubmitting(true);
+      console.log("Submiting");
+      const response = await fetch("http://localhost:4000/api/hostel-applications/apply", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        // Backend responded with error status
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit application");
+      }
+
+      const result = await response.json();
+      console.log("Application submitted:", result);
+
       alert("Hostel application submitted successfully! You will receive a confirmation email shortly.");
-      
+
       // Reset form or redirect to dashboard
-      // In a real app, you'd use navigate("/dashboard");
+      // navigate("/dashboard");  // uncomment if using react-router
+
     } catch (error) {
       console.error("Error submitting application:", error);
       alert("There was an error submitting your application. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
+
   };
 
   return (
@@ -166,11 +168,11 @@ export default function HostelApplication() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Hostel Application</h1>
           <p className="text-gray-600">Please fill out all sections completely and accurately.</p>
-          <div className="mt-4 p-3 bg-blue-50 rounded-md">
+          {/* <div className="mt-4 p-3 bg-blue-50 rounded-md">
             <p className="text-sm text-blue-700">
               <span className="font-medium">Current User:</span> {currentUser.name} ({currentUser.role})
             </p>
-          </div>
+          </div> */}
         </div>
 
         <div onSubmit={handleSubmit} className="space-y-6">
@@ -182,36 +184,36 @@ export default function HostelApplication() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="first_name"
+                  value={formData.first_name}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                {errors.first_name && <p className="text-red-500 text-sm mt-1">{errors.first_name}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
                 <input
                   type="text"
-                  name="lastName"
-                  value={formData.lastName}
+                  name="last_name"
+                  value={formData.last_name}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                {errors.last_name && <p className="text-red-500 text-sm mt-1">{errors.last_name}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Student ID *</label>
                 <input
                   type="text"
-                  name="studentId"
-                  value={formData.studentId}
+                  name="student_id"
+                  value={formData.student_id}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {errors.studentId && <p className="text-red-500 text-sm mt-1">{errors.studentId}</p>}
+                {errors.student_id && <p className="text-red-500 text-sm mt-1">{errors.student_id}</p>}
               </div>
 
               <div>
@@ -226,7 +228,7 @@ export default function HostelApplication() {
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
                 <input
                   type="tel"
@@ -236,21 +238,21 @@ export default function HostelApplication() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
                 <input
                   type="date"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
+                  name="dob"
+                  value={formData.dob}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>}
+                {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
                 <select
                   name="gender"
@@ -264,13 +266,13 @@ export default function HostelApplication() {
                   <option value="other">Other</option>
                 </select>
                 {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
                 <select
-                  name="bloodGroup"
-                  value={formData.bloodGroup}
+                  name="blood_group"
+                  value={formData.blood_group}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -292,22 +294,34 @@ export default function HostelApplication() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Academic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Grade Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Program *</label>
-                <select
-                  name="program"
-                  value={formData.program}
+                <label className="block text-sm font-medium text-gray-700 mb-1">Grade *</label>
+                <input
+                  type="number"
+                  name="grade"
+                  value={formData.grade}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Program</option>
-                  <option value="bachelor">Bachelor's Degree</option>
-                  <option value="master">Master's Degree</option>
-                  <option value="phd">PhD</option>
-                </select>
-                {errors.program && <p className="text-red-500 text-sm mt-1">{errors.program}</p>}
+                />
+                {errors.grade && <p className="text-red-500 text-sm mt-1">{errors.grade}</p>}
               </div>
 
+              {/* Class Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Class *</label>
+                <input
+                  type="text"  // Changed to lowercase
+                  name="className"
+                  value={formData.className}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.className && <p className="text-red-500 text-sm mt-1">{errors.className}</p>}
+              </div>
+            </div>
+          </div>
+          {/*
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Year *</label>
                 <select
@@ -352,7 +366,7 @@ export default function HostelApplication() {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Guardian Information */}
           <div className="bg-white rounded-lg shadow-sm p-6">
@@ -418,8 +432,8 @@ export default function HostelApplication() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Hostel *</label>
                 <select
-                  name="preferredHostel"
-                  value={formData.preferredHostel}
+                  name="hostel_id"
+                  value={formData.hostel_id}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -430,10 +444,10 @@ export default function HostelApplication() {
                     </option>
                   ))}
                 </select>
-                {errors.preferredHostel && <p className="text-red-500 text-sm mt-1">{errors.preferredHostel}</p>}
+                {errors.hostel_id && <p className="text-red-500 text-sm mt-1">{errors.hostel_id}</p>}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Room Type *</label>
                   <select
@@ -464,7 +478,7 @@ export default function HostelApplication() {
                     <option value="none">No Meals</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Special Requirements</label>
@@ -636,7 +650,7 @@ export default function HostelApplication() {
               <p className="text-sm text-gray-600 mb-4">
                 Please ensure all information is accurate and complete. Incomplete applications will be rejected.
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <div className="text-blue-600 mb-2">
@@ -647,7 +661,7 @@ export default function HostelApplication() {
                   <h4 className="font-medium text-gray-900 mb-1">Quick Processing</h4>
                   <p className="text-xs text-gray-600">Applications reviewed within 2-3 business days</p>
                 </div>
-                
+
                 <div className="bg-green-50 p-4 rounded-lg">
                   <div className="text-green-600 mb-2">
                     <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -657,7 +671,7 @@ export default function HostelApplication() {
                   <h4 className="font-medium text-gray-900 mb-1">Secure Data</h4>
                   <p className="text-xs text-gray-600">Your personal information is protected and secure</p>
                 </div>
-                
+
                 <div className="bg-yellow-50 p-4 rounded-lg">
                   <div className="text-yellow-600 mb-2">
                     <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -677,7 +691,7 @@ export default function HostelApplication() {
             <p className="text-sm text-gray-600 mb-4">
               After submitting, you can track your application status using your Student ID and email address.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 type="button"
@@ -691,7 +705,7 @@ export default function HostelApplication() {
                   Track Application
                 </div>
               </button>
-              
+
               <button
                 type="button"
                 className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200"
@@ -708,7 +722,7 @@ export default function HostelApplication() {
           </div>
 
         </div>
-        
+
         {/* Floating Action Button for Help */}
         <div className="fixed bottom-6 right-6">
           <button

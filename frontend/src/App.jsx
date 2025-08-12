@@ -21,6 +21,8 @@ import Events from './pages/Events';
 import AcademicSports from './pages/AcademicSports';
 import ParentPortal from './pages/ParentPortal';
 import HostelApplication from './pages/HostelApply';
+import AdminDashboard from './pages/HostelAdminDashboard';
+import AchievementsSystem from './pages/Academic&SportsAchivements';
 
 function LoginWrapper() {
   const { user, loading } = useAuth();
@@ -66,6 +68,9 @@ function App() {
             <Route path="/parent-portal" element={<ProtectedRoute allowedRoles={['parent']}><ParentPortal /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
             <Route path="/hostel" element={<HostelApplication />} />
+            <Route path="/HostelAdmin" element={<AdminDashboard />} />
+            <Route path="/Achive" element={<AchievementsSystem />} />
+
           </Routes>
         </Router>
       </AuthProvider>

@@ -1,4 +1,4 @@
-import { pool } from "../config/db.js";
+import  {pool}  from "../config/db.js";
 
 // 1. Student applies for hostel
 export const applyForHostel = async (req, res) => {
@@ -12,10 +12,10 @@ export const applyForHostel = async (req, res) => {
       blood_group,
       grade,
       class: className,   // because `class` is reserved in JS
-      g_name,
-      relationship,
-      g_mobile_num,
-      g_email,
+      guardianName,
+      guardianRelation,
+      guardianPhone,
+      guardianEmail,
       hostel_id
     } = req.body;
 
@@ -38,9 +38,9 @@ export const applyForHostel = async (req, res) => {
     // Insert new hostel application
     const [result] = await pool.query(
       `INSERT INTO hostel_applications
-       (student_id, first_name, last_name, dob, email, blood_group, grade, class, g_name, relationship, g_mobile_num, g_email, hostel_id)
+       (student_id, first_name, last_name, dob, email, blood_group, grade, class, guardianName, guardianRelation, guardianPhone, guardianEmail, hostel_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [student_id, first_name, last_name, dob, email, blood_group || null, grade || null, className || null, g_name || null, relationship || null, g_mobile_num || null, g_email || null, hostel_id]
+      [student_id, first_name, last_name, dob, email, blood_group || null, grade || null, className || null, guardianName || null, guardianRelation || null, guardianPhone || null, guardianEmail || null, hostel_id]
     );
 
     res.status(201).json({
