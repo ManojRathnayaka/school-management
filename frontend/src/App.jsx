@@ -17,9 +17,14 @@ import AdminPanel from './pages/AdminPanel';
 import Students from './pages/Students';
 import StudentRegistration from './pages/StudentRegistration';
 import Scholarships from './pages/Scholarships';
-import Events from './pages/Events';
+import Events from './pages/AuditoriumBooking2';
 import AcademicSports from './pages/AcademicSports';
 import ParentPortal from './pages/ParentPortal';
+// import AuditoriumBookingForm from './pages/AuditoriumBooking';
+import AuditoriumBookingForm from './pages/AuditoriumBooking2';
+import PrincipalAuditoriumManagement from './pages/PrincipalAuditoriumManagement';
+import ClassPerformance from './pages/ClassPerformance';
+import ScholarshipList from "./pages/ScholarshipPrinciple";
 import HostelApplication from './pages/HostelApply';
 import AdminDashboard from './pages/HostelAdminDashboard';
 import AchievementsSystem from './pages/Academic&SportsAchivements';
@@ -62,10 +67,15 @@ function App() {
             <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminPanel /></ProtectedRoute>} />
             <Route path="/students" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Students /></ProtectedRoute>} />
             <Route path="/student-registration" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><StudentRegistration /></ProtectedRoute>} />
-            <Route path="/scholarships" element={<ProtectedRoute allowedRoles={['principal', 'teacher', 'student', 'parent']}><Scholarships /></ProtectedRoute>} />
+            <Route path="/scholarships" element={<ProtectedRoute allowedRoles={[ 'student']}><Scholarships /></ProtectedRoute>} />
             <Route path="/events" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Events /></ProtectedRoute>} />
             <Route path="/academic-sports" element={<ProtectedRoute allowedRoles={['principal', 'teacher', 'student', 'parent']}><AcademicSports /></ProtectedRoute>} />
             <Route path="/parent-portal" element={<ProtectedRoute allowedRoles={['parent']}><ParentPortal /></ProtectedRoute>} />
+            <Route path="/auditorium-booking" element={<ProtectedRoute allowedRoles={['teacher']}><AuditoriumBookingForm/></ProtectedRoute>}/>
+            <Route path="/auditorium-booking-principal" element={<ProtectedRoute allowedRoles={['principal']}><PrincipalAuditoriumManagement/></ProtectedRoute>}/>
+            <Route path="/scholarship-list" element={<ProtectedRoute allowedRoles={['principal']}><ScholarshipList/></ProtectedRoute>}/>
+            
+            <Route path="/class-performance" element={<ProtectedRoute allowedRoles={['teacher']}><ClassPerformance/></ProtectedRoute>}/>
             <Route path="*" element={<Navigate to="/" replace />} />
             <Route path="/hostel" element={<HostelApplication />} />
             <Route path="/HostelAdmin" element={<AdminDashboard />} />
@@ -77,5 +87,5 @@ function App() {
     </ErrorBoundary>
   );
 }
-
+//gfgffff
 export default App;

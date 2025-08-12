@@ -7,3 +7,11 @@ export async function createTeacher({ user_id, contact_number, grade = null }) {
   );
   return result;
 } 
+
+export async function deleteTeacher(user_id) {
+  const [result] = await pool.query(
+    "DELETE FROM teachers WHERE user_id = ?",
+    [user_id]
+  );
+  return result;
+}

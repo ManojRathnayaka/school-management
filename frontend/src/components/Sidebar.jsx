@@ -1,21 +1,27 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { USER_ROLES } from "../constants";
+// import ScholarshipList from "../pages/ScholarshipPrinciple";
 
 const sidebarConfig = {
   common: [{ path: "/dashboard", label: "Dashboard" }],
   [USER_ROLES.PRINCIPAL]: [
     { path: "/student-registration", label: "Student Registration" },
     { path: "/students", label: "Students" },
-    { path: "/scholarships", label: "Scholarship Management" },
-    { path: "/events", label: "Event Management" },
+    // { path: "/scholarships", label: "Scholarship Management" },
+    { path: "/auditorium-booking-principal", label: "Auditorium Booking" },
     { path: "/academic-sports", label: "Academic & Sports" },
+    { path: "/scholarship-list", label: "Scholarship Management" },
+
+  
   ],
   [USER_ROLES.TEACHER]: [
     { path: "/student-registration", label: "Student Registration" },
     { path: "/students", label: "Students" },
-    { path: "/events", label: "Event Management" },
+    { path: "/auditorium-booking", label: "Auditorium Booking" },
     { path: "/academic-sports", label: "Academic & Sports" },
+    { path: "/class-performance", label: "Class Performance"},
+
   ],
   [USER_ROLES.STUDENT]: [
     { path: "/scholarships", label: "Scholarships" },
