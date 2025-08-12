@@ -1,0 +1,21 @@
+CREATE TABLE hostel_applications (
+    application_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    dob DATE NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    blood_group VARCHAR(3),
+    grade INT,
+    class VARCHAR(3),
+    guardianName VARCHAR(50),
+    guardianRelation VARCHAR(20),
+    guardianPhone CHAR(11),
+    guardianEmail VARCHAR(50),
+    hostel_id INT NOT NULL,
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    approved_at TIMESTAMP NULL,
+    -- FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (hostel_id) REFERENCES hostels(hostel_id) ON DELETE CASCADE
+);

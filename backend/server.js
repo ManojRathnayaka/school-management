@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import hostelApplicationRoutes from "./routes/hostelApplicationRoutes.js"
 import auditoriumRoutes from "./routes/auditoriumRoutes.js"
 import notificationsRoutes from "./routes/notificationsRoutes.js";
 import performanceRoutes from "./routes/performanceRoutes.js";
@@ -33,6 +34,8 @@ app.use("/api/notifications", notificationsRoutes);
 app.use('/api/class-performance', performanceRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/scholarships', scholarshipRoutes);
+
+app.use("/api/hostel-applications", hostelApplicationRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
