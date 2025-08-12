@@ -42,24 +42,7 @@ router.put("/:id/reject",
 );
   
 
-// // Only Principal can view pending requests
-// router.get(
-//   "/pending",
-//   authenticateJWT,
-//   authorizeRoles("principal"),
-//   getPendingRequests
-// );
 
-// // Only Principal can update status (approve/reject)
-// router.put(
-//   "/:id",
-//   authenticateJWT,
-//   authorizeRoles("principal"),
-//   updateBookingStatus
-// );
-
-// // Public route – Anyone can view approved bookings (no auth needed)
-// router.get("/approved", getApprovedBookings);
 
 export default router;
 

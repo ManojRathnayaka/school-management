@@ -2,7 +2,7 @@ import express from 'express';
 
 import { getClassPerformances, updateStudentPerformances, getStudentPerformances } from '../controllers/performanceController.js';
 const router = express.Router();
-// const performanceController = require('../controllers/performanceController');
+
 import {
   authenticateJWT,
   authorizeRoles

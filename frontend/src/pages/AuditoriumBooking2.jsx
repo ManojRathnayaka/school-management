@@ -1,9 +1,6 @@
 // Component imports
 import Layout from "../components/Layout";
 import React, { useState, useEffect } from "react";
-import Notifications from "../components/NotificationBell";
-
-
 import axios from "axios";
 import NotificationBell from "../components/NotificationBell";
 

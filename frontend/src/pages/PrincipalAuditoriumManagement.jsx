@@ -1,8 +1,8 @@
-// src/pages/PrincipalAuditoriumManagement.jsx
+
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
-import AuditoriumBookingForm from "./AuditoriumBooking2"; // Adjust the import path as necessary
+
 
 const PrincipalAuditoriumManagement = () => {
   const [pendingBookings, setPendingBookings] = useState([]);
