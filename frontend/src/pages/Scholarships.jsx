@@ -75,7 +75,7 @@ export default function Scholarships() {
 
           {/* Academic Information */}
           <h3 className="font-bold">Medical or Physical Challenges</h3>
-          <input type="text" name="Medical_or_Physical_Challenges" placeholder=" " value={formData.medical_or_Physical_Challenges} onChange={handleChange} className="border p-2 w-full" />
+          <input type="text" name="medical_or_Physical_Challenges" placeholder="Insert Here " value={formData.medical_or_Physical_Challenges} onChange={handleChange} className="border p-2 w-full" />
 
           <h3 className="font-bold">Extra - Curricular Involvement</h3>
           <h4 className="font-bold">Sports</h4>
