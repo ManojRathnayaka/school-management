@@ -8,7 +8,7 @@ export default function Layout({ children, activePage }) {
       <Sidebar activePage={activePage} />
       <div className="flex-1">
         <Header />
-        <div className="p-6">
+        <div>
           {children}
         </div>
       </div>
