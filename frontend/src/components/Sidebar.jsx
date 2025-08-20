@@ -47,7 +47,7 @@ export default function Sidebar() {
 
   return (
     <div className="w-64 bg-white shadow-sm border-r">
-      <div className="p-4 border-b h-14 flex items-center">
+      <div className="p-4 h-14 flex items-center">
         <h1 className="text-lg font-semibold text-gray-800">School Portal</h1>
       </div>
       <nav className="p-4">

@@ -76,9 +76,8 @@ export default function StudentRegistration() {
 
   return (
     <Layout activePage="student-registration">
-      <div className="p-6">
         {/* Main Container */}
-        <div className="card bg-base-100 shadow-xl">
+        <div className="bg-base-100">
           <div className="card-body">
             {/* Header */}
             <div className="mb-6">
@@ -345,7 +344,6 @@ export default function StudentRegistration() {
           sharedPassword={sharedPassword} 
           modalId="success_modal" 
         />
-      </div>
     </Layout>
   );
 }

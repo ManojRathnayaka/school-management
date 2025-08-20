@@ -114,9 +114,8 @@ export default function Students() {
 
   return (
     <Layout activePage="students">
-      <div className="p-6">
         {/* Main Container */}
-        <div className="card bg-base-100 shadow-xl">
+        <div className="bg-base-100">
           <div className="card-body">
             {/* Header */}
             <div className="mb-6">
@@ -400,7 +399,6 @@ export default function Students() {
             fetchStudents(pagination.currentPage); // Refresh list
           }}
         />
-      </div>
     </Layout>
   );
 }
