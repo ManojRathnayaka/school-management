@@ -14,7 +14,7 @@ export default function Dashboard() {
 
   return (
     <Layout activePage="dashboard">
-      <div className="space-y-6">
+      <div className="space-y-6 p-6">
         <div>
           <h2 className="text-2xl font-bold mb-4">
             Welcome, {user.first_name} {user.last_name}!
