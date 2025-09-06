@@ -96,14 +96,14 @@ export default function StudentDetailsModal({ show, student, onClose }) {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-base-content/70 block mb-1">
+                    <label className="text-sm font-medium text-base-content/70 mb-1">
                       First Name
                     </label>
                     <p className="text-base-content font-medium">{student.first_name}</p>
                   </div>
                   
                   <div>
-                    <label className="text-sm font-medium text-base-content/70 block mb-1">
+                    <label className="text-sm font-medium text-base-content/70 mb-1">
                       Last Name
                     </label>
                     <p className="text-base-content font-medium">{student.last_name}</p>
@@ -111,7 +111,7 @@ export default function StudentDetailsModal({ show, student, onClose }) {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-base-content/70 block mb-1 flex items-center gap-1">
+                  <label className="text-sm font-medium text-base-content/70 mb-1 flex items-center gap-1">
                     <IdCard className="w-4 h-4" />
                     Admission Number
                   </label>
@@ -121,7 +121,7 @@ export default function StudentDetailsModal({ show, student, onClose }) {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-base-content/70 block mb-1 flex items-center gap-1">
+                  <label className="text-sm font-medium text-base-content/70 mb-1 flex items-center gap-1">
                     <Mail className="w-4 h-4" />
                     Email
                   </label>
@@ -130,7 +130,7 @@ export default function StudentDetailsModal({ show, student, onClose }) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-base-content/70 block mb-1 flex items-center gap-1">
+                    <label className="text-sm font-medium text-base-content/70 mb-1 flex items-center gap-1">
                       <GraduationCap className="w-4 h-4" />
                       Grade
                     </label>
@@ -141,7 +141,7 @@ export default function StudentDetailsModal({ show, student, onClose }) {
                   
                   {student.date_of_birth && (
                     <div>
-                      <label className="text-sm font-medium text-base-content/70 block mb-1 flex items-center gap-1">
+                      <label className="text-sm font-medium text-base-content/70 mb-1 flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         Date of Birth
                       </label>
@@ -158,7 +158,7 @@ export default function StudentDetailsModal({ show, student, onClose }) {
 
                 {student.address && (
                   <div>
-                    <label className="text-sm font-medium text-base-content/70 block mb-1 flex items-center gap-1">
+                    <label className="text-sm font-medium text-base-content/70 mb-1 flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
                       Address
                     </label>
@@ -186,14 +186,14 @@ export default function StudentDetailsModal({ show, student, onClose }) {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-base-content/70 block mb-1">
+                      <label className="text-sm font-medium text-base-content/70 mb-1">
                         First Name
                       </label>
                       <p className="text-base-content font-medium">{parentInfo.first_name}</p>
                     </div>
                     
                     <div>
-                      <label className="text-sm font-medium text-base-content/70 block mb-1">
+                      <label className="text-sm font-medium text-base-content/70 mb-1">
                         Last Name
                       </label>
                       <p className="text-base-content font-medium">{parentInfo.last_name}</p>
@@ -201,7 +201,7 @@ export default function StudentDetailsModal({ show, student, onClose }) {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-base-content/70 block mb-1 flex items-center gap-1">
+                    <label className="text-sm font-medium text-base-content/70 mb-1 flex items-center gap-1">
                       <Mail className="w-4 h-4" />
                       Email
                     </label>
@@ -209,7 +209,7 @@ export default function StudentDetailsModal({ show, student, onClose }) {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-base-content/70 block mb-1 flex items-center gap-1">
+                    <label className="text-sm font-medium text-base-content/70 mb-1 flex items-center gap-1">
                       <Phone className="w-4 h-4" />
                       Contact Number
                     </label>
