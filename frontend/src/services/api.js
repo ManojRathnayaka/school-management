@@ -40,7 +40,7 @@ export const userAPI = {
 
 export const studentAPI = {
   registerStudent: (studentData) => api.post("/students", studentData),
-
+  
   getStudents: (params = {}) => {
     const { page = 1, limit = 15, search = '', grade = '', section = '' } = params;
     return api.get("/students/", {
@@ -53,9 +53,12 @@ export const studentAPI = {
       }
     });
   },
-
+  
   updateStudent: (studentId, data) => api.put(`/students/${studentId}`, data),
-  deleteStudent: (studentId) => api.delete(`/students/${studentId}`)
+  deleteStudent: (studentId) => api.delete(`/students/${studentId}`),
+  
+  // NEW: Get student with parent information
+  getStudentParents: (studentId) => api.get(`/students/${studentId}/parents`)
 };
 
 export default api;

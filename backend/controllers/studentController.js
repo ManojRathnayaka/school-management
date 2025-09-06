@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { findUserByEmail, createUser, updateUser, deleteUser } from "../models/userModel.js"; // Added deleteUser
+import { findUserByEmail, createUser, updateUser, deleteUser } from "../models/userModel.js";
 import { 
   findStudentByAdmissionNumber, 
   createStudent, 
@@ -8,8 +8,9 @@ import {
   findStudentById, 
   updateStudentInfo,
   getParentIdsByStudentId,
-  deleteStudentParentRelationship,  // Added this
-  deleteStudentOnly                 // Added this
+  deleteStudentParentRelationship,
+  deleteStudentOnly,
+  getStudentWithParents  // NEW IMPORT
 } from "../models/studentModel.js";
 import { createParent, linkStudentToParent, deleteParentRecord, findParentById } from "../models/parentModel.js";
 import crypto from "crypto";
@@ -120,7 +121,7 @@ export async function registerStudent(req, res) {
     console.error('Student registration error:', err);
     res.status(500).json({ message: "Server error" });
   }
-} 
+}
 
 export async function getStudents(req, res) {
   try {
@@ -304,6 +305,33 @@ export async function deleteStudent(req, res) {
 
   } catch (err) {
     console.error('Student delete error:', err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+// NEW FUNCTION: Get student with parent information
+export async function getStudentParents(req, res) {
+  try {
+    const { studentId } = req.params;
+    
+    // Validate studentId
+    if (!studentId || isNaN(studentId)) {
+      return res.status(400).json({ message: "Invalid student ID" });
+    }
+    
+    const result = await getStudentWithParents(parseInt(studentId));
+    
+    if (!result) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    
+    res.status(200).json({
+      student: result.student,
+      parent: result.parent
+    });
+    
+  } catch (err) {
+    console.error('Error fetching student with parents:', err);
     res.status(500).json({ message: "Server error" });
   }
 }
