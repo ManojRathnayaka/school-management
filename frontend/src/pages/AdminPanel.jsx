@@ -49,22 +49,22 @@ export default function AdminPanel() {
           </ul>
         </nav>
         
-        {/* Logout Button */}
-        <div className="p-3 border-t border-base-300">
-          <button className="btn btn-ghost btn-sm w-full justify-start" onClick={logout}>
-            <LogOut className="w-4 h-4" />
-            Logout
-          </button>
-        </div>
+        {/* Logout Button has been moved from here */}
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Content Header */}
-        <div className="h-14 bg-base-100 px-4 flex items-center border-b border-base-300">
+        <div className="h-14 bg-base-100 px-4 flex items-center justify-between border-b border-base-300">
           <h2 className="text-lg font-semibold text-base-content">
             {activeTab === "create" ? "Create User" : "Manage Users"}
           </h2>
+          
+          {/* Logout Button moved here */}
+          <button className="btn btn-ghost btn-sm" onClick={logout}>
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
         </div>
         
         {/* Scrollable Content Area */}
