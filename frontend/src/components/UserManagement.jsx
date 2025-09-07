@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { userAPI } from "../services/api";
 import { useDebounce } from "../hooks/useDebounce";
-import Alert from "./Alert";
-import Button from "./Button";
-import Input from "./Input";
+import { Edit, RotateCcwKey, Trash2, Check, X, Search } from "lucide-react";
 import PasswordModal from "./modals/PasswordModal";
 import DeleteUserModal from "./modals/DeleteUserModal";
 
@@ -16,15 +14,14 @@ export default function UserManagement() {
   const [filters, setFilters] = useState({
     search: "",
     roles: [],
-    page: 1
+    page: 1,
   });
   const [editingUser, setEditingUser] = useState(null);
   const [editForm, setEditForm] = useState({});
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [userToReset, setUserToReset] = useState(null);
   const [generatedPassword, setGeneratedPassword] = useState("");
 
   // Debounce search and role filters
@@ -38,21 +35,20 @@ export default function UserManagement() {
         page: filters.page,
         limit: 10,
       });
-      
+
       if (debouncedRoles.length > 0) {
-        params.append('roles', debouncedRoles.join(','));
+        params.append("roles", debouncedRoles.join(","));
       }
-      
+
       if (debouncedSearch.trim()) {
-        params.append('search', debouncedSearch);
+        params.append("search", debouncedSearch);
       }
 
       const response = await userAPI.getUsers(params.toString());
       setUsers(response.data.users);
       setPagination(response.data.pagination);
-      setError("");
     } catch (err) {
-      setError("Failed to fetch users");
+      console.error("Failed to fetch users:", err);
     }
     setLoading(false);
   };
@@ -63,7 +59,7 @@ export default function UserManagement() {
 
   const handleRoleFilter = (role) => {
     const newRoles = filters.roles.includes(role)
-      ? filters.roles.filter(r => r !== role)
+      ? filters.roles.filter((r) => r !== role)
       : [...filters.roles, role];
     setFilters({ ...filters, roles: newRoles, page: 1 });
   };
@@ -73,7 +69,7 @@ export default function UserManagement() {
     setEditForm({
       first_name: userItem.first_name,
       last_name: userItem.last_name,
-      email: userItem.email
+      email: userItem.email,
     });
   };
 
@@ -85,23 +81,33 @@ export default function UserManagement() {
   const saveUser = async (userId) => {
     try {
       await userAPI.updateUser(userId, editForm);
-      setSuccess("User updated successfully");
       setEditingUser(null);
       fetchUsers();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update user");
+      console.error("Failed to update user:", err);
     }
   };
 
-  const resetPassword = async (userId) => {
+  const handleResetPasswordClick = (userItem) => {
+    setUserToReset(userItem);
+    setShowPasswordModal(true);
+  };
+
+  const handleResetPasswordConfirm = async () => {
     try {
-      const response = await userAPI.resetUserPassword(userId);
+      const response = await userAPI.resetUserPassword(userToReset.user_id);
       setGeneratedPassword(response.data.tempPassword);
-      setShowPasswordModal(true);
-      setSuccess("Password reset successfully");
+      return Promise.resolve();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to reset password");
+      console.error("Failed to reset password:", err);
+      return Promise.reject(err);
     }
+  };
+
+  const handlePasswordModalClose = () => {
+    setShowPasswordModal(false);
+    setUserToReset(null);
+    setGeneratedPassword("");
   };
 
   const handleDeleteClick = (userItem) => {
@@ -110,7 +116,6 @@ export default function UserManagement() {
   };
 
   const handleDeleteConfirm = () => {
-    setSuccess("User deleted successfully");
     setShowDeleteModal(false);
     setUserToDelete(null);
     fetchUsers();
@@ -124,35 +129,46 @@ export default function UserManagement() {
   const allRoles = ["admin", "principal", "teacher"];
 
   return (
-    <div>
-      <Alert type="error" message={error} />
-      <Alert type="success" message={success} />
-
-      {/* Filters */}
-      <div className="mb-6 space-y-4">
-        <div>
-          <Input
-            placeholder="Search by name..."
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })}
-          />
+    <div className="p-4">
+      {/* Filters - Search and Role filters side by side */}
+      <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Search */}
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text font-medium">Search Users</span>
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by name..."
+              className="input input-bordered input-sm w-full pl-8 text-sm"
+              value={filters.search}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value, page: 1 })
+              }
+            />
+            <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 opacity-50" />
+          </div>
         </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Filter by Role:
+
+        {/* Role Filters */}
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text font-medium">Filter by Role</span>
           </label>
           <div className="flex flex-wrap gap-4">
             {allRoles.map((role) => (
-              <label key={role} className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={filters.roles.includes(role)}
-                  onChange={() => handleRoleFilter(role)}
-                  className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <span className="text-sm text-gray-700 capitalize">{role}</span>
-              </label>
+              <div key={role} className="form-control">
+                <label className="label cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.roles.includes(role)}
+                    onChange={() => handleRoleFilter(role)}
+                    className="checkbox checkbox-primary mr-2"
+                  />
+                  <span className="label-text capitalize">{role}</span>
+                </label>
+              </div>
             ))}
           </div>
         </div>
@@ -160,104 +176,135 @@ export default function UserManagement() {
 
       {/* User Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-gray-50">
+        <table className="table w-full table-fixed">
+          <thead>
             <tr>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Name</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Email</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Role</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 w-72">Actions</th>
+              <th className="w-1/4">Name</th>
+              <th className="w-1/4">Email</th>
+              <th className="w-1/6">Role</th>
+              <th className="w-1/3">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="4" className="px-4 py-8 text-center text-gray-500">
-                  Loading...
+                <td colSpan="4" className="text-center py-8">
+                  <span className="loading loading-spinner loading-md"></span>
+                  <div className="ml-2">Loading...</div>
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
-                <td colSpan="4" className="px-4 py-8 text-center text-gray-500">
+                <td
+                  colSpan="4"
+                  className="text-center py-8 text-base-content/60"
+                >
                   No users found
                 </td>
               </tr>
             ) : (
               users.map((userItem) => (
-                <tr key={userItem.user_id} className="border-t">
-                  <td className="px-4 py-2">
+                <tr key={userItem.user_id}>
+                  <td className="w-1/3">
                     {editingUser === userItem.user_id ? (
-                      <div className="flex gap-2">
-                        <Input
+                      <div className="flex gap-1">
+                        <input
+                          type="text"
+                          className="input input-bordered input-sm flex-1 min-w-0"
                           value={editForm.first_name}
-                          onChange={(e) => setEditForm({ ...editForm, first_name: e.target.value })}
-                          className="text-sm px-2 py-1 w-24"
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              first_name: e.target.value,
+                            })
+                          }
+                          placeholder="First"
                         />
-                        <Input
+                        <input
+                          type="text"
+                          className="input input-bordered input-sm flex-1 min-w-0"
                           value={editForm.last_name}
-                          onChange={(e) => setEditForm({ ...editForm, last_name: e.target.value })}
-                          className="text-sm px-2 py-1 w-24"
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              last_name: e.target.value,
+                            })
+                          }
+                          placeholder="Last"
                         />
                       </div>
                     ) : (
-                      `${userItem.first_name} ${userItem.last_name}`
+                      <div
+                        className="truncate"
+                        title={`${userItem.first_name} ${userItem.last_name}`}
+                      >
+                        {`${userItem.first_name} ${userItem.last_name}`}
+                      </div>
                     )}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="w-1/3">
                     {editingUser === userItem.user_id ? (
-                      <Input
+                      <input
                         type="email"
+                        className="input input-bordered input-sm w-full"
                         value={editForm.email}
-                        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                        className="text-sm px-2 py-1"
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, email: e.target.value })
+                        }
                       />
                     ) : (
-                      userItem.email
+                      <div className="truncate" title={userItem.email}>
+                        {userItem.email}
+                      </div>
                     )}
                   </td>
-                  <td className="px-4 py-2 capitalize">{userItem.role}</td>
-                  <td className="px-4 py-2">
-                    <div className="flex gap-2 flex-nowrap">
+                  <td className="w-1/6">
+                    <div className="badge badge-outline capitalize">
+                      {userItem.role}
+                    </div>
+                  </td>
+                  <td className="w-1/6">
+                    <div className="flex gap-1 flex-nowrap">
                       {editingUser === userItem.user_id ? (
                         <>
-                          <Button 
-                            className="px-3 py-1.5 text-sm"
+                          <button
+                            className="btn btn-primary btn-sm flex-shrink-0"
                             onClick={() => saveUser(userItem.user_id)}
                           >
+                            <Check className="w-4 h-4" />
                             Save
-                          </Button>
-                          <Button 
-                            variant="secondary" 
-                            className="px-3 py-1.5 text-sm"
+                          </button>
+                          <button
+                            className="btn btn-outline btn-sm flex-shrink-0"
                             onClick={cancelEdit}
                           >
+                            <X className="w-4 h-4" />
                             Cancel
-                          </Button>
+                          </button>
                         </>
                       ) : (
                         <>
-                          <Button 
-                            className="px-3 py-1.5 text-sm"
+                          <button
+                            className="btn btn-primary btn-sm flex-shrink-0"
                             onClick={() => startEdit(userItem)}
                           >
+                            <Edit className="w-4 h-4" />
                             Edit
-                          </Button>
-                          <Button 
-                            variant="secondary" 
-                            className="px-3 py-1.5 text-sm whitespace-nowrap"
-                            onClick={() => resetPassword(userItem.user_id)}
+                          </button>
+                          <button
+                            className="btn btn-secondary btn-sm flex-shrink-0"
+                            onClick={() => handleResetPasswordClick(userItem)}
                           >
-                            Reset Password
-                          </Button>
-                          {userItem.user_id !== user.user_id && (
-                            <Button 
-                              variant="danger" 
-                              className="px-3 py-1.5 text-sm"
-                              onClick={() => handleDeleteClick(userItem)}
-                            >
-                              Delete
-                            </Button>
-                          )}
+                            <RotateCcwKey className="w-4 h-4" />
+                            Reset
+                          </button>
+                          <button
+                            className="btn btn-error btn-sm flex-shrink-0"
+                            onClick={() => handleDeleteClick(userItem)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Delete
+                          </button>
                         </>
                       )}
                     </div>
@@ -271,36 +318,37 @@ export default function UserManagement() {
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="mt-6 flex justify-center items-center gap-4">
-          <Button
-            variant="secondary"
-            className="px-4 py-2 text-sm"
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <button
+            className="btn btn-outline"
             disabled={pagination.currentPage === 1}
-            onClick={() => setFilters({ ...filters, page: pagination.currentPage - 1 })}
+            onClick={() =>
+              setFilters({ ...filters, page: pagination.currentPage - 1 })
+            }
           >
             Previous
-          </Button>
-          <span className="text-sm text-gray-700">
+          </button>
+          <span className="text-sm">
             Page {pagination.currentPage} of {pagination.totalPages}
           </span>
-          <Button
-            variant="secondary"
-            className="px-4 py-2 text-sm"
+          <button
+            className="btn btn-outline"
             disabled={pagination.currentPage === pagination.totalPages}
-            onClick={() => setFilters({ ...filters, page: pagination.currentPage + 1 })}
+            onClick={() =>
+              setFilters({ ...filters, page: pagination.currentPage + 1 })
+            }
           >
             Next
-          </Button>
+          </button>
         </div>
       )}
 
-      <PasswordModal 
+      <PasswordModal
         isOpen={showPasswordModal}
+        user={userToReset}
         password={generatedPassword}
-        onClose={() => {
-          setShowPasswordModal(false);
-          setGeneratedPassword("");
-        }}
+        onClose={handlePasswordModalClose}
+        onConfirm={handleResetPasswordConfirm}
       />
 
       <DeleteUserModal
