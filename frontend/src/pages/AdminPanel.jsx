@@ -2,51 +2,76 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import CreateUserForm from "../components/CreateUserForm";
 import UserManagement from "../components/UserManagement";
-import Button from "../components/Button";
+import { UserPlus, Users, LogOut } from "lucide-react";
 
 export default function AdminPanel() {
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("create");
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-6 rounded shadow-md w-full max-w-6xl">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Admin Panel</h2>
-          <Button variant="danger" className="px-3 py-1.5 text-sm" onClick={logout}>
+    <div className="h-screen flex bg-base-200">
+      {/* Left Sidebar */}
+      <div className="w-64 bg-base-100 shadow-lg flex flex-col">
+        {/* Header */}
+        <div className="h-14 px-4 flex items-center border-b border-base-300">
+          <h1 className="text-lg font-bold text-base-content">Admin Panel</h1>
+        </div>
+        
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4">
+          <ul className="space-y-1">
+            <li>
+              <button
+                onClick={() => setActiveTab("create")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  activeTab === "create"
+                    ? "bg-primary text-primary-content"
+                    : "text-base-content hover:bg-base-200 hover:text-base-content"
+                }`}
+              >
+                <UserPlus className="w-4 h-4" />
+                Create User
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setActiveTab("manage")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  activeTab === "manage"
+                    ? "bg-primary text-primary-content"
+                    : "text-base-content hover:bg-base-200 hover:text-base-content"
+                }`}
+              >
+                <Users className="w-4 h-4" />
+                Manage Users
+              </button>
+            </li>
+          </ul>
+        </nav>
+        
+        {/* Logout Button */}
+        <div className="p-3 border-t border-base-300">
+          <button className="btn btn-ghost btn-sm w-full justify-start" onClick={logout}>
+            <LogOut className="w-4 h-4" />
             Logout
-          </Button>
+          </button>
         </div>
+      </div>
 
-        {/* Tabs */}
-        <div className="border-b border-gray-200 mb-6">
-          <nav className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab("create")}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === "create"
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Create User
-            </button>
-            <button
-              onClick={() => setActiveTab("manage")}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === "manage"
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Manage Users
-            </button>
-          </nav>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Content Header */}
+        <div className="h-14 bg-base-100 px-4 flex items-center border-b border-base-300">
+          <h2 className="text-lg font-semibold text-base-content">
+            {activeTab === "create" ? "Create User" : "Manage Users"}
+          </h2>
         </div>
-
-        {/* Tab Content */}
-        {activeTab === "create" && <CreateUserForm />}
-        {activeTab === "manage" && <UserManagement />}
+        
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-auto p-4">
+          {activeTab === "create" && <CreateUserForm />}
+          {activeTab === "manage" && <UserManagement />}
+        </div>
       </div>
     </div>
   );
