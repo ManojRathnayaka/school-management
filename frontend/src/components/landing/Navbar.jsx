@@ -42,7 +42,7 @@ function Navbar() {
               className="flex items-center gap-2 text-2xl font-bold text-blue-600 cursor-pointer hover:text-blue-700 transition-colors"
             >
               <School />
-              <span>School</span>
+              <span>School Portal</span>
             </ScrollLink>
           </div>
           
