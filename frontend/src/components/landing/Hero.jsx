@@ -23,7 +23,7 @@ function Hero() {
             activities. Please log in with your provided credentials to access
             your dashboard.
           </p>
-          <Link to="/login" className="btn glass btn-lg">
+          <Link to="/login" className="btn btn-primary btn-lg">
             View Dashboard
           </Link>
         </div>
