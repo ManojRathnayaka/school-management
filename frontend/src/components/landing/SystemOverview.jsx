@@ -3,7 +3,7 @@ import { Users, GraduationCap, Briefcase, Shield } from 'lucide-react';
 
 function SystemOverview() {
   return (
-    <section id="overview" className="py-20 bg-base-100">
+    <section id="system-overview" className="py-20 bg-base-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* 1. Header */}
