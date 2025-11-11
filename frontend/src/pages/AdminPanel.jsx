@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import CreateUserForm from "../components/CreateUserForm";
+import BulkUserForm from "../components/BulkUserForm";
 import UserManagement from "../components/UserManagement";
 import { UserPlus, Users, LogOut } from "lucide-react";
 
 export default function AdminPanel() {
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("create");
+  const [createTab, setCreateTab] = useState("single");
 
   return (
     <div className="h-screen flex bg-base-200">
@@ -48,8 +50,6 @@ export default function AdminPanel() {
             </li>
           </ul>
         </nav>
-        
-        {/* Logout Button has been moved from here */}
       </div>
 
       {/* Main Content */}
@@ -60,7 +60,6 @@ export default function AdminPanel() {
             {activeTab === "create" ? "Create User" : "Manage Users"}
           </h2>
           
-          {/* Logout Button moved here */}
           <button className="btn btn-ghost btn-sm" onClick={logout}>
             <LogOut className="w-4 h-4" />
             Logout
@@ -69,7 +68,29 @@ export default function AdminPanel() {
         
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-auto p-4">
-          {activeTab === "create" && <CreateUserForm />}
+          {activeTab === "create" && (
+            <div>
+              {/* Tabs for Single vs Bulk Creation */}
+              <div className="tabs tabs-boxed mb-6 w-fit">
+                <button
+                  className={`tab ${createTab === "single" ? "tab-active" : ""}`}
+                  onClick={() => setCreateTab("single")}
+                >
+                  Single User
+                </button>
+                <button
+                  className={`tab ${createTab === "bulk" ? "tab-active" : ""}`}
+                  onClick={() => setCreateTab("bulk")}
+                >
+                  Bulk Import
+                </button>
+              </div>
+
+              {/* Render appropriate form based on createTab */}
+              {createTab === "single" && <CreateUserForm />}
+              {createTab === "bulk" && <BulkUserForm />}
+            </div>
+          )}
           {activeTab === "manage" && <UserManagement />}
         </div>
       </div>

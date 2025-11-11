@@ -1,4 +1,5 @@
 import { Router } from "express";
+import multer from "multer";
 import {
   login,
   logout,
@@ -9,11 +10,15 @@ import {
   updateUserDetails,
   resetUserPassword,
   deleteUserAccount,
+  bulkCreateAdminUsers,
 } from "../controllers/authController.js";
 
 import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+// Configure multer for file uploads
+const upload = multer({ dest: "uploads/" });
 
 router.post("/login", login);
 router.post("/logout", logout);
@@ -27,7 +32,16 @@ router.post(
   createAdminUser,
 );
 
-// New user management routes
+// Bulk user creation route
+router.post(
+  "/users/bulk-create",
+  authenticateJWT,
+  authorizeRoles("admin"),
+  upload.single("userCsv"),
+  bulkCreateAdminUsers,
+);
+
+// User management routes
 router.get(
   "/users",
   authenticateJWT,
