@@ -5,6 +5,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import scholarshipRoutes from "./routes/scholarshipRoutes.js";
+import parentPortalRoutes from "./routes/parentPortalRoutes.js";
 
 dotenv.config({ quiet: true });
 const app = express();
@@ -34,6 +35,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/scholarships", scholarshipRoutes);
+app.use("/api/parent-portal", parentPortalRoutes);
 
 
 // app.get("/api/health", (req, res) => {
