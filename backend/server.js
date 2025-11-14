@@ -10,6 +10,7 @@ import notificationsRoutes from "./routes/notificationsRoutes.js";
 import performanceRoutes from "./routes/performanceRoutes.js";
 import classRoutes from "./routes/classRoutes.js";
 import scholarshipRoutes from "./routes/scholarshipRoutes.js";
+import announcementRoutes from "./routes/announcementRoutes.js";
 dotenv.config({ quiet: true });
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -26,6 +27,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/announcements", announcementRoutes);
 app.use("/api/auditorium",auditoriumRoutes)
 app.use("/api/approved", auditoriumRoutes);
 app.use("/api/pending", auditoriumRoutes);

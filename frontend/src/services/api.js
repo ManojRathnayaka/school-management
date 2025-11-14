@@ -61,4 +61,21 @@ export const studentAPI = {
   getStudentParents: (studentId) => api.get(`/students/${studentId}/parents`)
 };
 
+export const announcementAPI = {
+  // Get latest announcements for dashboard
+  getLatest: (limit = 5) => api.get(`/announcements/latest?limit=${limit}`),
+  
+  // Get all announcements (for management page)
+  getAll: () => api.get("/announcements"),
+  
+  // Create announcement (Principal only)
+  create: (announcementData) => api.post("/announcements", announcementData),
+  
+  // Update announcement (Principal only)
+  update: (id, announcementData) => api.put(`/announcements/${id}`, announcementData),
+  
+  // Delete announcement (Principal only)
+  delete: (id) => api.delete(`/announcements/${id}`)
+};
+
 export default api;

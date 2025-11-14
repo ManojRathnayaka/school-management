@@ -16,6 +16,7 @@ import Dashboard from './pages/Dashboard';
 import AdminPanel from './pages/AdminPanel';
 import Students from './pages/Students';
 import StudentRegistration from './pages/StudentRegistration';
+import AnnouncementManagement from './pages/AnnouncementManagement';
 import Scholarships from './pages/Scholarships';
 import Events from './pages/AuditoriumBooking2';
 import AcademicSports from './pages/AcademicSports';
@@ -67,6 +68,7 @@ function App() {
             <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminPanel /></ProtectedRoute>} />
             <Route path="/students" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Students /></ProtectedRoute>} />
             <Route path="/student-registration" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><StudentRegistration /></ProtectedRoute>} />
+            <Route path="/announcements" element={<ProtectedRoute allowedRoles={['principal']}><AnnouncementManagement /></ProtectedRoute>} />
             <Route path="/scholarships" element={<ProtectedRoute allowedRoles={[ 'student']}><Scholarships /></ProtectedRoute>} />
             <Route path="/events" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Events /></ProtectedRoute>} />
             <Route path="/academic-sports" element={<ProtectedRoute allowedRoles={['principal', 'teacher', 'student', 'parent']}><AcademicSports /></ProtectedRoute>} />
@@ -87,5 +89,4 @@ function App() {
     </ErrorBoundary>
   );
 }
-//gfgffff
 export default App;

@@ -8,12 +8,10 @@ const sidebarConfig = {
   [USER_ROLES.PRINCIPAL]: [
     { path: "/student-registration", label: "Student Registration" },
     { path: "/students", label: "Students" },
-    // { path: "/scholarships", label: "Scholarship Management" },
+    { path: "/announcements", label: "Announcements" },
     { path: "/auditorium-booking-principal", label: "Auditorium Booking" },
     { path: "/academic-sports", label: "Academic & Sports" },
     { path: "/scholarship-list", label: "Scholarship Management" },
-
-  
   ],
   [USER_ROLES.TEACHER]: [
     { path: "/student-registration", label: "Student Registration" },
@@ -21,7 +19,6 @@ const sidebarConfig = {
     { path: "/auditorium-booking", label: "Auditorium Booking" },
     { path: "/academic-sports", label: "Academic & Sports" },
     { path: "/class-performance", label: "Class Performance"},
-
   ],
   [USER_ROLES.STUDENT]: [
     { path: "/scholarships", label: "Scholarships" },
