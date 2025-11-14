@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 
-//app.use(cors());
+
 
 app.use(cors({
   origin: [
@@ -23,12 +23,7 @@ app.use(cors({
   credentials: true,
 }));
 
-// app.use(
-//   cors({
-//     origin: process.env.CLIENT_URL || "http://localhost:3000",
-//     credentials: true,
-//   })
-// );
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -38,12 +33,7 @@ app.use("/api/scholarships", scholarshipRoutes);
 app.use("/api/parent-portal", parentPortalRoutes);
 
 
-// app.get("/api/health", (req, res) => {
-//   res.json({ status: "ok" });
-// });
 
-
-//
 app.get("/api/test", (req, res) => {
   res.json({ 
     message: "Server is working!",
