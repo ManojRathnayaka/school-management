@@ -103,14 +103,14 @@ export default function ParentPortal() {
               <div className="bg-gradient-to-r from-yellow-50 to-blue-50 p-5 rounded-lg border-l-4 border-yellow-500">
                 <label className="block mb-3 font-bold text-gray-700 flex items-center">
                   <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center mr-3">🔍</span>
-                  Enter Student ID or Admission Number
+                  Enter Student Admission Number
                 </label>
                 <div className="flex gap-3">
                   <input
                     type="text"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    placeholder="Enter Student ID (e.g., 6) or Admission Number (e.g., 20250001)"
+                    placeholder="Enter Student Admission Number (e.g., 20250001)"
                     className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg px-4 py-3 flex-1 transition-all"
                     required
                   />
