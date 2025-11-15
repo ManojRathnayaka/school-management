@@ -11,6 +11,7 @@ import performanceRoutes from "./routes/performanceRoutes.js";
 import classRoutes from "./routes/classRoutes.js";
 import scholarshipRoutes from "./routes/scholarshipRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
+import parentPortalRoutes from "./routes/parentPortalRoutes.js";
 dotenv.config({ quiet: true });
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -36,6 +37,7 @@ app.use("/api/notifications", notificationsRoutes);
 app.use('/api/class-performance', performanceRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/scholarships', scholarshipRoutes);
+app.use("/api/parent-portal", parentPortalRoutes);
 
 app.use("/api/hostel-applications", hostelApplicationRoutes);
 
