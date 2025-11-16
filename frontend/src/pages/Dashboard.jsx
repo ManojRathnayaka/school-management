@@ -82,7 +82,7 @@ const dashboardCardConfig = [
     roles: [USER_ROLES.STUDENT],
   },
   {
-    title: "Academic & Sports",
+    title: "Achievements",
     description: "Track and celebrate student achievements",
     icon: Award,
     path: "/academic-sports",

@@ -17,8 +17,8 @@ export const getStudentById = async (studentId) => {
         'Not Assigned' as class_teacher
       FROM students s
       LEFT JOIN users u ON s.user_id = u.user_id
-      WHERE s.admission_number = ?`,
-      [studentId]
+      WHERE s.student_id = ? OR  s.admission_number = ?`,
+      [studentId, studentId]
     );
     
     console.log('   -> Query executed successfully');

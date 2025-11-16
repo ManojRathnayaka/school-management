@@ -78,4 +78,34 @@ export const announcementAPI = {
   delete: (id) => api.delete(`/announcements/${id}`)
 };
 
+export const achievementAPI = {
+  getAll: (params = {}) => {
+    const { page = 1, limit = 12, search = '', grade = '', category = '' } = params;
+    return api.get("/achievements", {
+      params: {
+        page,
+        limit,
+        search,
+        grade,
+        category
+      }
+    });
+  },
+  getById: (id) => api.get(`/achievements/${id}`),
+  getByCategory: (category, limit = 10) => api.get(`/achievements/category/${category}`, {
+    params: { limit }
+  }),
+  create: (formData) => api.post("/achievements", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  update: (id, formData) => api.put(`/achievements/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  delete: (id) => api.delete(`/achievements/${id}`)
+};
+
 export default api;
