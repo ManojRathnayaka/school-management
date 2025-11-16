@@ -8,7 +8,7 @@ CREATE TABLE students (
     address TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    class_id INT NOT NULL,  -- Foreign key to classes table
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    class_id INT NULL,  -- Foreign key to classes table
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (class_id) REFERENCES classes(class_id)
-); 
+);

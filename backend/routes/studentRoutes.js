@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerStudent, getStudents, updateStudent, deleteStudent } from "../controllers/studentController.js";
+import { registerStudent, getStudents, updateStudent, deleteStudent, getStudentParents } from "../controllers/studentController.js";
 import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
@@ -29,4 +29,9 @@ router.delete('/:studentId',
   deleteStudent
 );
 
+router.get('/:studentId/parents',
+  authenticateJWT,
+  authorizeRoles("principal", "teacher"),
+  getStudentParents
+);
 export default router; 

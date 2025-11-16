@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import fs from "fs";
+import csvParser from "csv-parser";
 import {
   findUserByEmail,
   createUser,
@@ -137,6 +139,129 @@ export async function createAdminUser(req, res) {
   }
 }
 
+export async function bulkCreateAdminUsers(req, res) {
+  const { role } = req.body;
+  const filePath = req.file?.path;
+
+  try {
+    if (!role || !["admin", "principal", "teacher"].includes(role)) {
+      return res.status(400).json({ message: "Valid role is required" });
+    }
+
+    if (!filePath) {
+      return res.status(400).json({ message: "CSV file is required" });
+    }
+
+    const results = { successes: [], failures: [] };
+
+    // Parse CSV with BOM handling
+    const stream = fs.createReadStream(filePath).pipe(
+      csvParser({
+        skipEmptyLines: true,
+        trim: true,
+        mapHeaders: ({ header }) => header.replace(/^\uFEFF/, '').trim().replace(/^"|"$/g, ''),
+      })
+    );
+
+    for await (const row of stream) {
+      try {
+        // Normalize headers - handle various formats
+        const getField = (field) => {
+          const variations = {
+            first_name: ['first_name', 'First Name', 'firstName', 'firstname'],
+            last_name: ['last_name', 'Last Name', 'lastName', 'lastname'],
+            email: ['email', 'Email'],
+            contact_number: ['contact_number', 'Contact Number', 'contactNumber', 'contact'],
+            grade: ['grade', 'Grade'],
+          };
+          
+          for (const variant of variations[field] || []) {
+            if (row[variant]) return row[variant].trim();
+          }
+          return null;
+        };
+
+        const first_name = getField('first_name');
+        const last_name = getField('last_name');
+        const email = getField('email');
+        const contact_number = getField('contact_number');
+        const grade = getField('grade');
+
+        // Validate required fields
+        if (!first_name || !last_name || !email) {
+          results.failures.push({
+            email: email || "N/A",
+            reason: "Missing required fields",
+          });
+          continue;
+        }
+
+        // Validate teacher requirements
+        if (role === "teacher" && !contact_number) {
+          results.failures.push({
+            email,
+            reason: "Contact number required for teachers",
+          });
+          continue;
+        }
+
+        // Check existing user
+        const existingUser = await findUserByEmail(email);
+        if (existingUser) {
+          results.failures.push({ email, reason: "Email already exists" });
+          continue;
+        }
+
+        // Generate temp password
+        const tempPassword = crypto
+          .randomBytes(5)
+          .toString("base64")
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .slice(0, 10);
+
+        const password_hash = await bcrypt.hash(tempPassword, 10);
+
+        // Create user
+        const userResult = await createUser({
+          first_name,
+          last_name,
+          email,
+          password_hash,
+          role,
+          must_reset_password: true,
+        });
+
+        // Create teacher record if needed
+        if (role === "teacher") {
+          await createTeacher({ 
+            user_id: userResult.insertId, 
+            contact_number, 
+            grade: grade || null 
+          });
+        }
+
+        results.successes.push({ email, first_name, last_name, tempPassword });
+
+      } catch (rowError) {
+        results.failures.push({
+          email: row.email || "N/A",
+          reason: rowError.message || "Processing failed",
+        });
+      }
+    }
+
+    res.status(200).json(results);
+
+  } catch (err) {
+    console.error("Bulk create error:", err);
+    res.status(500).json({ message: "Bulk creation failed" });
+  } finally {
+    if (filePath) {
+      fs.promises.unlink(filePath).catch(console.error);
+    }
+  }
+}
+
 function isStrongPassword(password) {
   const pattern = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/; // at least 6 characters, one letter and one number
   return pattern.test(password);
@@ -190,7 +315,7 @@ export async function resetPasswordFirstLogin(req, res) {
   }
 }
 
-// New functions for user management
+// User management functions
 export async function getAllUsers(req, res) {
   try {
     const page = parseInt(req.query.page) || 1;

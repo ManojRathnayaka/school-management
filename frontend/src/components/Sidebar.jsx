@@ -1,36 +1,32 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { USER_ROLES } from "../constants";
-// import ScholarshipList from "../pages/ScholarshipPrinciple";
 
 const sidebarConfig = {
   common: [{ path: "/dashboard", label: "Dashboard" }],
   [USER_ROLES.PRINCIPAL]: [
     { path: "/student-registration", label: "Student Registration" },
     { path: "/students", label: "Students" },
-    // { path: "/scholarships", label: "Scholarship Management" },
+    { path: "/announcements", label: "Announcements" },
+    { path: "/achievements", label: "Achievements" },
     { path: "/auditorium-booking-principal", label: "Auditorium Booking" },
-    { path: "/academic-sports", label: "Academic & Sports" },
     { path: "/scholarship-list", label: "Scholarship Management" },
-
-  
   ],
   [USER_ROLES.TEACHER]: [
     { path: "/student-registration", label: "Student Registration" },
     { path: "/students", label: "Students" },
+    { path: "/achievements", label: "Achievements" },
     { path: "/auditorium-booking", label: "Auditorium Booking" },
-    { path: "/academic-sports", label: "Academic & Sports" },
     { path: "/class-performance", label: "Class Performance"},
-
   ],
   [USER_ROLES.STUDENT]: [
+    { path: "/achievements", label: "Achievements" },
     { path: "/scholarships", label: "Scholarships" },
-    { path: "/academic-sports", label: "Academic & Sports" },
     { path: "/hostal-application", label: "Hostel Application" },
   ],
   [USER_ROLES.PARENT]: [
+    { path: "/achievements", label: "Achievements" },
     { path: "/scholarships", label: "Scholarships" },
-    { path: "/academic-sports", label: "Academic & Sports" },
     { path: "/parent-portal", label: "Parent Portal" },
   ],
 };
@@ -47,7 +43,7 @@ export default function Sidebar() {
 
   return (
     <div className="w-64 bg-white shadow-sm border-r">
-      <div className="p-4 border-b h-14 flex items-center">
+      <div className="p-4 h-14 flex items-center">
         <h1 className="text-lg font-semibold text-gray-800">School Portal</h1>
       </div>
       <nav className="p-4">

@@ -1,22 +1,18 @@
-import { Link } from 'react-router-dom';
+import React from 'react';
+import Navbar from '../components/landing/Navbar';
+import Hero from '../components/landing/Hero';
+import Features from '../components/landing/Features';
+import SystemOverview from '../components/landing/SystemOverview';
+import Footer from '../components/landing/Footer';
 
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="flex justify-end p-6">
-        <Link 
-          to="/login"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
-        >
-          Login
-        </Link>
-      </header>
-      
-      <div className="flex flex-col justify-center items-center h-full">
-        <h1 className="text-4xl font-bold text-gray-900">
-          School Management System
-        </h1>
-      </div>
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      <Navbar />
+      <Hero />
+      <Features />
+      <SystemOverview />
+      <Footer />
     </div>
   );
 }
