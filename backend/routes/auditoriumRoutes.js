@@ -7,7 +7,7 @@ import {
 
 const router = Router();
 
-// Teacher or Principal can submit a booking request
+
 router.post(
   "/book",
   authenticateJWT,
@@ -25,8 +25,6 @@ router.get("/slots",
   authorizeRoles("teacher", "principal"),
    handleGetAvailableSlotss);
 
-
-// Only principals can access these
 router.get("/pending",
    authenticateJWT, authorizeRoles("principal", "principal"),
     handleGetPendingBookings);
@@ -48,8 +46,4 @@ export default router;
 
 
 
-// // Get all bookings (for allocation list)
-// router.get("/all", handleGetAllBookings);
 
-// // Get available dates (for calendar)
-// router.get("/available-dates", handleGetAvailableDates);

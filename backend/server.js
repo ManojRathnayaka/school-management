@@ -26,6 +26,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
+
 app.use("/api/auditorium",auditoriumRoutes)
 app.use("/api/approved", auditoriumRoutes);
 app.use("/api/pending", auditoriumRoutes);
@@ -33,6 +34,8 @@ app.use("/api/notifications", notificationsRoutes);
 
 app.use('/api/class-performance', performanceRoutes);
 app.use('/api/classes', classRoutes);
+
+
 app.use('/api/scholarships', scholarshipRoutes);
 
 app.use("/api/hostel-applications", hostelApplicationRoutes);
