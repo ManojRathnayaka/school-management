@@ -85,7 +85,7 @@ const dashboardCardConfig = [
     title: "Achievements",
     description: "Track and celebrate student achievements",
     icon: Award,
-    path: "/academic-sports",
+    path: "/achievements",
     roles: [
       USER_ROLES.PRINCIPAL,
       USER_ROLES.TEACHER,
