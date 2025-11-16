@@ -15,6 +15,7 @@ import classRoutes from "./routes/classRoutes.js";
 import scholarshipRoutes from "./routes/scholarshipRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
 import parentPortalRoutes from "./routes/parentPortalRoutes.js";
+import { pool } from "./config/db.js";
 
 dotenv.config({ quiet: true });
 
@@ -30,6 +31,11 @@ app.use(
     credentials: true,
   })
 );
+
+pool.getConnection()
+  .then(() => console.log("MySQL connected"))
+  .catch(err => console.error("MySQL error:", err));
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -62,3 +68,4 @@ app.get("/api/health", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
