@@ -27,7 +27,7 @@ export const createBooking = async (data) => {
 
 
 export async function getApprovedAndPendingBookings() {
- const [rows] = await pool.query("SELECT * FROM auditorium_bookings WHERE status IN ('approved', 'pending') ORDER BY event_date, start_time");
+ const [rows] = await pool.query("SELECT * FROM auditorium_bookings WHERE status IN ('approved', 'pending','rejected') ORDER BY event_date, start_time");
  return [rows];
 }
 

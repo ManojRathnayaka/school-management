@@ -15,6 +15,8 @@ import classRoutes from "./routes/classRoutes.js";
 import scholarshipRoutes from "./routes/scholarshipRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
 import parentPortalRoutes from "./routes/parentPortalRoutes.js";
+
+// import classPerformanceRoutes from './routes/classPerformanceRoutes.js';
 import { pool } from "./config/db.js";
 
 dotenv.config({ quiet: true });
@@ -53,6 +55,7 @@ app.use("/api/auditorium",auditoriumRoutes)
 app.use("/api/approved", auditoriumRoutes);
 app.use("/api/pending", auditoriumRoutes);
 app.use("/api/notifications", notificationsRoutes);
+// app.use('/api/class-performance', performanceRoutes);
 app.use('/api/class-performance', performanceRoutes);
 app.use('/api/classes', classRoutes);
 

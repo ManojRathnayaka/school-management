@@ -1,48 +1,146 @@
-// models/performanceModel.js
-import {pool} from "../config/db.js";
 
-// Function to get performance data for a class
-export const getClassPerformance = async (classId) => {
+
+
+// models/classPerformanceModel.js
+import {pool} from '../config/db.js';
+
+// Check that the logged-in teacher actually owns this class
+export const teacherOwnsClass = async (userId, classId) => {
   const [rows] = await pool.query(
-    `SELECT s.first_name, s.last_name, p.* 
-    FROM student_performance p 
-    JOIN students s ON p.student_id = s.student_id 
-    WHERE p.class_id = ?`,
-    [classId]
+    `
+    SELECT 1
+    FROM classes c
+    JOIN teachers t ON c.teacher_id = t.teacher_id
+    WHERE c.class_id = ? AND t.user_id = ?
+    `,
+    [classId, userId]
+  );
+  return rows.length > 0;
+};
+
+// Get all classes assigned to this teacher (by user_id from JWT)
+export const getClassesForTeacher = async (userId) => {
+  const [rows] = await pool.query(
+    `
+    SELECT c.class_id, c.name, c.grade
+    FROM classes c
+    JOIN teachers t ON c.teacher_id = t.teacher_id
+    WHERE t.user_id = ?
+    ORDER BY c.grade, c.name
+    `,
+    [userId]
   );
   return rows;
 };
 
-// Function to update student performance
-export const updateStudentPerformance = async (studentId, data, teacherId) => {
-  const { academic_score, sports_score, discipline_score, leadership_score, comments } = data;
-
-  // Insert into performance_audit_log before updating
-  const [previousPerformance] = await pool.query(
-    'SELECT * FROM student_performance WHERE student_id = ?',
-    [studentId]
+// Get all students in a class, but only if this teacher owns the class
+export const getStudentsForClass = async (userId, classId) => {
+  const [rows] = await pool.query(
+    `
+    SELECT 
+      s.student_id,
+      s.admission_number,
+      u.first_name,
+      u.last_name
+    FROM students s
+    JOIN classes c ON s.class_id = c.class_id
+    JOIN teachers t ON c.teacher_id = t.teacher_id
+    JOIN users u ON s.user_id = u.user_id
+    WHERE s.class_id = ? AND t.user_id = ?
+    ORDER BY u.first_name, u.last_name
+    `,
+    [classId, userId]
   );
-
-  await pool.query(
-    'INSERT INTO performance_audit_log (performance_id, field_changed, old_value, new_value, changed_by) VALUES (?, ?, ?, ?, ?)',
-    [previousPerformance[0].performance_id, 'academic_score', previousPerformance[0].academic_score, academic_score, teacherId]
-  );
-
-  // Update performance in the student_performance table
-  await pool.query(
-    'UPDATE student_performance SET academic_score = ?, sports_score = ?, discipline_score = ?, leadership_score = ?, comments = ?, updated_by = ? WHERE student_id = ?',
-    [academic_score, sports_score, discipline_score, leadership_score, comments, teacherId, studentId]
-  );
+  return rows;
 };
 
-// Function to get a specific student's performance
-export const getStudentPerformance = async (studentId) => {
-  const [rows] = await pool.query('SELECT * FROM student_performance WHERE student_id = ?', [studentId]);
-  return rows[0];
+// Get the latest performance entry for a student in a class
+export const getPerformanceForStudent = async (studentId, classId) => {
+  const [rows] = await pool.query(
+    `
+    SELECT 
+      performance_id,
+      academic_score,
+      sports_score,
+      discipline_score,
+      leadership_score,
+      comments,
+      updated_by,
+      updated_at
+    FROM student_performance 
+    WHERE student_id = ? AND class_id = ?
+    ORDER BY updated_at DESC
+    LIMIT 1
+    `,
+    [studentId, classId]
+  );
+  return rows[0] || null;
 };
 
-// module.exports = {
-//   getClassPerformance,
-//   updateStudentPerformance,
-//   getStudentPerformance,
-// };
+// Insert or update performance (upsert by student_id + class_id)
+export const upsertPerformance = async ({
+  studentId,
+  classId,
+  academicScore,
+  sportsScore,
+  disciplineScore,
+  leadershipScore,
+  comments,
+  updatedBy,
+}) => {
+  const [existing] = await pool.query(
+    `
+    SELECT performance_id
+    FROM student_performance 
+    WHERE student_id = ? AND class_id = ?
+    LIMIT 1
+    `,
+    [studentId, classId]
+  );
+
+  if (existing.length > 0) {
+    const performanceId = existing[0].performance_id;
+    await pool.query(
+      `
+      UPDATE student_performance 
+      SET academic_score = ?,
+          sports_score = ?,
+          discipline_score = ?,
+          leadership_score = ?,
+          comments = ?,
+          updated_by = ?,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE performance_id = ?
+      `,
+      [
+        academicScore,
+        sportsScore,
+        disciplineScore,
+        leadershipScore,
+        comments,
+        updatedBy,
+        performanceId,
+      ]
+    );
+    return performanceId;
+  } else {
+    const [result] = await pool.query(
+      `
+      INSERT INTO student_performance 
+      (student_id, class_id, academic_score, sports_score, discipline_score, leadership_score, comments, updated_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      [
+        studentId,
+        classId,
+        academicScore,
+        sportsScore,
+        disciplineScore,
+        leadershipScore,
+        comments,
+        updatedBy,
+      ]
+    );
+    return result.insertId;
+  }
+};

@@ -1,30 +1,61 @@
-import express from 'express';
 
-import { getClassPerformances, updateStudentPerformances, getStudentPerformances } from '../controllers/performanceController.js';
-const router = express.Router();
 
+
+import { Router } from "express";
 import {
   authenticateJWT,
   authorizeRoles
 } from "../middleware/authMiddleware.js";
 
+import {
+  getTeacherClasses,
+  getStudentsForTeacherClass,
+  getStudentPerformanceHandler,
+  upsertStudentPerformanceHandler
+} from "../controllers/performanceController.js";
 
-// Get performance data for a class
-router.get('/:classId',
-    authenticateJWT,
-  authorizeRoles("teacher"),
-    getClassPerformances);
+const router = Router();
 
-// Update performance for a specific student
-router.put('/:studentId',
-    authenticateJWT,
-  authorizeRoles("teacher"),
-     updateStudentPerformances);
+// ===============================
+//  ONLY TEACHERS CAN ACCESS
+// ===============================
+router.use(authenticateJWT);
+router.use(authorizeRoles("teacher"));
 
-// Get performance details for a specific student
-router.get('/:studentId',
-    authenticateJWT,
-  authorizeRoles("teacher"),
-     getStudentPerformances);
+
+// --------------------------------------
+// GET classes assigned to logged-in teacher
+// --------------------------------------
+router.get(
+  "/classes",
+  getTeacherClasses
+);
+
+
+// --------------------------------------
+// GET students in a class (teacher must own that class)
+// --------------------------------------
+router.get(
+  "/classes/:classId/students",
+  getStudentsForTeacherClass
+);
+
+
+// --------------------------------------
+// GET performance for a specific student in teacher's class
+// --------------------------------------
+router.get(
+  "/classes/:classId/students/:studentId",
+  getStudentPerformanceHandler
+);
+
+
+// --------------------------------------
+// CREATE or UPDATE student performance
+// --------------------------------------
+router.put(
+  "/classes/:classId/students/:studentId",
+  upsertStudentPerformanceHandler
+);
 
 export default router;
