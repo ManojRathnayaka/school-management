@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { pool } from "./config/db.js";
+
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import achievementRoutes from "./routes/achievementRoutes.js";
@@ -15,9 +17,7 @@ import classRoutes from "./routes/classRoutes.js";
 import scholarshipRoutes from "./routes/scholarshipRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
 import parentPortalRoutes from "./routes/parentPortalRoutes.js";
-
 // import classPerformanceRoutes from './routes/classPerformanceRoutes.js';
-import { pool } from "./config/db.js";
 
 dotenv.config({ quiet: true });
 
@@ -38,7 +38,6 @@ pool.getConnection()
   .then(() => console.log("MySQL connected"))
   .catch(err => console.error("MySQL error:", err));
 
-
 app.use(express.json());
 app.use(cookieParser());
 
@@ -51,6 +50,8 @@ app.use(express.static(join(__dirname, "../frontend/public")));
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/announcements", announcementRoutes);
+app.use("/api/achievements", achievementRoutes);
 app.use("/api/auditorium",auditoriumRoutes)
 app.use("/api/approved", auditoriumRoutes);
 app.use("/api/pending", auditoriumRoutes);
@@ -58,7 +59,6 @@ app.use("/api/notifications", notificationsRoutes);
 // app.use('/api/class-performance', performanceRoutes);
 app.use('/api/class-performance', performanceRoutes);
 app.use('/api/classes', classRoutes);
-
 
 app.use('/api/scholarships', scholarshipRoutes);
 app.use("/api/parent-portal", parentPortalRoutes);
@@ -71,4 +71,3 @@ app.get("/api/health", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
