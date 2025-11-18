@@ -1,69 +1,119 @@
-// controllers/performanceController.js
-// const performanceModel = require('../models/performanceModel');
-// const classModel = require('../models/classModel');
 
- import {pool} from '../config/db.js';
-//  import { getClassPerformance, updateStudentPerformance } from './classController';
-import { getClassById } from '../models/classModel.js';
-import { getClassPerformance, updateStudentPerformance, getStudentPerformance } from '../models/performanceModel.js';
-// Get performance data for all students in a class
-export const getClassPerformances = async (req, res) => {
-  const { classId } = req.params;
-  const teacherId = req.user.user_id;
 
+// controllers/classPerformanceController.js
+import {
+  teacherOwnsClass,
+  getClassesForTeacher,
+  getStudentsForClass,
+  getPerformanceForStudent,
+  upsertPerformance,
+} from '../models/performanceModel.js';
+
+// GET /api/class-performance/classes
+export const getTeacherClasses = async (req, res) => {
   try {
-    // Check if teacher is assigned to the class
-    const classData = await getClassById(classId, teacherId);
-    if (!classData || classData.length === 0) {
-      return res.status(403).json({ message: "You are not authorized to view this class performance." });
-    }
-
-    const performanceRecords = await getClassPerformance(classId);
-    return res.json(performanceRecords);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Error fetching class performance' });
+    const userId = req.user.user_id;
+    const classes = await getClassesForTeacher(userId);
+    return res.json(classes);
+  } catch (err) {
+    console.error('Error fetching teacher classes', err);
+    return res.status(500).json({ message: 'Error fetching classes' });
   }
 };
 
-// Update student performance
-export const updateStudentPerformances = async (req, res) => {
-  const { studentId } = req.params;
-  const teacherId = req.user.user_id;
-  const data = req.body;
-
+// GET /api/class-performance/classes/:classId/students
+export const getStudentsForTeacherClass = async (req, res) => {
   try {
-    const [studentData] = await pool.query('SELECT class_id FROM students WHERE student_id = ?', [studentId]);
+    const userId = req.user.user_id;
+    const { classId } = req.params;
 
-    // Check if the teacher is authorized for the student's class
-    const classData = await getClassById(studentData[0].class_id, teacherId);
-    if (!classData || classData.length === 0) {
-      return res.status(403).json({ message: "You are not authorized to update this student's performance." });
+    const owns = await teacherOwnsClass(userId, classId);
+    if (!owns) {
+      return res.status(403).json({ message: 'Not authorized for this class' });
     }
 
-    await updateStudentPerformance(studentId, data, teacherId);
-    return res.json({ message: 'Performance updated successfully' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Error updating student performance' });
+    const students = await getStudentsForClass(userId, classId);
+    return res.json(students);
+  } catch (err) {
+    console.error('Error fetching students for class', err);
+    return res.status(500).json({ message: 'Error fetching students' });
   }
 };
 
-// Get performance details for a specific student
-export const getStudentPerformances = async (req, res) => {
-  const { studentId } = req.params;
-
+// GET /api/class-performance/classes/:classId/students/:studentId
+export const getStudentPerformanceHandler = async (req, res) => {
   try {
-    const performance = await getStudentPerformance(studentId);
+    const userId = req.user.user_id;
+    const { classId, studentId } = req.params;
+
+    const owns = await teacherOwnsClass(userId, classId);
+    if (!owns) {
+      return res.status(403).json({ message: 'Not authorized for this class' });
+    }
+
+    const performance = await getPerformanceForStudent(studentId, classId);
+    if (!performance) {
+      return res.json(null); // frontend will show empty/0 values
+    }
+
     return res.json(performance);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Error fetching student performance' });
+  } catch (err) {
+    console.error('Error fetching performance', err);
+    return res.status(500).json({ message: 'Error fetching performance' });
   }
 };
 
-// module.exports = {
-//   getClassPerformance,
-//   updateStudentPerformance,
-//   getStudentPerformance,
-// };
+// PUT /api/class-performance/classes/:classId/students/:studentId
+export const upsertStudentPerformanceHandler = async (req, res) => {
+  try {
+    const userId = req.user.user_id; // teacher's user_id
+    const { classId, studentId } = req.params;
+    const {
+      academic_score,
+      sports_score,
+      discipline_score,
+      leadership_score,
+      comments,
+    } = req.body;
+
+    const owns = await teacherOwnsClass(userId, classId);
+    if (!owns) {
+      return res.status(403).json({ message: 'Not authorized for this class' });
+    }
+
+    // Basic validation (0–100 range)
+    const toNum = (v) => (v === null || v === '' || v === undefined ? 0 : Number(v));
+    const academic = toNum(academic_score);
+    const sports = toNum(sports_score);
+    const discipline = toNum(discipline_score);
+    const leadership = toNum(leadership_score);
+
+    if (
+      [academic, sports, discipline, leadership].some(
+        (v) => Number.isNaN(v) || v < 0 || v > 100
+      )
+    ) {
+      return res
+        .status(400)
+        .json({ message: 'Scores must be numbers between 0 and 100' });
+    }
+
+    const performanceId = await upsertPerformance({
+      studentId,
+      classId,
+      academicScore: academic,
+      sportsScore: sports,
+      disciplineScore: discipline,
+      leadershipScore: leadership,
+      comments: comments || null,
+      updatedBy: userId,
+    });
+
+    const updated = await getPerformanceForStudent(studentId, classId);
+    return res.json({ performance_id: performanceId, performance: updated });
+  } catch (err) {
+    console.error('Error saving performance', err);
+    return res.status(500).json({ message: 'Error saving performance' });
+  }
+};
+

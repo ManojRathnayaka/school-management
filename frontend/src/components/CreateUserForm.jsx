@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "../hooks/useForm";
 import { USER_ROLES, GRADES } from "../constants";
 import { userAPI } from "../services/api";
-import Alert from "./Alert";
-import Button from "./Button";
-import Input from "./Input";
-import Select from "./Select";
+import { User, Mail, Phone, UserCheck, AlertCircle, Check } from "lucide-react";
+import UserCreatedModal from "./modals/UserCreatedModal";
 
 const initialForm = {
   first_name: "",
@@ -18,6 +16,7 @@ const initialForm = {
 
 export default function CreateUserForm() {
   const [tempPassword, setTempPassword] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const {
     form,
     error,
@@ -26,7 +25,22 @@ export default function CreateUserForm() {
     setFormSuccess,
     handleInputChange,
     resetForm,
-  } = useForm(initialForm)
+  } = useForm(initialForm);
+
+  // Auto-dismiss alerts after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setFormError(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, setFormError]);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setFormSuccess(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, setFormSuccess]);
 
   const handleRoleChange = (e) => {
     handleInputChange(e);
@@ -50,8 +64,8 @@ export default function CreateUserForm() {
 
     try {
       const response = await userAPI.createUser(submitData);
-      setFormSuccess("User created successfully!");
       setTempPassword(response.data.tempPassword || "");
+      setShowSuccessModal(true);
       resetForm();
     } catch (err) {
       const errorMessage = err.response?.data?.message || "User creation failed.";
@@ -59,7 +73,13 @@ export default function CreateUserForm() {
     }
   };
 
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    setTempPassword("");
+  };
+
   const isTeacher = form.role === USER_ROLES.TEACHER;
+
   const roleOptions = [
     { value: USER_ROLES.TEACHER, label: "Teacher" },
     { value: USER_ROLES.PRINCIPAL, label: "Principal" },
@@ -67,107 +87,169 @@ export default function CreateUserForm() {
   ];
 
   return (
-    <div>
-      <Alert type="error" message={error} />
-      <Alert type="success" message={success} />
+    <div className="p-4">
+      {/* Alert Messages */}
+      {error && (
+        <div className="alert alert-error mb-6">
+          <AlertCircle className="w-5 h-5" />
+          <span>{error}</span>
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">
+      {success && (
+        <div className="alert alert-success mb-6">
+          <Check className="w-5 h-5" />
+          <span>{success}</span>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic Information */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <User className="w-5 h-5" />
             Basic Information
           </h3>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input 
-            name="first_name" 
-            placeholder="First Name" 
-            value={form.first_name} 
-            onChange={handleInputChange} 
-            required 
-          />
-          <Input 
-            name="last_name" 
-            placeholder="Last Name" 
-            value={form.last_name} 
-            onChange={handleInputChange} 
-            required 
-          />
-        </div>
-        
-        <Input 
-          type="email" 
-          name="email" 
-          placeholder="Email" 
-          value={form.email} 
-          onChange={handleInputChange} 
-          required 
-        />
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Role <span className="text-red-500">*</span>
-          </label>
-          <div className="flex flex-wrap gap-6">
-            {roleOptions.map((option) => (
-              <label key={option.value} className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="role"
-                  value={option.value}
-                  checked={form.role === option.value}
-                  onChange={handleRoleChange}
-                  required
-                  className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <span className="text-sm text-gray-700">{option.label}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">First Name</span>
               </label>
-            ))}
+              <input
+                type="text"
+                name="first_name"
+                placeholder="Enter first name"
+                className="input input-bordered input-sm"
+                value={form.first_name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Last Name</span>
+              </label>
+              <input
+                type="text"
+                name="last_name"
+                placeholder="Enter last name"
+                className="input input-bordered input-sm"
+                value={form.last_name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Email</span>
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter email address"
+                className="input input-bordered input-sm w-full pl-8"
+                value={form.email}
+                onChange={handleInputChange}
+                required
+              />
+              <Mail className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 opacity-50" />
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Role</span>
+            </label>
+            <div className="flex flex-wrap gap-4">
+              {roleOptions.map((option) => (
+                <div key={option.value} className="form-control">
+                  <label className="label cursor-pointer">
+                    <input
+                      type="radio"
+                      name="role"
+                      value={option.value}
+                      checked={form.role === option.value}
+                      onChange={handleRoleChange}
+                      className="radio radio-primary mr-2"
+                      required
+                    />
+                    <span className="label-text">{option.label}</span>
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="min-h-[100px]">
-          {isTeacher && (
-            <>
-              <h3 className="text-lg font-semibold mb-3 text-gray-700 border-b pb-2">
-                Teacher Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Select 
-                  name="grade" 
-                  value={form.grade} 
-                  onChange={handleInputChange} 
-                  options={[{ value: "", label: "Select Grade" }, ...GRADES]} 
-                  required
-                />
-                <Input 
-                  type="tel" 
-                  name="contact_number" 
-                  placeholder="Contact Number" 
-                  value={form.contact_number} 
+        {/* Teacher Information */}
+        <div className={`mb-6 transition-all duration-300 ease-in-out ${isTeacher ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <UserCheck className="w-5 h-5" />
+              Teacher Information
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Grade</span>
+              </label>
+              <select
+                name="grade"
+                className="select select-bordered select-sm"
+                value={form.grade}
+                onChange={handleInputChange}
+                required={isTeacher}
+              >
+                <option value="">Select Grade</option>
+                {GRADES.map((grade) => (
+                  <option key={grade.value} value={grade.value}>
+                    {grade.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Contact Number</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="tel"
+                  name="contact_number"
+                  placeholder="Enter contact number"
+                  className="input input-bordered input-sm w-full pl-8"
+                  value={form.contact_number}
                   onChange={handleInputChange}
                 />
+                <Phone className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 opacity-50" />
               </div>
-            </>
-          )}
+            </div>
+          </div>
         </div>
 
-        <Button type="submit">Create User</Button>
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <button type="submit" className="btn btn-primary btn-sm">
+            <User className="w-4 h-4 mr-2" />
+            Create User
+          </button>
+        </div>
       </form>
 
-      {tempPassword && (
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
-          <p className="text-green-800 font-semibold mb-2">
-            User Created Successfully!
-          </p>
-          <p className="text-green-700">
-            Temporary Password:{" "}
-            <span className="font-mono bg-green-100 px-2 py-1 rounded">
-              {tempPassword}
-            </span>
-          </p>
-        </div>
-      )}
+      {/* Success Modal */}
+      <UserCreatedModal
+        isOpen={showSuccessModal}
+        tempPassword={tempPassword}
+        onClose={handleModalClose}
+      />
     </div>
   );
 }

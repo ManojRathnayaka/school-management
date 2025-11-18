@@ -9,8 +9,9 @@ CREATE TABLE auditorium_bookings (
   equipment TEXT,
   notes TEXT,
   status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
-  requested_by VARCHAR(255) NOT NULL, -- teacher username or email
+  requested_by VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  FOREIGN KEY (requested_by) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -23,4 +24,6 @@ CREATE TABLE notifications (
   read_at TIMESTAMP NULL,
   FOREIGN KEY (user_id) REFERENCES auditorium_bookings(id)
 );
+
+
 

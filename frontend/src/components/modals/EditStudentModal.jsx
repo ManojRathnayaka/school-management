@@ -1,8 +1,5 @@
 // components/modals/EditStudentModal.js
 import { useState, useEffect } from "react";
-import Button from "../Button";
-import Input from "../Input";
-import Select from "../Select";
 import { GRADES, SECTIONS } from "../../constants";
 import { studentAPI } from "../../services/api";
 
@@ -21,7 +18,14 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (student) {
+    if (show && student) {
+      // Open the DaisyUI modal
+      const modal = document.getElementById(`edit_student_modal_${student.student_id}`);
+      if (modal) {
+        modal.showModal();
+      }
+      
+      // Populate form data
       setFormData({
         first_name: student.first_name || "",
         last_name: student.last_name || "",
@@ -29,13 +33,14 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
         grade: student.grade || "",
         section: student.section || "",
         admission_number: student.admission_number || "",
-        date_of_birth: student.date_of_birth || "",
+        date_of_birth: student.date_of_birth,
         address: student.address || ""
       });
+      
+      // Clear error when modal opens
+      setError("");
     }
-    // Clear error when modal opens
-    setError("");
-  }, [student]);
+  }, [show, student]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +66,7 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
       onSave();
       
       // Close the modal
-      onClose();
+      handleClose();
       
     } catch (err) {
       console.error('Update error:', err);
@@ -72,118 +77,202 @@ export default function EditStudentModal({ show, student, onClose, onSave }) {
   };
 
   const handleClose = () => {
+    const modal = document.getElementById(`edit_student_modal_${student?.student_id}`);
+    if (modal) {
+      modal.close();
+    }
     setError("");
     onClose();
   };
 
-  if (!show || !student) return null;
-
-  // Prepare grade and section options
-  const gradeOptions = [{ value: "", label: "Select Grade" }, ...GRADES];
-  const sectionOptions = [{ value: "", label: "Select Section" }, ...SECTIONS];
+  if (!student) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <h3 className="text-xl font-bold mb-6 text-gray-800">Edit Student</h3>
+    <dialog id={`edit_student_modal_${student.student_id}`} className="modal">
+      <div className="modal-box max-w-2xl">
+        {/* Close button */}
+        <form method="dialog">
+          <button 
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={handleClose}
+          >
+            ✕
+          </button>
+        </form>
+
+        {/* Modal header */}
+        <h3 className="font-bold text-xl mb-6">Edit Student</h3>
         
+        {/* Error alert */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="alert alert-error mb-4">
+            <span>{error}</span>
           </div>
         )}
         
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <Input
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* First Name */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">First Name</span>
+            </label>
+            <input
+              type="text"
               name="first_name"
-              placeholder="First Name"
+              placeholder="Enter first name"
+              className="input input-bordered w-full"
               value={formData.first_name}
               onChange={handleInputChange}
               required
             />
-            
-            <Input
+          </div>
+
+          {/* Last Name */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Last Name</span>
+            </label>
+            <input
+              type="text"
               name="last_name"
-              placeholder="Last Name"
+              placeholder="Enter last name"
+              className="input input-bordered w-full"
               value={formData.last_name}
               onChange={handleInputChange}
               required
             />
-            
-            <Input
+          </div>
+
+          {/* Email */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Email</span>
+            </label>
+            <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Enter email address"
+              className="input input-bordered w-full"
               value={formData.email}
               onChange={handleInputChange}
               required
             />
-            
-            <Input
+          </div>
+
+          {/* Admission Number */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Admission Number</span>
+            </label>
+            <input
+              type="text"
               name="admission_number"
-              placeholder="Admission Number"
+              placeholder="Enter admission number"
+              className="input input-bordered w-full"
               value={formData.admission_number}
               onChange={handleInputChange}
               required
             />
+          </div>
 
-            <Input
-              name="date_of_birth"
+          {/* Date of Birth */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Date of Birth</span>
+            </label>
+            <input
               type="date"
-              placeholder="Date of Birth"
+              name="date_of_birth"
+              className="input input-bordered w-full"
               value={formData.date_of_birth}
               onChange={handleInputChange}
             />
-            
-            <Select
+          </div>
+
+          {/* Grade */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Grade</span>
+            </label>
+            <select
               name="grade"
+              className="select select-bordered w-full"
               value={formData.grade}
               onChange={handleInputChange}
-              options={gradeOptions}
               required
-            />
-            
-            <Select
+            >
+              <option value="">Select Grade</option>
+              {GRADES.map((grade) => (
+                <option key={grade.value} value={grade.value}>
+                  {grade.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Section */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Section</span>
+            </label>
+            <select
               name="section"
+              className="select select-bordered w-full"
               value={formData.section}
               onChange={handleInputChange}
-              options={sectionOptions}
               required
-            />
-
-            {/* Address field spanning two columns */}
-            <div className="md:col-span-2">
-              <textarea
-                name="address"
-                placeholder="Address"
-                className="w-full p-2 border rounded"
-                rows="3"
-                value={formData.address}
-                onChange={handleInputChange}
-              />
-            </div>
+            >
+              <option value="">Select Section</option>
+              {SECTIONS.map((section) => (
+                <option key={section.value} value={section.value}>
+                  {section.label}
+                </option>
+              ))}
+            </select>
           </div>
-          
-          <div className="flex justify-end space-x-2">
-            <Button
+
+          {/* Address */}
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Address</span>
+            </label>
+            <textarea
+              name="address"
+              placeholder="Enter address"
+              className="textarea textarea-bordered w-full"
+              rows="3"
+              value={formData.address}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          {/* Action buttons */}
+          <div className="modal-action">
+            <button
               type="button"
-              variant="secondary"
+              className="btn btn-ghost"
               onClick={handleClose}
               disabled={loading}
             >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
-              variant="primary"
+              className="btn btn-primary"
               disabled={loading}
             >
-              {loading ? "Saving..." : "Save Changes"}
-            </Button>
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  Saving...
+                </>
+              ) : (
+                "Save Changes"
+              )}
+            </button>
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 }

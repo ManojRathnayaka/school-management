@@ -19,12 +19,6 @@ router.get("/", authenticateJWT, authorizeRoles("principal"), listScholarships)
 router.put("/:id/approve", authenticateJWT, authorizeRoles("principal"), approveScholarship);
 router.put("/:id/reject", authenticateJWT, authorizeRoles("principal"), rejectScholarship);
 
-// router.get(
-//   "/scholarships",
-//   authenticateJWT,
-//   authorizeRoles("principal"),
-//   listScholarships // Only principal can view
-  
-// );
+
 
 export default router;

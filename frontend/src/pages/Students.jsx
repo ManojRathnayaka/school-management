@@ -1,12 +1,19 @@
 // React imports
 import { useState, useEffect } from "react";
+import {
+  Users,
+  Search,
+  GraduationCap,
+  Mail,
+  Eye,
+  Edit,
+  Trash2,
+  IdCard,
+  Settings,
+} from "lucide-react";
 
 // Component imports
 import Layout from "../components/Layout";
-import LoadingSpinner from "../components/LoadingSpinner";
-import Button from "../components/Button";
-import Input from "../components/Input";
-import Select from "../components/Select";
 
 // Modal imports
 import StudentDetailsModal from "../components/modals/StudentDetailsModal";
@@ -100,22 +107,6 @@ export default function Students() {
     setShowDeleteModal(true);
   };
 
-  // Confirm delete
-  const confirmDelete = async () => {
-    try {
-      // TODO: Implement actual delete API call
-      // await studentAPI.deleteStudent(selectedStudent.student_id);
-      alert(
-        `Delete functionality for ${selectedStudent.first_name} ${selectedStudent.last_name} will be implemented soon.`
-      );
-      setShowDeleteModal(false);
-      setSelectedStudent(null);
-      // fetchStudents(pagination.currentPage); // Refresh list after delete
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to delete student");
-    }
-  };
-
   // Grade options using your constants
   const gradeOptions = [{ value: "", label: "All Grades" }, ...GRADES];
 
@@ -123,238 +114,291 @@ export default function Students() {
 
   return (
     <Layout activePage="students">
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-4">Students</h2>
-
-          {/* Search and Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <Input
-              type="text"
-              placeholder="Search by student name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-            <Select
-              value={selectedGrade}
-              onChange={(e) => setSelectedGrade(e.target.value)}
-              options={gradeOptions}
-              className="w-full"
-            />
-            <Select
-              value={selectedSection}
-              onChange={(e) => setSelectedSection(e.target.value)}
-              options={sectionOptions}
-              className="w-full"
-            />
-          </div>
-
-          {/* Results Info */}
-          {!loading && (
-            <div className="text-sm text-gray-600 mb-4">
-              Showing {students.length} of {pagination.totalRecords} students
-              {(debouncedSearchTerm || selectedGrade || selectedSection) && (
-                <span className="ml-2">
-                  (filtered
-                  {debouncedSearchTerm && ` by "${debouncedSearchTerm}"`}
-                  {selectedGrade && ` - Grade ${selectedGrade}`}
-                  {selectedSection && ` - Section ${selectedSection}`})
-                </span>
-              )}
+        {/* Main Container */}
+        <div className="bg-base-100">
+          <div className="card-body">
+            {/* Header */}
+            <div className="mb-6">
+              <h1 className="card-title text-3xl text-base-content">
+                <Users className="w-8 h-8 text-primary mr-2" />
+                Students
+              </h1>
             </div>
-          )}
-        </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+            {/* Search and Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base-content/70">
+                    Search Students
+                  </span>
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-base-content/50" />
+                  <input
+                    type="text"
+                    placeholder="Search by student name"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="input input-bordered input-sm w-full pl-10"
+                  />
+                </div>
+              </div>
 
-        {/* Loading State */}
-        {loading ? (
-          <div className="flex justify-center py-8">
-            <LoadingSpinner />
-          </div>
-        ) : (
-          <>
-            {/* Students Table */}
-            {students.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                        Student
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">
-                        Admission No.
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-                        Grade
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {students.map((student) => (
-                      <tr key={student.student_id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {student.first_name} {student.last_name}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {student.admission_number}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {student.grade}
-                          {student.section}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {student.email}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              variant="primary"
-                              size="small"
-                              onClick={() => handleViewStudent(student)}
-                            >
-                              View
-                            </Button>
-                            <Button
-                              variant="secondary"
-                              size="small"
-                              onClick={() => handleEditStudent(student)}
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="small"
-                              onClick={() => handleDeleteStudent(student)}
-                            >
-                              Delete
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base-content/70">Grade</span>
+                </label>
+                <select
+                  value={selectedGrade}
+                  onChange={(e) => setSelectedGrade(e.target.value)}
+                  className="select select-bordered select-sm w-full"
+                >
+                  {gradeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base-content/70">
+                    Section
+                  </span>
+                </label>
+                <select
+                  value={selectedSection}
+                  onChange={(e) => setSelectedSection(e.target.value)}
+                  className="select select-bordered select-sm w-full"
+                >
+                  {sectionOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Error Alert */}
+            {error && (
+              <div className="alert alert-error mb-4">
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <span className="loading loading-spinner loading-lg text-primary"></span>
+                <span className="ml-4 text-base-content/70">
+                  Loading students...
+                </span>
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                {debouncedSearchTerm || selectedGrade || selectedSection
-                  ? "No students found matching your criteria."
-                  : "No students found."}
-              </div>
+              <>
+                {/* Students Table */}
+                {students.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="table w-full">
+                      <thead>
+                        <tr className="bg-base-200">
+                          <th className="text-base-content font-semibold w-1/4">
+                            <div className="flex items-center gap-2">
+                              <Users className="w-4 h-4" />
+                              Student
+                            </div>
+                          </th>
+                          <th className="text-base-content font-semibold w-1/6">
+                            <div className="flex items-center gap-2">
+                              <IdCard className="w-4 h-4" />
+                              Admission No.
+                            </div>
+                          </th>
+                          <th className="text-base-content font-semibold w-1/8">
+                            <div className="flex items-center gap-2">
+                              <GraduationCap className="w-4 h-4" />
+                              Grade
+                            </div>
+                          </th>
+                          <th className="text-base-content font-semibold w-1/4">
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-4 h-4" />
+                              Email
+                            </div>
+                          </th>
+                          <th className="text-base-content font-semibold w-1/12">
+                            <div className="flex items-center gap-2">
+                              <Settings className="w-4 h-4" />
+                              Actions
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {students.map((student) => (
+                          <tr
+                            key={student.student_id}
+                            className="hover:bg-base-200/50 transition-colors"
+                          >
+                            <td>
+                              <div className="flex items-center space-x-3">
+                                <div className="avatar placeholder">
+                                  <div className="bg-primary text-primary-content rounded-full w-10">
+                                    <span className="text-sm font-medium">
+                                      {student.first_name?.[0]}
+                                      {student.last_name?.[0]}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-base-content">
+                                    {student.first_name} {student.last_name}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="inline-block font-mono text-sm bg-base-200 px-2 py-1 rounded-md">
+                                {student.admission_number}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="badge badge-outline badge-primary">
+                                {student.grade}
+                                {student.section}
+                              </div>
+                            </td>
+                            <td>
+                              <span className="text-sm text-base-content/70">
+                                {student.email}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="flex justify-end space-x-1">
+                                <button
+                                  className="btn btn-sm btn-primary"
+                                  onClick={() => handleViewStudent(student)}
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-secondary"
+                                  onClick={() => handleEditStudent(student)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-error"
+                                  onClick={() => handleDeleteStudent(student)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="hero bg-base-200 rounded-lg">
+                    <div className="hero-content text-center py-16">
+                      <div className="max-w-md">
+                        <Search className="w-24 h-24 text-base-content/20 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-base-content mb-2">
+                          {debouncedSearchTerm ||
+                          selectedGrade ||
+                          selectedSection
+                            ? "No students found"
+                            : "No students yet"}
+                        </h3>
+                        <p className="text-base-content/70">
+                          {debouncedSearchTerm ||
+                          selectedGrade ||
+                          selectedSection
+                            ? "Try adjusting your search criteria or filters."
+                            : "Students will appear here once they are added to the system."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Pagination */}
+                {pagination.totalPages > 1 && (
+                  <div className="flex justify-center mt-6">
+                    <div className="join">
+                      <button
+                        className="join-item btn"
+                        onClick={() =>
+                          handlePageChange(pagination.currentPage - 1)
+                        }
+                        disabled={!pagination.hasPrev}
+                      >
+                        Previous
+                      </button>
+                      <button className="join-item btn btn-primary">
+                        {pagination.currentPage}
+                      </button>
+                      <button
+                        className="join-item btn"
+                        onClick={() =>
+                          handlePageChange(pagination.currentPage + 1)
+                        }
+                        disabled={!pagination.hasNext}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
+          </div>
+        </div>
 
-            {/* Pagination */}
-            {pagination.totalPages > 1 && (
-              <div className="mt-6 flex items-center justify-between">
-                <div className="text-sm text-gray-700">
-                  Page {pagination.currentPage} of {pagination.totalPages}
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={() => handlePageChange(pagination.currentPage - 1)}
-                    disabled={!pagination.hasPrev}
-                  >
-                    Previous
-                  </Button>
+        {/* Student Details Modal */}
+        <StudentDetailsModal
+          show={showDetailsModal}
+          student={selectedStudent}
+          onClose={() => {
+            setShowDetailsModal(false);
+            setSelectedStudent(null);
+          }}
+        />
 
-                  {/* Page Numbers */}
-                  {Array.from(
-                    { length: Math.min(5, pagination.totalPages) },
-                    (_, i) => {
-                      const startPage = Math.max(1, pagination.currentPage - 2);
-                      const pageNumber = startPage + i;
+        {/* Edit Student Modal */}
+        <EditStudentModal
+          show={showEditModal}
+          student={selectedStudent}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedStudent(null);
+          }}
+          onSave={() => {
+            setShowEditModal(false);
+            setSelectedStudent(null);
+            fetchStudents(pagination.currentPage); // Refresh list
+          }}
+        />
 
-                      if (pageNumber > pagination.totalPages) return null;
-
-                      return (
-                        <Button
-                          key={pageNumber}
-                          variant={
-                            pageNumber === pagination.currentPage
-                              ? "primary"
-                              : "secondary"
-                          }
-                          size="small"
-                          onClick={() => handlePageChange(pageNumber)}
-                        >
-                          {pageNumber}
-                        </Button>
-                      );
-                    }
-                  )}
-
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={() => handlePageChange(pagination.currentPage + 1)}
-                    disabled={!pagination.hasNext}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Student Details Modal */}
-      <StudentDetailsModal
-        show={showDetailsModal}
-        student={selectedStudent}
-        onClose={() => {
-          setShowDetailsModal(false);
-          setSelectedStudent(null);
-        }}
-      />
-
-      {/* Edit Student Modal */}
-      <EditStudentModal
-        show={showEditModal}
-        student={selectedStudent}
-        onClose={() => {
-          setShowEditModal(false);
-          setSelectedStudent(null);
-        }}
-        onSave={() => {
-          setShowEditModal(false);
-          setSelectedStudent(null);
-          fetchStudents(pagination.currentPage); // Refresh list
-        }}
-      />
-
-      {/* Delete Student Modal */}
-      <DeleteStudentModal
-        show={showDeleteModal}
-        student={selectedStudent}
-        onClose={() => {
-          setShowDeleteModal(false);
-          setSelectedStudent(null);
-        }}
-        onConfirm={() => {
-          setShowDeleteModal(false);
-          setSelectedStudent(null);
-          fetchStudents(pagination.currentPage); // Refresh list
-        }}
-      />
+        {/* Delete Student Modal */}
+        <DeleteStudentModal
+          show={showDeleteModal}
+          student={selectedStudent}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setSelectedStudent(null);
+          }}
+          onConfirm={() => {
+            setShowDeleteModal(false);
+            setSelectedStudent(null);
+            fetchStudents(pagination.currentPage); // Refresh list
+          }}
+        />
     </Layout>
   );
 }

@@ -1,6 +1,4 @@
-// controllers/classController.js
-// const classModel = require('../models/classModel');
-// import {performanceController} from './performanceController.js';
+
 import { getStudentsForClass, getClassesForTeachers  } from '../models/classModel.js';
 // Get students for a specific class
 export const getStudentsForClasses = async (req, res) => {
