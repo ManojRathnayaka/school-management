@@ -13,10 +13,14 @@ export const getStudentById = async (studentId) => {
         COALESCE(u.first_name, '') as first_name, 
         COALESCE(u.last_name, '') as last_name, 
         COALESCE(u.email, '') as email,
-        'Not Assigned' as class_name,
-        'Not Assigned' as class_teacher
+        COALESCE(c.name, CONCAT(s.grade, s.section)) as class_name,
+        COALESCE(CONCAT(tu.first_name, ' ', tu.last_name), 'Not Assigned') as class_teacher,
+        COALESCE(t.contact_number, 'N/A') as teacher_contact
       FROM students s
       LEFT JOIN users u ON s.user_id = u.user_id
+      LEFT JOIN classes c ON s.class_id = c.class_id
+      LEFT JOIN teachers t ON c.teacher_id = t.teacher_id
+      LEFT JOIN users tu ON t.user_id = tu.user_id
       WHERE s.admission_number = ?`,
       [studentId]
     );
@@ -26,6 +30,9 @@ export const getStudentById = async (studentId) => {
     
     if (rows.length > 0) {
       console.log('   -> Student found:', rows[0].first_name, rows[0].last_name);
+      console.log('   -> Class:', rows[0].class_name);
+      console.log('   -> Teacher:', rows[0].class_teacher);
+      console.log('   -> Teacher Contact:', rows[0].teacher_contact);
       
     } else {
       console.log('   -> No student found with admission number:', studentId);

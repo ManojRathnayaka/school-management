@@ -165,6 +165,11 @@ export default function ParentPortal() {
                   <p className="text-sm text-gray-600 mb-1">Class Teacher</p>
                   <p className="font-bold text-gray-800">{studentInfo.class_teacher || "N/A"}</p>
                 </div>
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                     <p className="text-sm text-gray-600 mb-1">Teacher Contact</p>
+                     <p className="font-bold text-blue-700">{studentInfo.teacher_contact && studentInfo.teacher_contact !== 'N/A' ? `📞 ${studentInfo.teacher_contact}` : 'N/A'}
+                     </p>
+                </div>
                 <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                   <p className="text-sm text-gray-600 mb-1">Date of Birth</p>
                   <p className="font-bold text-gray-800">
