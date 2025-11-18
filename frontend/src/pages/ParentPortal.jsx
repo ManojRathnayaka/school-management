@@ -20,19 +20,22 @@ export default function ParentPortal() {
     setPerformance(null);
     setActivities(null);
 
-    try {
-      // Fetch basic student information
-      const response = await axios.get(
-        `http://localhost:4000/api/parent-portal/student/${studentId}`,
-        { withCredentials: true }
-      );
-      setStudentInfo(response.data);
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Student not found. Please check the Student ID.");
-    } finally {
-      setLoading(false);
-    }
+   try {
+  const response = await axios.get(
+    `http://localhost:4000/api/parent-portal/student/${studentId}`,
+    { withCredentials: true }
+  );
+  setStudentInfo(response.data);
+} catch (err) {
+  console.error(err);
+  if (err.response?.status === 403) {
+    setError("Access denied. You don't have permission to view this student's information.");
+  } else {
+    setError(err.response?.data?.message || "Student not found. Please check the admission number.");
+  }
+} finally {
+  setLoading(false);
+}
   };
 
   const handleCategoryChange = async (category) => {
