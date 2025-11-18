@@ -6,6 +6,9 @@ export const submitScholarship = async (req, res) => {
     res.status(201).json({ message: "Scholarship application submitted successfully" });
   } catch (error) {
     console.error(error);
+    if (error.message === 'Student not found with this admission number') {
+      return res.status(404).json({ message: "Invalid admission number. Please check and try again." });
+    }
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

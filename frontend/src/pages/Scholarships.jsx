@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 
 export default function Scholarships() {
   const [formData, setFormData] = useState({
-    student_id: "",
+    admission_number: "",
     student_name: "",
     father_name: "",
     father_occupation: "",
@@ -39,7 +39,7 @@ export default function Scholarships() {
       alert("Scholarship application submitted successfully!");
       // Reset form
       setFormData({
-        student_id: "",
+        admission_number: "",
         student_name: "",
         father_name: "",
         father_occupation: "",
@@ -93,12 +93,12 @@ export default function Scholarships() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Student ID <span className="text-red-500">*</span>
+                      Student Admission Number <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="student_id"
-                      placeholder="Enter Student ID"
+                      name="admission_number"
+                      placeholder="Enter Admission Number (e.g., ADM2025001)"
                       value={formData.student_id}
                       onChange={handleChange}
                       className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 w-full rounded-lg transition-all"
