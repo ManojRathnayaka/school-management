@@ -11,24 +11,33 @@ export const getStudentInfo = async (req, res) => {
   
   try {
     const { studentId } = req.params;
+    const userRole = req.user.role;
+    const userId = req.user.userId;
+    
     console.log('1. Received Student ID:', studentId);
-    console.log('2. Calling getStudentById function...');
+    console.log('2. User Role:', userRole);
+    console.log('3. User ID:', userId);
+    console.log('4. Calling getStudentById function...');
     
-    const student = await getStudentById(studentId);
+    // Pass userId only if user is a parent (principals can see all)
+    const parentUserId = userRole === 'parent' ? userId : null;
+    const student = await getStudentById(studentId, parentUserId);
     
-    console.log('3. Query completed');
-    console.log('4. Student found:', student ? 'YES' : 'NO');
+    console.log('5. Query completed');
+    console.log('6. Student found:', student ? 'YES' : 'NO');
     
     if (student) {
-      console.log('5. Student data:', JSON.stringify(student, null, 2));
+      console.log('7. Student data:', JSON.stringify(student, null, 2));
     }
     
     if (!student) {
-      console.log('6. Returning 404 - Student not found');
-      return res.status(404).json({ message: "Student not found" });
+      console.log('8. Returning 403 - Access denied or student not found');
+      return res.status(403).json({ 
+        message: "You don't have permission to view this student's information, or the student doesn't exist." 
+      });
     }
     
-    console.log('7. Returning student data to frontend');
+    console.log('9. Returning student data to frontend');
     res.json(student);
     console.log('========================================\n');
   } catch (error) {
@@ -47,10 +56,17 @@ export const getStudentInfo = async (req, res) => {
 export const getStudentPerformance = async (req, res) => {
   try {
     const { studentId } = req.params;
-    const performance = await getPerformanceByStudentId(studentId);
+    const userRole = req.user.role;
+    const userId = req.user.userId;
+    
+    // Pass userId only if user is a parent
+    const parentUserId = userRole === 'parent' ? userId : null;
+    const performance = await getPerformanceByStudentId(studentId, parentUserId);
     
     if (!performance) {
-      return res.status(404).json({ message: "No performance records found" });
+      return res.status(403).json({ 
+        message: "No performance records found or you don't have permission to view this data." 
+      });
     }
     
     res.json(performance);
@@ -63,7 +79,12 @@ export const getStudentPerformance = async (req, res) => {
 export const getStudentActivities = async (req, res) => {
   try {
     const { studentId } = req.params;
-    const activities = await getActivitiesByStudentId(studentId);
+    const userRole = req.user.role;
+    const userId = req.user.userId;
+    
+    // Pass userId only if user is a parent
+    const parentUserId = userRole === 'parent' ? userId : null;
+    const activities = await getActivitiesByStudentId(studentId, parentUserId);
     
     res.json(activities);
   } catch (error) {
