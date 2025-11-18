@@ -1,9 +1,11 @@
 import { pool } from "../config/db.js";
 
-// NEW: Check if parent has access to this student
+// Check if parent has access to this student
 export const checkParentStudentRelationship = async (parentUserId, admissionNumber) => {
+  console.log('🔍 Checking access: parentUserId =', parentUserId, 'admissionNumber =', admissionNumber);
+  
   const [rows] = await pool.query(
-    `SELECT s.student_id 
+    `SELECT s.student_id, sp.parent_id, p.user_id
      FROM students s
      JOIN student_parents sp ON s.student_id = sp.student_id
      JOIN parents p ON sp.parent_id = p.parent_id
@@ -11,6 +13,18 @@ export const checkParentStudentRelationship = async (parentUserId, admissionNumb
     [admissionNumber, parentUserId]
   );
   
+  console.log('🔍 Query result:', rows);
+  console.log('🔍 Has access:', rows.length > 0);
+  
+  return rows.length > 0;
+};
+
+// Check if student exists (separate from access check)
+export const studentExists = async (admissionNumber) => {
+  const [rows] = await pool.query(
+    `SELECT student_id FROM students WHERE admission_number = ?`,
+    [admissionNumber]
+  );
   return rows.length > 0;
 };
 
@@ -20,12 +34,20 @@ export const getStudentById = async (studentId, parentUserId = null) => {
   try {
     console.log('   -> Executing SQL query...');
     
-    // If parentUserId is provided, check relationship first
+    // If parentUserId is provided, check access first
     if (parentUserId) {
+      // First check if student exists at all
+      const exists = await studentExists(studentId);
+      if (!exists) {
+        console.log('   -> Student does not exist');
+        return { error: 'NOT_FOUND' };
+      }
+      
+      // Then check if parent has access
       const hasAccess = await checkParentStudentRelationship(parentUserId, studentId);
       if (!hasAccess) {
         console.log('   -> Access denied: Parent does not have access to this student');
-        return null;
+        return { error: 'ACCESS_DENIED' };
       }
     }
     
@@ -57,14 +79,10 @@ export const getStudentById = async (studentId, parentUserId = null) => {
     
     if (rows.length > 0) {
       console.log('   -> Student found:', rows[0].first_name, rows[0].last_name);
-      console.log('   -> Class:', rows[0].class_name);
-      console.log('   -> Teacher:', rows[0].class_teacher);
-      console.log('   -> Teacher Contact:', rows[0].teacher_contact);
+      return rows[0];
     } else {
-      console.log('   -> No student found with admission number:', studentId);
+      return { error: 'NOT_FOUND' };
     }
-    
-    return rows[0] || null;
   } catch (error) {
     console.error('   -> ERROR in getStudentById:');
     console.error('   -> Error message:', error.message);
@@ -76,12 +94,16 @@ export const getPerformanceByStudentId = async (studentId, parentUserId = null) 
   try {
     console.log('   -> getPerformanceByStudentId called with:', studentId);
     
-    // If parentUserId is provided, check relationship first
+    // If parentUserId is provided, check access first
     if (parentUserId) {
+      const exists = await studentExists(studentId);
+      if (!exists) {
+        return { error: 'NOT_FOUND' };
+      }
+      
       const hasAccess = await checkParentStudentRelationship(parentUserId, studentId);
       if (!hasAccess) {
-        console.log('   -> Access denied: Parent does not have access to this student');
-        return null;
+        return { error: 'ACCESS_DENIED' };
       }
     }
     
@@ -113,12 +135,16 @@ export const getActivitiesByStudentId = async (studentId, parentUserId = null) =
   try {
     console.log('   -> getActivitiesByStudentId called with:', studentId);
     
-    // If parentUserId is provided, check relationship first
+    // If parentUserId is provided, check access first
     if (parentUserId) {
+      const exists = await studentExists(studentId);
+      if (!exists) {
+        return { error: 'NOT_FOUND' };
+      }
+      
       const hasAccess = await checkParentStudentRelationship(parentUserId, studentId);
       if (!hasAccess) {
-        console.log('   -> Access denied: Parent does not have access to this student');
-        return { scholarships: [] };
+        return { error: 'ACCESS_DENIED' };
       }
     }
     
