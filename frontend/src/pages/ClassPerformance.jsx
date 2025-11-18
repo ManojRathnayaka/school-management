@@ -1,10 +1,15 @@
-
-
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
 
+// School Branding Colors
+const SCHOOL_BLUE = "#0D47A1";
+const SCHOOL_YELLOW = "#FBC02D";
+
 const ClassPerformance = () => {
+  // ───────────────────────────────────────────────
+  // STATE
+  // ───────────────────────────────────────────────
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
 
@@ -19,13 +24,22 @@ const ClassPerformance = () => {
 
   const [overallScore, setOverallScore] = useState(0);
 
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [updatedByName, setUpdatedByName] = useState(null);
+
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [loadingPerformance, setLoadingPerformance] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Student Photo State
+  const [studentPhoto, setStudentPhoto] = useState("/student_photos/default_user.jpg");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const token = localStorage.getItem("token");
 
-  // Calculate overall score
+  // ───────────────────────────────────────────────
+  // CALCULATE FINAL SCORE
+  // ───────────────────────────────────────────────
   useEffect(() => {
     const a = Number(academicScore) || 0;
     const b = Number(sportsScore) || 0;
@@ -35,23 +49,27 @@ const ClassPerformance = () => {
     setOverallScore(Math.round((a + b + c + d) / 4));
   }, [academicScore, sportsScore, disciplineScore, leadershipScore]);
 
-  // Load teacher classes
+  // ───────────────────────────────────────────────
+  // FETCH CLASSES
+  // ───────────────────────────────────────────────
   useEffect(() => {
-    const fetchClasses = async () => {
+    const loadClasses = async () => {
       try {
         const res = await axios.get("/api/class-performance/classes", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setClasses(res.data || []);
       } catch (err) {
-        console.error("Failed to load classes", err);
-        alert("Failed to load classes.");
+        alert("Failed to load classes");
       }
     };
-    fetchClasses();
+
+    loadClasses();
   }, [token]);
 
-  // Load students for selected class
+  // ───────────────────────────────────────────────
+  // FETCH STUDENTS
+  // ───────────────────────────────────────────────
   useEffect(() => {
     if (!selectedClassId) {
       setStudents([]);
@@ -60,83 +78,115 @@ const ClassPerformance = () => {
       return;
     }
 
-    const fetchStudents = async () => {
+    const loadStudents = async () => {
       setLoadingStudents(true);
+
       try {
         const res = await axios.get(
           `/api/class-performance/classes/${selectedClassId}/students`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         setStudents(res.data || []);
-        setSelectedStudentId("");
-        resetPerformance();
-      } catch (err) {
-        console.error("Failed to load students", err);
-        alert("Failed to load students.");
+      } catch {
+        alert("Failed to load students");
       } finally {
         setLoadingStudents(false);
       }
     };
 
-    fetchStudents();
-  }, [selectedClassId, token]);
+    loadStudents();
+  }, [selectedClassId]);
 
-  // Load performance for selected student
+  // ───────────────────────────────────────────────
+  // FETCH PERFORMANCE + PHOTO
+  // ───────────────────────────────────────────────
   useEffect(() => {
     if (!selectedClassId || !selectedStudentId) {
       resetPerformance();
       return;
     }
 
-    const fetchPerformance = async () => {
+    const loadPerformance = async () => {
       setLoadingPerformance(true);
+
       try {
         const res = await axios.get(
           `/api/class-performance/classes/${selectedClassId}/students/${selectedStudentId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        if (res.data) {
-          const p = res.data;
+        const p = res.data;
+
+        if (p) {
           setAcademicScore(p.academic_score ?? 0);
           setSportsScore(p.sports_score ?? 0);
           setDisciplineScore(p.discipline_score ?? 0);
           setLeadershipScore(p.leadership_score ?? 0);
           setComments(p.comments ?? "");
-        } else {
-          resetPerformance();
+
+          setLastUpdated(p.updated_at ?? null);
+          setUpdatedByName(p.updated_by_name ?? null);
+
+          loadStudentPhoto(p.admission_number);
         }
-      } catch (err) {
-        console.error("Failed to load performance", err);
-        alert("Failed to load performance.");
+      } catch {
+        alert("Failed to load performance");
       } finally {
         setLoadingPerformance(false);
       }
     };
 
-    fetchPerformance();
-  }, [selectedStudentId, selectedClassId, token]);
+    loadPerformance();
+  }, [selectedStudentId]);
 
-  // Reset sliders
+  // ───────────────────────────────────────────────
+  // DYNAMIC STUDENT PHOTO LOADER
+  // ───────────────────────────────────────────────
+  const loadStudentPhoto = (admission) => {
+    const formats = ["jpg", "jpeg", "png"];
+
+    const tryLoad = (i) => {
+      if (i >= formats.length) {
+        setStudentPhoto("/student_photos/default_user.jpg");
+        return;
+      }
+
+      const path = `/student_photos/${admission}.${formats[i]}`;
+      const img = new Image();
+      img.src = path;
+
+      img.onload = () => setStudentPhoto(path);
+      img.onerror = () => tryLoad(i + 1);
+    };
+
+    tryLoad(0);
+  };
+
+  // ───────────────────────────────────────────────
+  // RESET PERFORMANCE
+  // ───────────────────────────────────────────────
   const resetPerformance = () => {
     setAcademicScore(0);
     setSportsScore(0);
     setDisciplineScore(0);
     setLeadershipScore(0);
     setComments("");
+
+    setLastUpdated(null);
+    setUpdatedByName(null);
+
+    setStudentPhoto("/student_photos/default_user.jpg");
   };
 
-  // Save performance
+  // ───────────────────────────────────────────────
+  // SAVE PERFORMANCE
+  // ───────────────────────────────────────────────
   const handleSave = async (e) => {
     e.preventDefault();
-
-    if (!selectedClassId || !selectedStudentId) {
-      alert("Please select a class and a student");
-      return;
-    }
+    if (!selectedClassId || !selectedStudentId) return alert("Select class and student");
 
     setSaving(true);
-
     try {
       await axios.put(
         `/api/class-performance/classes/${selectedClassId}/students/${selectedStudentId}`,
@@ -147,30 +197,89 @@ const ClassPerformance = () => {
           leadership_score: leadershipScore,
           comments,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("Performance saved successfully!");
+      alert("Saved!");
+      setLastUpdated(new Date().toISOString());
+      setUpdatedByName("You");
     } catch (err) {
-      console.error("Save failed", err);
-      alert("Failed to save performance");
+      alert("Save failed");
     } finally {
       setSaving(false);
     }
   };
 
+  // ───────────────────────────────────────────────
+  // SCORE INPUT COMPONENT
+  // ───────────────────────────────────────────────
+  const ScoreField = ({ label, value, setValue }) => (
+    <div className="mb-6">
+      <p className="font-semibold mb-1 text-gray-700">{label}</p>
+
+      <div className="flex items-center gap-4">
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className="w-20 border rounded-lg px-3 py-2 text-center"
+        />
+
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className="flex-1 accent-blue-600"
+        />
+      </div>
+    </div>
+  );
+
+  // FORMAT LAST UPDATED
+  const formatDateTime = (iso) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    return d.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // ───────────────────────────────────────────────
+  // UI
+  // ───────────────────────────────────────────────
   return (
     <Layout activePage="classPerformance">
-      <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-2xl font-bold mb-6">Class Performance</h2>
+      <div className="bg-white p-8 rounded-lg shadow max-w-4xl mx-auto mt-6">
+
+        {/* HEADER */}
+        <h1
+          className="text-3xl font-bold text-white p-4 mb-6 rounded-lg text-center"
+          style={{ backgroundColor: SCHOOL_BLUE }}
+        >
+          Class Performance
+        </h1>
 
         {/* CLASS & STUDENT SELECT */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex flex-wrap gap-4 mb-10 items-center">
+          
+          {/* Student Photo */}
+          {selectedStudentId && (
+            <img
+              src={studentPhoto}
+              onClick={() => setIsModalOpen(true)}
+              className="w-20 h-20 rounded-full object-cover border-2 shadow cursor-pointer hover:scale-105 transition"
+              alt="Student"
+            />
+          )}
+
           <select
             value={selectedClassId}
             onChange={(e) => setSelectedClassId(e.target.value)}
@@ -187,8 +296,8 @@ const ClassPerformance = () => {
           <select
             value={selectedStudentId}
             onChange={(e) => setSelectedStudentId(e.target.value)}
-            className="border px-4 py-2 rounded w-64"
             disabled={!selectedClassId || loadingStudents}
+            className="border px-4 py-2 rounded w-64"
           >
             <option value="">
               {loadingStudents ? "Loading..." : "Select Student"}
@@ -202,82 +311,79 @@ const ClassPerformance = () => {
           </select>
         </div>
 
-        {/* SLIDERS */}
-        <form onSubmit={handleSave} className="space-y-6 max-w-xl">
+        {/* PERFORMANCE FORM */}
+        <form onSubmit={handleSave}>
+          <ScoreField label="Academic Score" value={academicScore} setValue={setAcademicScore} />
+          <ScoreField label="Sports Score" value={sportsScore} setValue={setSportsScore} />
+          <ScoreField label="Discipline Score" value={disciplineScore} setValue={setDisciplineScore} />
+          <ScoreField label="Leadership Score" value={leadershipScore} setValue={setLeadershipScore} />
 
-          <div>
-            <label className="font-semibold">
-              Academic Score: {academicScore}
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={academicScore}
-              onChange={(e) => setAcademicScore(e.target.value)}
-              className="w-full"
+          {/* COMMENTS */}
+          <div className="mb-6">
+            <p className="font-semibold text-gray-700 mb-2">Comments</p>
+            <textarea
+              className="border w-full rounded-lg p-3 min-h-[120px]"
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              placeholder="Add comments..."
             />
           </div>
 
-          <div>
-            <label className="font-semibold">
-              Sports Score: {sportsScore}
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={sportsScore}
-              onChange={(e) => setSportsScore(e.target.value)}
-              className="w-full"
-            />
-          </div>
+          {/* OVERALL */}
+          <p className="text-xl font-bold mb-4">
+            Overall Score: <span className="text-blue-700">{overallScore}</span>
+          </p>
 
-          <div>
-            <label className="font-semibold">
-              Discipline Score: {disciplineScore}
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={disciplineScore}
-              onChange={(e) => setDisciplineScore(e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          <div>
-            <label className="font-semibold">
-              Leadership Score: {leadershipScore}
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={leadershipScore}
-              onChange={(e) => setLeadershipScore(e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          <textarea
-            value={comments}
-            onChange={(e) => setComments(e.target.value)}
-            placeholder="Add comments"
-            className="border rounded w-full p-2 min-h-[100px]"
-          />
-
-          <p className="font-bold text-lg">Overall Score: {overallScore}</p>
-
+          {/* SAVE BUTTON */}
           <button
             type="submit"
             disabled={saving}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            className="px-6 py-3 rounded-lg text-white font-semibold shadow"
+            style={{ backgroundColor: saving ? "#888" : SCHOOL_BLUE }}
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
         </form>
+
+        {/* LAST UPDATED INFO */}
+        {lastUpdated && (
+          <div
+            className="mt-10 p-4 rounded-lg shadow border"
+            style={{
+              backgroundColor: SCHOOL_YELLOW + "20",
+              borderColor: SCHOOL_YELLOW,
+            }}
+          >
+            <p className="font-bold text-lg text-gray-800">Last Updated</p>
+
+            <p className="text-gray-700 mt-1">
+              <span className="font-semibold">Date & Time:</span>{" "}
+              {formatDateTime(lastUpdated)}
+            </p>
+
+            <p className="text-gray-700">
+              <span className="font-semibold">Updated By:</span>{" "}
+              {updatedByName || "Unknown Teacher"}
+            </p>
+          </div>
+        )}
+
+        {/* PHOTO MODAL */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-white p-4 rounded-xl shadow-xl relative">
+              <img src={studentPhoto} className="max-h-[80vh] rounded-xl" alt="Student" />
+
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded"
+              >
+                ✖
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </Layout>
   );
