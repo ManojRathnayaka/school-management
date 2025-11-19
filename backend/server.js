@@ -8,7 +8,6 @@ import { pool } from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
-import achievementRoutes from "./routes/achievementRoutes.js";
 import hostelApplicationRoutes from "./routes/hostelApplicationRoutes.js";
 import auditoriumRoutes from "./routes/auditoriumRoutes.js";
 import notificationsRoutes from "./routes/notificationsRoutes.js";
@@ -17,7 +16,7 @@ import classRoutes from "./routes/classRoutes.js";
 import scholarshipRoutes from "./routes/scholarshipRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
 import parentPortalRoutes from "./routes/parentPortalRoutes.js";
-// import classPerformanceRoutes from './routes/classPerformanceRoutes.js';
+import academicsportsAchievement from "./routes/academicsportsAchievement.js";
 
 dotenv.config({ quiet: true });
 
@@ -51,7 +50,7 @@ app.use(express.static(join(__dirname, "../frontend/public")));
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/announcements", announcementRoutes);
-app.use("/api/achievements", achievementRoutes);
+app.use("/api/achievements", academicsportsAchievement);
 app.use("/api/auditorium",auditoriumRoutes)
 app.use("/api/approved", auditoriumRoutes);
 app.use("/api/pending", auditoriumRoutes);
