@@ -32,7 +32,7 @@ const ClassPerformance = () => {
   const [saving, setSaving] = useState(false);
 
   // Student Photo State
-  const [studentPhoto, setStudentPhoto] = useState("/student_photos/default_user.jpg");
+  const [studentPhoto, setStudentPhoto] = useState("/src/assets/default_user.jpg");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const token = localStorage.getItem("token");
@@ -128,6 +128,7 @@ const ClassPerformance = () => {
           setLastUpdated(p.updated_at ?? null);
           setUpdatedByName(p.updated_by_name ?? null);
 
+          // ⭐ Load student photo
           loadStudentPhoto(p.admission_number);
         }
       } catch {
@@ -141,18 +142,23 @@ const ClassPerformance = () => {
   }, [selectedStudentId]);
 
   // ───────────────────────────────────────────────
-  // DYNAMIC STUDENT PHOTO LOADER
+  // ⭐ CORRECTED STUDENT PHOTO LOADER (final working)
   // ───────────────────────────────────────────────
   const loadStudentPhoto = (admission) => {
+    if (!admission) {
+      setStudentPhoto("/src/assets/default_user.jpg");
+      return;
+    }
+
     const formats = ["jpg", "jpeg", "png"];
 
     const tryLoad = (i) => {
       if (i >= formats.length) {
-        setStudentPhoto("/student_photos/default_user.jpg");
+        setStudentPhoto("/src/assets/default_user.jpg");
         return;
       }
 
-      const path = `/student_photos/${admission}.${formats[i]}`;
+      const path = `/src/assets/${admission}.${formats[i]}`;
       const img = new Image();
       img.src = path;
 
@@ -176,7 +182,7 @@ const ClassPerformance = () => {
     setLastUpdated(null);
     setUpdatedByName(null);
 
-    setStudentPhoto("/student_photos/default_user.jpg");
+    setStudentPhoto("/src/assets/default_user.jpg");
   };
 
   // ───────────────────────────────────────────────
@@ -211,7 +217,7 @@ const ClassPerformance = () => {
   };
 
   // ───────────────────────────────────────────────
-  // SCORE INPUT COMPONENT
+  // SCORE FIELD COMPONENT
   // ───────────────────────────────────────────────
   const ScoreField = ({ label, value, setValue }) => (
     <div className="mb-6">
@@ -269,7 +275,7 @@ const ClassPerformance = () => {
 
         {/* CLASS & STUDENT SELECT */}
         <div className="flex flex-wrap gap-4 mb-10 items-center">
-          
+
           {/* Student Photo */}
           {selectedStudentId && (
             <img
