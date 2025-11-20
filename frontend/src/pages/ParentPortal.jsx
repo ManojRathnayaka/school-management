@@ -209,7 +209,7 @@ export default function ParentPortal() {
                     <div className="text-3xl mb-2">🏆</div>
                     Sports Performance
                   </button>
-                  <button
+                 {/* <button
                     onClick={() => handleCategoryChange("extracurricular")}
                     className={`p-5 rounded-lg border-2 font-bold transition-all transform hover:scale-105 ${
                       selectedCategory === "extracurricular"
@@ -219,7 +219,7 @@ export default function ParentPortal() {
                   >
                     <div className="text-3xl mb-2">⭐</div>
                     Extracurricular Activities
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
