@@ -7,6 +7,7 @@ export default function ScholarshipList() {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [loading, setLoading] = useState(true);
 
+   //Fetching Applications
   useEffect(() => {
     fetchApplications();
   }, []);
@@ -25,6 +26,7 @@ export default function ScholarshipList() {
       });
   };
 
+  //Approve/Reject Functions
   const handleApprove = (id) => {
     if (!window.confirm("Are you sure you want to approve this scholarship application?")) {
       return;
@@ -100,7 +102,7 @@ export default function ScholarshipList() {
   return (
     <Layout activePage="scholarship-list">
       <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
-        <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-700">
+        <div className="bg-white rounded-xl shadow-lg p-6 ">
           {/* Header with School Colors */}
           <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6 rounded-lg mb-6 shadow-md">
             <h2 className="text-3xl font-bold mb-2">Scholarship Applications</h2>
