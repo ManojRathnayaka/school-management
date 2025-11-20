@@ -1,14 +1,33 @@
 import { Router } from "express";
-import { registerStudent, getStudents, updateStudent, deleteStudent, getStudentParents } from "../controllers/studentController.js";
+import multer from "multer";
+import { 
+  registerStudent, 
+  getStudents, 
+  updateStudent, 
+  deleteStudent, 
+  getStudentParents,
+  bulkRegisterStudents
+} from "../controllers/studentController.js";
 import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+// multer for file uploads
+const upload = multer({ dest: "uploads/" });
 
 router.post(
   "/",
   authenticateJWT,
   authorizeRoles("principal", "teacher"),
   registerStudent
+);
+
+router.post(
+  "/bulk-register",
+  authenticateJWT,
+  authorizeRoles("principal", "teacher"),
+  upload.single("studentCsv"),
+  bulkRegisterStudents
 );
 
 router.get('/',
@@ -34,4 +53,5 @@ router.get('/:studentId/parents',
   authorizeRoles("principal", "teacher"),
   getStudentParents
 );
-export default router; 
+
+export default router;

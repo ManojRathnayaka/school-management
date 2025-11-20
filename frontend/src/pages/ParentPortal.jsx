@@ -5,6 +5,8 @@ import axios from "axios";
 // Component imports
 import Layout from "../components/Layout";
 
+//Component Structure & State Management
+
 export default function ParentPortal() {
   const [studentId, setStudentId] = useState("");            // Stores admission number input
   const [studentInfo, setStudentInfo] = useState(null);      // Stores basic student info

@@ -11,7 +11,7 @@ CREATE TABLE auditorium_bookings (
   status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
   requested_by VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  FOREIGN KEY (requested_by) REFERENCES users(email)
+  FOREIGN KEY (requested_by) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
