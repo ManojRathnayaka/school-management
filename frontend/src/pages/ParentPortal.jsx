@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 
+//Component Structure & State Management
+
 export default function ParentPortal() {
   const [studentId, setStudentId] = useState("");
   const [studentInfo, setStudentInfo] = useState(null);
@@ -10,6 +12,8 @@ export default function ParentPortal() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Fetching Student Information
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,6 +41,8 @@ export default function ParentPortal() {
   setLoading(false);
 }
   };
+
+  // handleCategoryChange - Loading Performance/Activities
 
   const handleCategoryChange = async (category) => {
     setSelectedCategory(category);
@@ -67,6 +73,10 @@ export default function ParentPortal() {
     }
   };
 
+  // Helper Functions
+
+  // Calculate average of all scores
+
   const calculateOverallScore = () => {
     if (!performance) return 0;
     const total =
@@ -77,10 +87,12 @@ export default function ParentPortal() {
     return (total / 4).toFixed(2);
   };
 
+  // Color coding based on score
+  
   const getScoreColor = (score) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-green-600";     // Excellent
+    if (score >= 60) return "text-yellow-600";    // Good
+    return "text-red-600";                         // Needs improvement
   };
 
   const getScoreBgColor = (score) => {
