@@ -1,23 +1,26 @@
+// React imports
 import { useState } from "react";
 import axios from "axios";
+
+// Component imports
 import Layout from "../components/Layout";
 
 //Component Structure & State Management
 
 export default function ParentPortal() {
-  const [studentId, setStudentId] = useState("");
-  const [studentInfo, setStudentInfo] = useState(null);
-  const [performance, setPerformance] = useState(null);
-  const [activities, setActivities] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [studentId, setStudentId] = useState("");            // Stores admission number input
+  const [studentInfo, setStudentInfo] = useState(null);      // Stores basic student info
+  const [performance, setPerformance] = useState(null);      // Stores academic/sports scores
+  const [activities, setActivities] = useState(null);        // Stores scholarship applications
+  const [selectedCategory, setSelectedCategory] = useState("");   // Tracks which tab is active
+  const [loading, setLoading] = useState(false);                 // Loading indicator
+  const [error, setError] = useState("");                         // Error messages
 
-  // Fetching Student Information
 
+   // handleSubmit - Fetching Student Information
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault();      // Prevents page reload
+    setLoading(true);        // Shows loading spinner
     setError("");
     setSelectedCategory("");
     setStudentInfo(null);
@@ -25,25 +28,25 @@ export default function ParentPortal() {
     setActivities(null);
 
    try {
+     // API call to backend with credentials (JWT cookie)
   const response = await axios.get(
     `http://localhost:4000/api/parent-portal/student/${studentId}`,
-    { withCredentials: true }
+    { withCredentials: true }  // Sends JWT cookie for authentication
   );
-  setStudentInfo(response.data);
+  setStudentInfo(response.data); // Store student data in state
 } catch (err) {
   console.error(err);
   if (err.response?.status === 403) {
-    setError("Access denied. You don't have permission to view this student's information.");
+    setError("Access denied. You don't have permission to view this student's information.");    // Parent trying to access another child
   } else {
     setError(err.response?.data?.message || "Student not found. Please check the admission number.");
   }
 } finally {
-  setLoading(false);
+  setLoading(false);     // Hide loading spinner
 }
   };
-
-  // handleCategoryChange - Loading Performance/Activities
-
+   
+  // handleCategoryChange - Loading Performance/Activities 
   const handleCategoryChange = async (category) => {
     setSelectedCategory(category);
     setLoading(true);
@@ -73,10 +76,8 @@ export default function ParentPortal() {
     }
   };
 
-  // Helper Functions
 
   // Calculate average of all scores
-
   const calculateOverallScore = () => {
     if (!performance) return 0;
     const total =
@@ -84,15 +85,14 @@ export default function ParentPortal() {
       parseFloat(performance.sports_score || 0) +
       parseFloat(performance.discipline_score || 0) +
       parseFloat(performance.leadership_score || 0);
-    return (total / 4).toFixed(2);
+    return (total / 4).toFixed(2);  // Returns average rounded to 2 decimals
   };
 
   // Color coding based on score
-  
   const getScoreColor = (score) => {
-    if (score >= 80) return "text-green-600";     // Excellent
-    if (score >= 60) return "text-yellow-600";    // Good
-    return "text-red-600";                         // Needs improvement
+    if (score >= 80) return "text-green-600";    // Excellent
+    if (score >= 60) return "text-yellow-600";   // Good
+    return "text-red-600";                       // Needs improvement
   };
 
   const getScoreBgColor = (score) => {
@@ -103,10 +103,10 @@ export default function ParentPortal() {
 
   return (
     <Layout activePage="parent-portal">
-      <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
+      <div className="bg-base-100">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-700 mb-6">
+          <div className="bg-white rounded-xl p-6   mb-6 ">
             <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6 rounded-lg shadow-md">
               <h2 className="text-3xl font-bold mb-2">Parent Portal</h2>
               <p className="text-blue-100">Mahamaya Girls' College, Kandy</p>
@@ -115,7 +115,7 @@ export default function ParentPortal() {
 
             {/* Student ID Input */}
             <form onSubmit={handleSubmit} className="mt-6">
-              <div className="bg-gradient-to-r from-yellow-50 to-blue-50 p-5 rounded-lg border-l-4 border-yellow-500">
+              <div className="bg-gradient-to-r from-yellow-50 to-blue-50  p-5 rounded-lg  ">
                 <label className="block mb-3 font-bold text-gray-700 flex items-center">
                   <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center mr-3">🔍</span>
                   Enter Student Admission Number
@@ -221,7 +221,7 @@ export default function ParentPortal() {
                     <div className="text-3xl mb-2">🏆</div>
                     Sports Performance
                   </button>
-                 {/* <button
+                  {/*<button
                     onClick={() => handleCategoryChange("extracurricular")}
                     className={`p-5 rounded-lg border-2 font-bold transition-all transform hover:scale-105 ${
                       selectedCategory === "extracurricular"

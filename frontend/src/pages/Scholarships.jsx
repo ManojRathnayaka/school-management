@@ -31,7 +31,8 @@ export default function Scholarships() {
       [name]: type === "checkbox" ? checked : value
     }));
   };
-
+   
+  //handleSubmit - Submitting Application
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -67,16 +68,16 @@ export default function Scholarships() {
   return (
     <Layout activePage="scholarships">
       <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
-        <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border-t-8 border-blue-700">
+        <div className="max-w-4xl mx-auto bg-white  rounded-2xl overflow-hidden ">
           {/* Header Section with School Colors */}
-          <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-8 text-center">
+          <div className="bg-gradient-to-r from-blue-700 to-blue-700 text-white p-8 text-center">
             <h2 className="text-4xl font-bold mb-2">Scholarship Application Form</h2>
             <p className="text-blue-100 text-lg">Mahamaya Girls' College, Kandy</p>
-            <div className="mt-4 h-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 rounded-full"></div>
+            <div className="mt-4 h-2 bg-gradient-to-r from-yellow-500 via-yellow-500 to-yellow-600 rounded-full"></div>
           </div>
 
           <div className="p-8 bg-gradient-to-br from-white to-blue-50">
-            <div className="mb-8 p-5 bg-gradient-to-r from-yellow-50 to-blue-50 border-l-4 border-yellow-500 rounded-lg shadow-sm">
+            <div className="mb-8 p-5 bg-gradient-to-r from-yellow-50 to-blue-50 border-l-4 border-red-500 rounded-lg shadow-sm">
               <p className="text-gray-700 leading-relaxed">
                 <span className="font-bold text-blue-700">📝 Important:</span> Please fill in all the required details accurately. 
                 This information will help us evaluate your application fairly and determine your eligibility for financial assistance.
@@ -85,7 +86,7 @@ export default function Scholarships() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Student Information */}
-              <section className="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-600">
+              <section className="bg-white p-6 rounded-xl shadow-md ">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
                   <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center mr-3 text-xl">👧</span>
                   Student Information
@@ -123,14 +124,14 @@ export default function Scholarships() {
               </section>
 
               {/* Parent Information */}
-              <section className="bg-white p-6 rounded-xl shadow-md border-l-4 border-yellow-500">
+              <section className="bg-white p-6 rounded-xl shadow-md ">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
                   <span className="bg-yellow-100 text-yellow-700 rounded-full w-10 h-10 flex items-center justify-center mr-3 text-xl">👨‍👩‍👧</span>
                   Parent / Guardian Information
                 </h3>
 
                 {/* Father's Information */}
-                <div className="mb-6 p-5 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="mb-6 p-5 bg-white-50 rounded-lg border border-blue-200">
                   <h4 className="text-lg font-bold text-blue-700 mb-4">Father's Details</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -181,11 +182,12 @@ export default function Scholarships() {
                       />
                     </div>
                   </div>
-                </div>
+                
+                <div className="mt-10"></div>
 
                 {/* Mother's Information */}
-                <div className="p-5 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <h4 className="text-lg font-bold text-yellow-700 mb-4">Mother's Details</h4>
+                
+                  <h4 className="text-lg font-bold text-blue-700 mb-4">Mother's Details</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Name</label>
@@ -195,7 +197,7 @@ export default function Scholarships() {
                         placeholder="Mother's Name"
                         value={formData.mother_name}
                         onChange={handleChange}
-                        className="border-2 border-yellow-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 p-3 w-full rounded-lg transition-all bg-white"
+                        className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 w-full rounded-lg transition-all bg-white"
                       />
                     </div>
                     <div>
@@ -206,7 +208,7 @@ export default function Scholarships() {
                         placeholder="Mother's Occupation"
                         value={formData.mother_occupation}
                         onChange={handleChange}
-                        className="border-2 border-yellow-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 p-3 w-full rounded-lg transition-all bg-white"
+                        className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 w-full rounded-lg transition-all bg-white"
                       />
                     </div>
                     <div>
@@ -217,7 +219,7 @@ export default function Scholarships() {
                         placeholder="Monthly Income"
                         value={formData.mother_income}
                         onChange={handleChange}
-                        className="border-2 border-yellow-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 p-3 w-full rounded-lg transition-all bg-white"
+                        className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 w-full rounded-lg transition-all bg-white"
                       />
                     </div>
                     <div>
@@ -228,7 +230,7 @@ export default function Scholarships() {
                         placeholder="Contact Number"
                         value={formData.mother_contact}
                         onChange={handleChange}
-                        className="border-2 border-yellow-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 p-3 w-full rounded-lg transition-all bg-white"
+                        className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 w-full rounded-lg transition-all bg-white"
                       />
                     </div>
                   </div>
@@ -236,7 +238,7 @@ export default function Scholarships() {
               </section>
 
               {/* Medical Challenges */}
-              <section className="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-600">
+              <section className="bg-white p-6 rounded-xl shadow-md">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
                   <span className="bg-red-100 text-red-600 rounded-full w-10 h-10 flex items-center justify-center mr-3 text-xl">🏥</span>
                   Medical or Physical Challenges
@@ -257,14 +259,14 @@ export default function Scholarships() {
               </section>
 
               {/* Extra-Curricular Activities */}
-              <section className="bg-white p-6 rounded-xl shadow-md border-l-4 border-yellow-500">
+              <section className="bg-white p-6 rounded-xl shadow-md ">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
                   <span className="bg-green-100 text-green-600 rounded-full w-10 h-10 flex items-center justify-center mr-3 text-xl">⭐</span>
                   Extra-Curricular Involvement
                 </h3>
 
                 <div className="space-y-5">
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="bg-white-50 p-4 rounded-lg border border-blue-200">
                     <label className="block text-sm font-bold text-blue-700 mb-2">🏆 Sports</label>
                     <input
                       type="text"
@@ -276,29 +278,29 @@ export default function Scholarships() {
                     />
                   </div>
 
-                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                    <label className="block text-sm font-bold text-yellow-700 mb-2">🤝 Social Works</label>
+                  <div className="bg-white-50 p-4 rounded-lg border border-blue-200">
+                    <label className="block text-sm font-bold text-blue-700 mb-2">🤝 Social Works</label>
                     <input
                       type="text"
                       name="social_works"
                       placeholder="List any social work or community service"
                       value={formData.social_works}
                       onChange={handleChange}
-                      className="border-2 border-yellow-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 p-3 w-full rounded-lg transition-all bg-white"
+                      className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 w-full rounded-lg transition-all bg-white"
                     />
                   </div>
                 </div>
               </section>
 
               {/* Reason for Applying */}
-              <section className="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-600">
+              <section className="bg-white p-6 rounded-xl shadow-md ">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
                   <span className="bg-purple-100 text-purple-600 rounded-full w-10 h-10 flex items-center justify-center mr-3 text-xl">💡</span>
                   Reason for Applying
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                  <label className="flex items-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition-all">
+                  <label className="flex items-center p-4 bg-white-50 rounded-lg border-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition-all">
                     <input
                       type="checkbox"
                       name="reason_financial_need"
@@ -309,7 +311,7 @@ export default function Scholarships() {
                     <span className="ml-3 font-semibold text-gray-700">💰 Financial Need</span>
                   </label>
 
-                  <label className="flex items-center p-4 bg-green-50 rounded-lg border-2 border-green-200 cursor-pointer hover:bg-green-100 transition-all">
+                  <label className="flex items-center p-4 bg-white-50 rounded-lg border-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition-all">
                     <input
                       type="checkbox"
                       name="reason_academic"
@@ -320,7 +322,7 @@ export default function Scholarships() {
                     <span className="ml-3 font-semibold text-gray-700">📖 Academic Excellence</span>
                   </label>
 
-                  <label className="flex items-center p-4 bg-yellow-50 rounded-lg border-2 border-yellow-200 cursor-pointer hover:bg-yellow-100 transition-all">
+                  <label className="flex items-center p-4 bg-white-50 rounded-lg border-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition-all">
                     <input
                       type="checkbox"
                       name="reason_sports"
@@ -331,7 +333,7 @@ export default function Scholarships() {
                     <span className="ml-3 font-semibold text-gray-700">🏆 Sports Achievement</span>
                   </label>
 
-                  <label className="flex items-center p-4 bg-purple-50 rounded-lg border-2 border-purple-200 cursor-pointer hover:bg-purple-100 transition-all">
+                  <label className="flex items-center p-4 bg-white-50 rounded-lg border-2 border-blue-200 cursor-pointer hover:bg-blue-100 transition-all">
                     <input
                       type="checkbox"
                       name="reason_cultural"
@@ -370,7 +372,7 @@ export default function Scholarships() {
             {/* Footer Note */}
             <div className="mt-8 p-5 bg-gradient-to-r from-blue-50 to-yellow-50 rounded-lg border border-blue-200">
               <p className="text-sm text-gray-600 text-center">
-                <span className="font-bold text-blue-700">Note:</span> Your application will be reviewed by the school administration. 
+                <span className="font-bold text-red-700">Note:</span> Your application will be reviewed by the school administration. 
                 You will be notified of the decision via your registered contact information.
               </p>
             </div>
