@@ -41,6 +41,13 @@ export const userAPI = {
 export const studentAPI = {
   registerStudent: (studentData) => api.post("/students", studentData),
   
+  bulkRegisterStudents: (formData) => 
+    api.post("/students/bulk-register", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }),
+
   getStudents: (params = {}) => {
     const { page = 1, limit = 15, search = '', grade = '', section = '' } = params;
     return api.get("/students/", {

@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import fs from "fs";
+import csvParser from "csv-parser";
 import { findUserByEmail, createUser, updateUser, deleteUser } from "../models/userModel.js";
 import { 
   findStudentByAdmissionNumber, 
@@ -10,7 +12,7 @@ import {
   getParentIdsByStudentId,
   deleteStudentParentRelationship,
   deleteStudentOnly,
-  getStudentWithParents  // NEW IMPORT
+  getStudentWithParents
 } from "../models/studentModel.js";
 import { createParent, linkStudentToParent, deleteParentRecord, findParentById } from "../models/parentModel.js";
 import crypto from "crypto";
@@ -333,5 +335,203 @@ export async function getStudentParents(req, res) {
   } catch (err) {
     console.error('Error fetching student with parents:', err);
     res.status(500).json({ message: "Server error" });
+  }
+}
+
+export async function bulkRegisterStudents(req, res) {
+  const filePath = req.file?.path;
+
+  try {
+    if (!filePath) {
+      return res.status(400).json({ message: "CSV file is required" });
+    }
+
+    const results = { successes: [], failures: [] };
+
+    // Parse CSV with BOM handling
+    const stream = fs.createReadStream(filePath).pipe(
+      csvParser({
+        skipEmptyLines: true,
+        trim: true,
+        mapHeaders: ({ header }) => header.replace(/^\uFEFF/, '').trim().replace(/^"|"$/g, ''),
+      })
+    );
+
+    for await (const row of stream) {
+      try {
+        // Normalize headers - handle various formats
+        const getField = (field) => {
+          const variations = {
+            student_first_name: ['student_first_name', 'Student First Name', 'studentFirstName'],
+            student_last_name: ['student_last_name', 'Student Last Name', 'studentLastName'],
+            student_email: ['student_email', 'Student Email', 'studentEmail'],
+            admission_number: ['admission_number', 'Admission Number', 'admissionNumber'],
+            date_of_birth: ['date_of_birth', 'Date of Birth', 'dateOfBirth', 'dob'],
+            grade: ['grade', 'Grade'],
+            section: ['section', 'Section'],
+            address: ['address', 'Address'],
+            parent_first_name: ['parent_first_name', 'Parent First Name', 'parentFirstName'],
+            parent_last_name: ['parent_last_name', 'Parent Last Name', 'parentLastName'],
+            parent_email: ['parent_email', 'Parent Email', 'parentEmail'],
+            contact_number: ['contact_number', 'Contact Number', 'contactNumber', 'phone'],
+          };
+          
+          for (const variant of variations[field] || []) {
+            if (row[variant]) return row[variant].trim();
+          }
+          return null;
+        };
+
+        const student_first_name = getField('student_first_name');
+        const student_last_name = getField('student_last_name');
+        const student_email = getField('student_email');
+        const admission_number = getField('admission_number');
+        const date_of_birth = getField('date_of_birth');
+        const grade = getField('grade');
+        const section = getField('section');
+        const address = getField('address');
+        const parent_first_name = getField('parent_first_name');
+        const parent_last_name = getField('parent_last_name');
+        const parent_email = getField('parent_email');
+        const contact_number = getField('contact_number');
+
+        // Validate required student fields
+        if (!student_first_name || !student_last_name || !student_email || !admission_number) {
+          results.failures.push({
+            admission_number: admission_number || "N/A",
+            student_email: student_email || "N/A",
+            reason: "Missing required student fields",
+          });
+          continue;
+        }
+
+        // Validate required parent fields
+        if (!parent_first_name || !parent_last_name || !parent_email || !contact_number) {
+          results.failures.push({
+            admission_number,
+            student_email,
+            reason: "Missing required parent fields",
+          });
+          continue;
+        }
+
+        // Check if student email already exists
+        const existingStudent = await findUserByEmail(student_email);
+        if (existingStudent) {
+          results.failures.push({ 
+            admission_number, 
+            student_email,
+            reason: "Student email already exists" 
+          });
+          continue;
+        }
+
+        // Check if parent email already exists
+        const existingParent = await findUserByEmail(parent_email);
+        if (existingParent) {
+          results.failures.push({ 
+            admission_number, 
+            student_email,
+            reason: "Parent email already exists" 
+          });
+          continue;
+        }
+
+        // Check if admission number already exists
+        const existingAdmission = await findStudentByAdmissionNumber(admission_number);
+        if (existingAdmission) {
+          results.failures.push({ 
+            admission_number, 
+            student_email,
+            reason: "Admission number already exists" 
+          });
+          continue;
+        }
+
+        // Generate shared password
+        const sharedPassword = crypto
+          .randomBytes(5)
+          .toString("base64")
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .slice(0, 10);
+
+        const passwordHash = await bcrypt.hash(sharedPassword, 10);
+
+        // Create student user
+        const studentUser = await createUser({
+          first_name: student_first_name,
+          last_name: student_last_name,
+          email: student_email,
+          password_hash: passwordHash,
+          role: 'student',
+          must_reset_password: true
+        });
+
+        const studentUserId = studentUser.insertId;
+
+        // Create student record
+        const studentRecord = await createStudent({
+          user_id: studentUserId,
+          admission_number: admission_number,
+          date_of_birth: date_of_birth || null,
+          grade: grade || null,
+          section: section || null,
+          address: address || null
+        });
+
+        const studentId = studentRecord.insertId;
+
+        // Create parent user with the same password
+        const parentUser = await createUser({
+          first_name: parent_first_name,
+          last_name: parent_last_name,
+          email: parent_email,
+          password_hash: passwordHash,
+          role: 'parent',
+          must_reset_password: true
+        });
+
+        const parentUserId = parentUser.insertId;
+
+        // Create parent record
+        const parentRecord = await createParent({
+          user_id: parentUserId,
+          contact_number: contact_number
+        });
+
+        const parentId = parentRecord.insertId;
+
+        // Link student to parent
+        await linkStudentToParent(studentId, parentId);
+
+        results.successes.push({
+          admission_number,
+          student_email,
+          student_first_name,
+          student_last_name,
+          parent_email,
+          parent_first_name,
+          parent_last_name,
+          sharedPassword
+        });
+
+      } catch (rowError) {
+        results.failures.push({
+          admission_number: row.admission_number || "N/A",
+          student_email: row.student_email || "N/A",
+          reason: rowError.message || "Processing failed",
+        });
+      }
+    }
+
+    res.status(200).json(results);
+
+  } catch (err) {
+    console.error("Bulk student registration error:", err);
+    res.status(500).json({ message: "Bulk registration failed" });
+  } finally {
+    if (filePath) {
+      fs.promises.unlink(filePath).catch(console.error);
+    }
   }
 }
