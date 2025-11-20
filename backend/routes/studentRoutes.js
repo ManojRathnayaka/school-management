@@ -6,7 +6,9 @@ import {
   updateStudent, 
   deleteStudent, 
   getStudentParents,
-  bulkRegisterStudents
+  bulkRegisterStudents,
+  resetStudentPassword,
+  resetParentPassword
 } from "../controllers/studentController.js";
 import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
 
@@ -34,7 +36,7 @@ router.get('/',
   authenticateJWT,
   authorizeRoles("principal", "teacher"),
   getStudents
-)
+);
 
 router.put('/:studentId',
   authenticateJWT,
@@ -52,6 +54,18 @@ router.get('/:studentId/parents',
   authenticateJWT,
   authorizeRoles("principal", "teacher"),
   getStudentParents
+);
+
+router.post('/:studentId/reset-password',
+  authenticateJWT,
+  authorizeRoles("principal", "teacher"),
+  resetStudentPassword
+);
+
+router.post('/:studentId/parent/reset-password',
+  authenticateJWT,
+  authorizeRoles("principal", "teacher"),
+  resetParentPassword
 );
 
 export default router;

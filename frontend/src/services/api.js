@@ -65,7 +65,11 @@ export const studentAPI = {
   deleteStudent: (studentId) => api.delete(`/students/${studentId}`),
   
   // NEW: Get student with parent information
-  getStudentParents: (studentId) => api.get(`/students/${studentId}/parents`)
+  getStudentParents: (studentId) => api.get(`/students/${studentId}/parents`),
+  // NEW: Reset student password
+  resetStudentPassword: (studentId) => api.post(`/students/${studentId}/reset-password`),
+  // NEW: Reset parent password
+  resetParentPassword: (studentId) => api.post(`/students/${studentId}/parent/reset-password`)
 };
 
 export const announcementAPI = {

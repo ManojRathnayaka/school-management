@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import fs from "fs";
 import csvParser from "csv-parser";
-import { findUserByEmail, createUser, updateUser, deleteUser } from "../models/userModel.js";
+import { findUserByEmail, createUser, updateUser, deleteUser, updatePassword, resetUserPasswordByAdmin } from "../models/userModel.js";
 import { 
   findStudentByAdmissionNumber, 
   createStudent, 
@@ -533,5 +533,86 @@ export async function bulkRegisterStudents(req, res) {
     if (filePath) {
       fs.promises.unlink(filePath).catch(console.error);
     }
+  }
+}
+
+// Reset student password - FIXED VERSION
+export async function resetStudentPassword(req, res) {
+  try {
+    const { studentId } = req.params;
+    
+    // Check if student exists
+    const student = await findStudentById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Generate new temp password
+    const tempPassword = crypto
+      .randomBytes(5)
+      .toString("base64")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 10);
+    
+    const password_hash = await bcrypt.hash(tempPassword, 10);
+    
+    // Use resetUserPasswordByAdmin instead of updatePassword to set must_reset_password flag
+    await resetUserPasswordByAdmin(student.user_id, password_hash);
+    
+    res.json({ 
+      message: "Student password reset successfully", 
+      tempPassword,
+      studentName: `${student.first_name} ${student.last_name}`,
+      email: student.email
+    });
+  } catch (err) {
+    console.error("Reset student password error:", err);
+    res.status(500).json({ message: "Failed to reset student password" });
+  }
+}
+
+// Reset parent password - FIXED VERSION
+export async function resetParentPassword(req, res) {
+  try {
+    const { studentId } = req.params;
+    
+    // Get student to verify it exists
+    const student = await findStudentById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Get parent information
+    const parentIds = await getParentIdsByStudentId(studentId);
+    if (parentIds.length === 0) {
+      return res.status(404).json({ message: "Parent not found for this student" });
+    }
+
+    const parent = await findParentById(parentIds[0]);
+    if (!parent) {
+      return res.status(404).json({ message: "Parent not found" });
+    }
+
+    // Generate new temp password
+    const tempPassword = crypto
+      .randomBytes(5)
+      .toString("base64")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 10);
+    
+    const password_hash = await bcrypt.hash(tempPassword, 10);
+    
+    // Use resetUserPasswordByAdmin instead of updatePassword to set must_reset_password flag
+    await resetUserPasswordByAdmin(parent.user_id, password_hash);
+    
+    res.json({ 
+      message: "Parent password reset successfully", 
+      tempPassword,
+      parentName: `${parent.first_name} ${parent.last_name}`,
+      email: parent.email
+    });
+  } catch (err) {
+    console.error("Reset parent password error:", err);
+    res.status(500).json({ message: "Failed to reset parent password" });
   }
 }
