@@ -70,7 +70,7 @@ export default function Scholarships() {
       <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
         <div className="max-w-4xl mx-auto bg-white  rounded-2xl overflow-hidden ">
           {/* Header Section with School Colors */}
-          <div className="bg-gradient-to-r from-blue-700 to-blue-700 text-white p-8 text-center">
+          <div className="bg-gradient-to-r from-[#0D47A1] to-[#0D47A1] text-white p-8 text-center">
             <h2 className="text-4xl font-bold mb-2">Scholarship Application Form</h2>
             <p className="text-blue-100 text-lg">Mahamaya Girls' College, Kandy</p>
             <div className="mt-4 h-2 bg-gradient-to-r from-yellow-500 via-yellow-500 to-yellow-600 rounded-full"></div>
