@@ -83,22 +83,22 @@ export default function Sidebar() {
       {/* --- Main Sidebar Container --- */}
       <aside
         className={`
-          fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-white shadow-sm border-r
+          fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-slate-50 shadow-sm border-r border-slate-200
           transition-transform duration-300 ease-in-out
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0
         `}
       >
-        <div className="h-14 flex items-center justify-between px-4 border-b">
+        <div className="h-14 flex items-center justify-between px-4 border-b border-slate-200 bg-slate-100/50">
           <div className="flex items-center gap-3">
             <School className="text-blue-600" />
-            <span className="font-bold text-lg text-gray-800">School Portal</span>
+            <span className="font-bold text-lg text-slate-800">School Portal</span>
           </div>
 
           {/* Close Button - Visible only on Mobile inside the header */}
           <button 
             onClick={() => setIsMobileOpen(false)}
-            className="md:hidden text-gray-500 hover:text-red-600 p-1"
+            className="md:hidden text-slate-500 hover:text-red-600 p-1"
           >
             <X size={24} />
           </button>
@@ -117,8 +117,8 @@ export default function Sidebar() {
                     className={({ isActive }) =>
                       `flex items-center gap-3 w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-blue-50 text-blue-700 shadow-sm"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                          ? "bg-blue-100 text-blue-700 shadow-sm"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       }`
                     }
                   >
