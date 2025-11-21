@@ -619,41 +619,7 @@ export default function HostelApplication() {
             </div>
           </div>
 
-          {/* Application Status Tracker */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Track Your Application</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              After submitting, you can track your application status using your Student ID and email address.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                type="button"
-                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200"
-                onClick={() => alert('Application tracking feature will be available after submission')}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                  </svg>
-                  Track Application
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200"
-                onClick={() => alert('Download application form feature coming soon')}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                  Download Form
-                </div>
-              </button>
-            </div>
-          </div>
+      
 
         </div>
 
