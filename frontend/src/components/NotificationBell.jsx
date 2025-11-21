@@ -25,16 +25,20 @@ const NotificationBell = () => {
     }
   };
 
-  const markAsRead = async (id) => {
-    try {
-      await axios.put(`/api/notifications/read/${id}/read`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNotifications(notifications.filter((n) => n.id !== id));
-    } catch (err) {
-      console.error("Failed to mark notification as read", err);
-    }
-  };
+ const markAsRead = async (id) => {
+  try {
+    await axios.put(`/api/notifications/read/${id}`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setNotifications(notifications.filter((n) => n.id !== id));
+
+    setOpen(false);   // 🔥 FIX — close dropdown
+  } catch (err) {
+    console.error("Failed to mark notification as read", err);
+  }
+};
+
 
   useEffect(() => {
     fetchNotifications();
@@ -49,16 +53,31 @@ const NotificationBell = () => {
       >
         <BellIcon />
         {notifications.length > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5">
-            {notifications.length}
-          </span>
+          
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white"></span>
+          // <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5">
+          //   {notifications.length}
+          // </span>
         )}
       </button>
 
       {/* Dropdown panel */}
       {open && (
         <div className="absolute right-0 mt-2 w-64 bg-white border rounded shadow z-10">
-          <h4 className="font-bold p-2 border-b">Notifications</h4>
+          {/* HEADER WITH CLOSE BUTTON */}
+    <div className="flex justify-between items-center p-2 border-b">
+      <h4 className="font-bold">Notifications</h4>
+
+      {/* 🔥 CLOSE BUTTON */}
+      <button
+        onClick={() => setOpen(false)}
+        className="text-gray-500 hover:text-gray-700 text-xl leading-none"
+      >
+        ×
+      </button>
+    </div>
+
+          {/* <h4 className="font-bold p-2 border-b">Notifications</h4> */}
           {notifications.length === 0 ? (
             <p className="p-2 text-gray-500">No notifications</p>
           ) : (

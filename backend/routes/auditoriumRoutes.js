@@ -30,13 +30,22 @@ router.get("/pending",
     handleGetPendingBookings);
 
 router.put("/:id/approve",
-   authenticateJWT, 
-   authorizeRoles("principal"), (req, res) =>
-  handleUpdateBookingStatus({ ...req, body: { status: "approved" } }, res)
+  authenticateJWT,
+  authorizeRoles("principal"),
+  (req, res) => {
+    // 🔥 FIXED: do not replace req object
+    req.body.status = "approved";
+    handleUpdateBookingStatus(req, res);
+  }
 );
-router.put("/:id/reject", 
-  authenticateJWT, authorizeRoles("principal"), (req, res) =>
-  handleUpdateBookingStatus({ ...req, body: { status: "rejected", reason: req.body.reason } }, res)
+router.put("/:id/reject",
+  authenticateJWT,
+  authorizeRoles("principal"),
+  (req, res) => {
+    // 🔥 FIXED
+    req.body.status = "rejected";
+    handleUpdateBookingStatus(req, res);
+  }
 );
   
 

@@ -124,39 +124,53 @@ export async function handleGetPendingBookings(req, res) {
 export async function handleUpdateBookingStatus(req, res) {
   const { id } = req.params;
   const { status, reason } = req.body;
+
   try {
-    // Always fetch the booking so booking.event_name and booking.event_date are defined
+    // Fetch booking
     const [rows] = await pool.query(
       "SELECT requested_by, event_name, event_date FROM auditorium_bookings WHERE id = ?",
       [id]
     );
+
     if (rows.length === 0) {
       return res.status(404).json({ message: "Booking not found" });
     }
+
     const booking = rows[0];
 
-    // Look up the teacher’s numeric ID in the users table
-    const [userRows] = await pool.query(
-      "SELECT id FROM auditorium_bookings WHERE requested_by = ?",
+    // 🔥 FIXED: lookup teacher in USERS table, not bookings
+    const [[user]] = await pool.query(
+      "SELECT user_id FROM users WHERE email = ?",
       [booking.requested_by]
     );
-    if (userRows.length === 0) {
-      throw new Error("No user found with email " + booking.requested_by);
-    }
-    const teacherId = userRows[0].id;
 
-    // Update the booking’s status (and rejection reason if provided)
+    if (!user) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    const teacherId = user.user_id;
+
+    // Update booking
     await updateBookingStatus(id, status, reason);
 
-    // Build a notification message for approvals or rejections
+    // Notification message
     let message = "";
+
+    const formattedDate = new Date(booking.event_date)
+  .toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+
+
     if (status === "approved") {
-      message = `Your booking '${booking.event_name}' on ${booking.event_date} has been approved`;
+      message = `Your booking '${booking.event_name}' on ${formattedDate} has been approved.`;
     } else if (status === "rejected") {
-      message = `Your booking '${booking.event_name}' on ${booking.event_date} was rejected`;
+      message = `Your booking '${booking.event_name}' on ${formattedDate} was rejected.`;
     }
 
-    // Insert a notification if there is a message
+    // Save notification
     if (message) {
       await pool.query(
         "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
@@ -165,6 +179,7 @@ export async function handleUpdateBookingStatus(req, res) {
     }
 
     res.json({ message: `Booking ${status}` });
+
   } catch (err) {
     console.error("Error updating booking status:", err);
     res.status(500).json({ message: "Server error" });
