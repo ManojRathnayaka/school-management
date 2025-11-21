@@ -17,6 +17,8 @@ import scholarshipRoutes from "./routes/scholarshipRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
 import parentPortalRoutes from "./routes/parentPortalRoutes.js";
 import academicsportsAchievement from "./routes/academicsportsAchievement.js";
+import hostelRoutes from "./routes/hostel_routes.js";
+
 
 dotenv.config({ quiet: true });
 
@@ -61,6 +63,7 @@ app.use('/api/classes', classRoutes);
 
 app.use('/api/scholarships', scholarshipRoutes);
 app.use("/api/parent-portal", parentPortalRoutes);
+app.use("/api/hostels", hostelRoutes);
 app.use("/api/hostel-applications", hostelApplicationRoutes);
 
 app.get("/api/health", (req, res) => {

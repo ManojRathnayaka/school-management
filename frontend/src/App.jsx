@@ -77,8 +77,8 @@ function App() {
             <Route path="/auditorium-booking-principal" element={<ProtectedRoute allowedRoles={['principal']}><PrincipalAuditoriumManagement/></ProtectedRoute>}/>
             <Route path="/scholarship-list" element={<ProtectedRoute allowedRoles={['principal']}><ScholarshipList/></ProtectedRoute>}/>
             <Route path="/class-performance" element={<ProtectedRoute allowedRoles={['teacher']}><ClassPerformance/></ProtectedRoute>}/>
-            <Route path="/hostal-application" element={<HostelApplication />} />
-            <Route path="/HostelAdmin" element={<AdminDashboard />} />
+            <Route path="/hostal-application" element={<ProtectedRoute allowedRoles={['parent','student']}><HostelApplication/></ProtectedRoute>} />
+            <Route path="/HostelAdmin" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><AdminDashboard /></ProtectedRoute>} />
             <Route path="/Academic&sportsachiv" element={<AchievementsSystem />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

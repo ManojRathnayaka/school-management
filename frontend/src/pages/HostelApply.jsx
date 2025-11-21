@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
+import axios from "axios";
+import Layout from "../components/Layout";
 
 export default function HostelApplication() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentUser] = useState({ role: "student", name: "John Doe" }); // Simulate auth context
   const [formData, setFormData] = useState({
     // Personal Information
     first_name: "",
@@ -42,12 +43,22 @@ export default function HostelApplication() {
   });
 
   const [errors, setErrors] = useState({});
-  const [availableHostels] = useState([
-    { id: "1", name: "Boys Hostel A", capacity: 200, available: 45 },
-    { id: "2", name: "Boys Hostel B", capacity: 180, available: 23 },
-    { id: "3", name: "Girls Hostel A", capacity: 150, available: 67 },
-    { id: "4", name: "Girls Hostel B", capacity: 120, available: 34 }
-  ]);
+  const [availableHostels, setAvailableHostels] = useState([]);
+
+  useEffect(() => {
+    const fetchHostels = async () => {
+      try {
+        const res = await axios.get("/api/hostels");
+
+        if (res.data.success) {
+          setAvailableHostels(res.data.data); 
+        }
+      } catch (err) {
+        console.error("Error fetching hostels:", err);
+      } 
+    };
+    fetchHostels();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -162,6 +173,7 @@ export default function HostelApplication() {
   };
 
   return (
+    <Layout>
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -321,52 +333,6 @@ export default function HostelApplication() {
               </div>
             </div>
           </div>
-          {/*
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Year *</label>
-                <select
-                  name="year"
-                  value={formData.year}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Year</option>
-                  <option value="1">1st Year</option>
-                  <option value="2">2nd Year</option>
-                  <option value="3">3rd Year</option>
-                  <option value="4">4th Year</option>
-                </select>
-                {errors.year && <p className="text-red-500 text-sm mt-1">{errors.year}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
-                <input
-                  type="text"
-                  name="department"
-                  value={formData.department}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Computer Science"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.department && <p className="text-red-500 text-sm mt-1">{errors.department}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Current CGPA</label>
-                <input
-                  type="number"
-                  name="cgpa"
-                  value={formData.cgpa}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  min="0"
-                  max="4"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          </div> */}
 
           {/* Guardian Information */}
           <div className="bg-white rounded-lg shadow-sm p-6">
@@ -439,46 +405,14 @@ export default function HostelApplication() {
                 >
                   <option value="">Select Hostel</option>
                   {availableHostels.map(hostel => (
-                    <option key={hostel.id} value={hostel.id}>
-                      {hostel.name} (Available: {hostel.available}/{hostel.capacity})
-                    </option>
+                    <option key={hostel.hostel_id} value={hostel.hostel_id}>
+                    {hostel.name}
+                  </option>
+
                   ))}
                 </select>
                 {errors.hostel_id && <p className="text-red-500 text-sm mt-1">{errors.hostel_id}</p>}
               </div>
-
-              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Room Type *</label>
-                  <select
-                    name="roomType"
-                    value={formData.roomType}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Room Type</option>
-                    <option value="single">Single Room</option>
-                    <option value="double">Double Room</option>
-                    <option value="triple">Triple Room</option>
-                  </select>
-                  {errors.roomType && <p className="text-red-500 text-sm mt-1">{errors.roomType}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Meal Plan</label>
-                  <select
-                    name="mealPlan"
-                    value={formData.mealPlan}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Meal Plan</option>
-                    <option value="full">Full Board (3 meals)</option>
-                    <option value="partial">Partial Board (2 meals)</option>
-                    <option value="none">No Meals</option>
-                  </select>
-                </div>
-              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Special Requirements</label>
@@ -737,5 +671,6 @@ export default function HostelApplication() {
         </div>
       </div>
     </div>
+    </Layout>
   );
 }

@@ -11,6 +11,7 @@ const sidebarConfig = {
     { path: "Academic&sportsachiv", label: "Achievements" },
     { path: "/auditorium-booking-principal", label: "Auditorium Booking" },
     { path: "/scholarship-list", label: "Scholarship Management" },
+    { path: "/HostelAdmin", label: "Hostel management" },
   ],
   [USER_ROLES.TEACHER]: [
     { path: "/student-registration", label: "Student Registration" },
@@ -18,9 +19,10 @@ const sidebarConfig = {
     { path: "/Academic&sportsachiv", label: "Achievements" },
     { path: "/auditorium-booking", label: "Auditorium Booking" },
     { path: "/class-performance", label: "Class Performance"},
+    { path: "/HostelAdmin", label: "Hostel management" },
   ],
   [USER_ROLES.STUDENT]: [
-    { path: "Academic&sportsachiv", label: "Achievements" },
+    { path: "/Academic&sportsachiv", label: "Achievements" },
     { path: "/scholarships", label: "Scholarships" },
     { path: "/hostal-application", label: "Hostel Application" },
   ],
