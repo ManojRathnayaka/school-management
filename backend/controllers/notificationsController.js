@@ -2,7 +2,9 @@ import { getUnreadNotifications,markNotificationRead } from "../models/notificat
 
 export async function handleGetUnreadNotifications(req, res) {
   try {
-    const userId = req.user.id; // set by authenticateJWT
+    // 🔥 FIXED: wrong JWT field
+    const userId = req.user.user_id;
+
     const notifications = await getUnreadNotifications(userId);
     res.json(notifications);
   } catch (err) {
