@@ -175,7 +175,7 @@ export default function ScholarshipList() {
                       <td className="border border-gray-200 px-4 py-3 text-center">
                         <button
                           onClick={() => viewDetails(app)}
-                          className="bg-blue-500 hover:from-blue-500 hover:to-blue-900 text-white px-4 py-2 rounded-lg mr-2 text-sm font-semibold shadow-md transition-all"
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg mr-2 text-sm font-semibold shadow-md transition-all"
                         >
                           View Details
                         </button>

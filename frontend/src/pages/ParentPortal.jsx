@@ -150,7 +150,7 @@ export default function ParentPortal() {
 
           {/* Student Information Card */}
           {studentInfo && (
-            <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border-l-4 border-blue-600">
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-6 ">
               <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
                 <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center mr-3">👧</span>
                 Student Information
