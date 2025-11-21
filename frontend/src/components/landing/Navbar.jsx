@@ -39,7 +39,7 @@ function Navbar() {
               to="hero"
               smooth={true}
               duration={500}
-              className="flex items-center gap-2 text-2xl font-bold text-blue-600 cursor-pointer hover:text-blue-700 transition-colors"
+              className="flex items-center gap-2 text-2xl font-bold text-blue-700 cursor-pointer hover:text-blue-800 transition-colors"
             >
               <School />
               <span>School Portal</span>

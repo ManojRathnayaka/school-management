@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { LogOut } from "lucide-react"; // Import the icon
 import logo from "../assets/logo.png";
 
 export default function Header() {
@@ -95,13 +96,16 @@ export default function Header() {
                     {user.role}
                   </span>
                 </div>
+                
+                {/* Updated Logout Button */}
                 <button
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-slate-50 transition-colors duration-150"
+                  className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-slate-50 transition-colors duration-150"
                   onClick={() => {
                     setProfileOpen(false);
                     logout();
                   }}
                 >
+                  <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </button>
               </div>
