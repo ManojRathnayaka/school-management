@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 
+
 export default function ScholarshipList() {
   const [applications, setApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [loading, setLoading] = useState(true);
 
+   //Fetching Applications
   useEffect(() => {
     fetchApplications();
   }, []);
@@ -25,6 +27,7 @@ export default function ScholarshipList() {
       });
   };
 
+  //Approve/Reject Functions
   const handleApprove = (id) => {
     if (!window.confirm("Are you sure you want to approve this scholarship application?")) {
       return;
@@ -100,9 +103,9 @@ export default function ScholarshipList() {
   return (
     <Layout activePage="scholarship-list">
       <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
-        <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-700">
+        <div className="bg-white rounded-xl shadow-lg p-6 ">
           {/* Header with School Colors */}
-          <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6 rounded-lg mb-6 shadow-md">
+          <div className="bg-[#0D47A1] text-white p-6 rounded-lg mb-6 shadow-md">
             <h2 className="text-3xl font-bold mb-2">Scholarship Applications</h2>
             <p className="text-blue-100">Mahamaya Girls' College, Kandy</p>
           </div>
@@ -139,7 +142,7 @@ export default function ScholarshipList() {
           ) : (
             <div className="overflow-x-auto rounded-lg shadow-md">
               <table className="min-w-full bg-white border border-gray-200">
-                <thead className="bg-gradient-to-r from-blue-700 to-blue-800 text-white">
+                <thead className="bg-[#0D47A1] text-white">
                   <tr>
                     <th className="border border-blue-600 px-4 py-3 text-left font-semibold">ID</th>
                     <th className="border border-blue-600 px-4 py-3 text-left font-semibold">Student Name</th>
@@ -172,7 +175,7 @@ export default function ScholarshipList() {
                       <td className="border border-gray-200 px-4 py-3 text-center">
                         <button
                           onClick={() => viewDetails(app)}
-                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg mr-2 text-sm font-semibold shadow-md transition-all"
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg mr-2 text-sm font-semibold shadow-md transition-all"
                         >
                           View Details
                         </button>
@@ -205,7 +208,7 @@ export default function ScholarshipList() {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
                 {/* Modal Header with School Colors */}
-                <div className="sticky top-0 bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6 flex justify-between items-center rounded-t-xl shadow-lg">
+                <div className="sticky top-0 bg-[#0D47A1] text-white p-6 flex justify-between items-center rounded-t-xl shadow-lg">
                   <div>
                     <h3 className="text-2xl font-bold">Application Details</h3>
                     <p className="text-blue-100 text-sm mt-1">Scholarship ID: {selectedApplication.scholarship_id}</p>

@@ -1,8 +1,21 @@
 import { Router } from "express";
-import { registerStudent, getStudents, updateStudent, deleteStudent, getStudentParents } from "../controllers/studentController.js";
+import multer from "multer";
+import { 
+  registerStudent, 
+  getStudents, 
+  updateStudent, 
+  deleteStudent, 
+  getStudentParents,
+  bulkRegisterStudents,
+  resetStudentPassword,
+  resetParentPassword
+} from "../controllers/studentController.js";
 import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+// multer for file uploads
+const upload = multer({ dest: "uploads/" });
 
 router.post(
   "/",
@@ -11,11 +24,19 @@ router.post(
   registerStudent
 );
 
+router.post(
+  "/bulk-register",
+  authenticateJWT,
+  authorizeRoles("principal", "teacher"),
+  upload.single("studentCsv"),
+  bulkRegisterStudents
+);
+
 router.get('/',
   authenticateJWT,
   authorizeRoles("principal", "teacher"),
   getStudents
-)
+);
 
 router.put('/:studentId',
   authenticateJWT,
@@ -34,4 +55,17 @@ router.get('/:studentId/parents',
   authorizeRoles("principal", "teacher"),
   getStudentParents
 );
-export default router; 
+
+router.post('/:studentId/reset-password',
+  authenticateJWT,
+  authorizeRoles("principal", "teacher"),
+  resetStudentPassword
+);
+
+router.post('/:studentId/parent/reset-password',
+  authenticateJWT,
+  authorizeRoles("principal", "teacher"),
+  resetParentPassword
+);
+
+export default router;

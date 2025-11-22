@@ -1,45 +1,46 @@
-// 🔥 Toast Notification
+// 🔔 Toast Notifications
 import toast, { Toaster } from "react-hot-toast";
-
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
 
+const SCHOOL_BLUE = "#0D47A1";
+const SCHOOL_YELLOW = "#FBC02D";
+
 const PrincipalAuditoriumManagement = () => {
   const [pendingBookings, setPendingBookings] = useState([]);
-
-  // ⭐ Teacher Overview Data
   const [slots, setSlots] = useState([]);
   const [bookings, setBookings] = useState([]);
 
-  // ⭐ Dropdown States
   const [showSlots, setShowSlots] = useState(false);
   const [showAllocations, setShowAllocations] = useState(false);
 
-  // ⭐ Selected Date Bookings
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedBookings, setSelectedBookings] = useState([]);
 
+  // ⭐ New Filter State
+  const [statusFilter, setStatusFilter] = useState({
+    approved: true,
+    pending: true,
+    rejected: true,
+  });
+
   const token = localStorage.getItem("token");
 
-  // =============================
-  // FETCHES
-  // =============================
-
-  // Pending Bookings
+  // ================================
+  // LOADERS
+  // ================================
   const fetchPendingBookings = async () => {
     try {
       const res = await axios.get("/api/auditorium/pending", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPendingBookings(res.data);
-    } catch (err) {
-      console.error("Failed to load pending bookings", err);
-      toast.error("Failed to load pending bookings");
+    } catch {
+      toast.error("Failed to load pending requests");
     }
   };
 
-  // ⭐ Teacher Overview (Slots + Approved List)
   const fetchTeacherOverview = async () => {
     try {
       const slotRes = await axios.get("/api/auditorium/slots", {
@@ -52,9 +53,8 @@ const PrincipalAuditoriumManagement = () => {
 
       setSlots(slotRes.data);
       setBookings(approvedRes.data);
-    } catch (err) {
-      console.error("Teacher overview error", err);
-      toast.error("Failed to load teacher overview");
+    } catch {
+      toast.error("Failed to load auditorium data");
     }
   };
 
@@ -63,36 +63,32 @@ const PrincipalAuditoriumManagement = () => {
     fetchTeacherOverview();
   }, []);
 
-  // =============================
+  // ================================
   // APPROVE / REJECT
-  // =============================
-
+  // ================================
   const handleApprove = async (id) => {
     if (!window.confirm("Approve this booking?")) return;
 
-    const loadingToast = toast.loading("Approving booking...");
-
+    const loader = toast.loading("Approving...");
     try {
       await axios.put(
         `/api/auditorium/${id}/approve`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      toast.success("Booking approved!", { id: loadingToast });
+      toast.success("Approved!", { id: loader });
       fetchPendingBookings();
       fetchTeacherOverview();
-    } catch (err) {
-      console.error("Approve error", err);
-      toast.error("Failed to approve booking", { id: loadingToast });
+    } catch {
+      toast.error("Approval failed", { id: loader });
     }
   };
 
   const handleReject = async (id) => {
-    const reason = window.prompt("Reason for rejection (optional):", "");
+    const reason = window.prompt("Reason (optional):", "");
     if (reason === null) return;
 
-    const loadingToast = toast.loading("Rejecting booking...");
+    const loader = toast.loading("Rejecting...");
 
     try {
       await axios.put(
@@ -100,75 +96,97 @@ const PrincipalAuditoriumManagement = () => {
         { reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      toast.success("Booking rejected!", { id: loadingToast });
+      toast.success("Rejected!", { id: loader });
       fetchPendingBookings();
       fetchTeacherOverview();
-    } catch (err) {
-      console.error("Reject error", err);
-      toast.error("Failed to reject booking", { id: loadingToast });
+    } catch {
+      toast.error("Rejection failed", { id: loader });
     }
   };
+
+  // ================================
+  // FILTER BADGE COMPONENT
+  // ================================
+  const FilterPill = ({ label, statusKey, color }) => (
+    <div
+      onClick={() =>
+        setStatusFilter({ ...statusFilter, [statusKey]: !statusFilter[statusKey] })
+      }
+      className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer border transition ${
+        statusFilter[statusKey]
+          ? "bg-purple-600 text-white"
+          : "bg-white text-purple-600 border-purple-600"
+      }`}
+    >
+      {statusFilter[statusKey] && <span>✔</span>}
+      <span>{label}</span>
+    </div>
+  );
+
+  // FILTER LOGIC
+  const filteredAllocations = bookings.filter((b) => statusFilter[b.status]);
 
   return (
     <Layout activePage="events">
       <Toaster position="top-right" />
 
-      <div className="bg-white p-6 rounded-lg shadow">
+      {/* ============================= */}
+      {/* BIG BLUE HEADER */}
+      {/* ============================= */}
+      <div
+        className="text-white text-3xl font-bold px-6 py-4 rounded-lg shadow mb-6"
+        style={{ backgroundColor: SCHOOL_BLUE }}
+      >
+        Auditorium Management
+      </div>
+
+      <div className="bg-white p-8 rounded-xl shadow-xl">
 
         {/* ============================= */}
-        {/* PENDING REQUESTS (TOP SECTION) */}
+        {/* PENDING REQUESTS */}
         {/* ============================= */}
-
-        <h2 className="text-2xl font-bold mb-6">
-          Pending Auditorium Booking Requests
-        </h2>
+        <h2 className="text-xl font-bold mb-4">Pending Booking Requests</h2>
 
         {pendingBookings.length === 0 ? (
-          <p>No pending requests.</p>
+          <p className="text-gray-600">No pending requests.</p>
         ) : (
-          <table className="w-full text-sm mb-10">
+          <table className="w-full text-sm mb-8">
             <thead>
-              <tr className="bg-gray-100">
-                <th className="px-2 py-1 text-left">Event</th>
-                <th className="px-2 py-1 text-left">Date</th>
-                <th className="px-2 py-1 text-left">Time</th>
-                <th className="px-2 py-1 text-left">Attendees</th>
-                <th className="px-2 py-1 text-left">Requester</th>
-                <th className="px-2 py-1 text-left">Actions</th>
+              <tr className="bg-gray-100 text-gray-700">
+                <th className="px-3 py-2">Event</th>
+                <th className="px-3 py-2">Date</th>
+                <th className="px-3 py-2">Time</th>
+                <th className="px-3 py-2">Attendees</th>
+                <th className="px-3 py-2">Requester</th>
+                <th className="px-3 py-2">Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {pendingBookings.map((b) => (
-                <tr key={b.id}>
-                  <td className="border-t px-2 py-1">{b.event_name}</td>
-
-                  <td className="border-t px-2 py-1">
+                <tr key={b.id} className="border-t">
+                  <td className="px-3 py-2">{b.event_name}</td>
+                  <td className="px-3 py-2">
                     {typeof b.event_date === "string"
                       ? b.event_date.split("T")[0]
                       : new Date(b.event_date).toISOString().split("T")[0]}
                   </td>
-
-                  <td className="border-t px-2 py-1">
-                    {b.start_time?.slice(0, 5)} – {b.end_time?.slice(0, 5)}
+                  <td className="px-3 py-2">
+                    {b.start_time?.slice(0, 5)} - {b.end_time?.slice(0, 5)}
                   </td>
-
-                  <td className="border-t px-2 py-1">{b.attendees}</td>
-
-                  <td className="border-t px-2 py-1">{b.requested_by}</td>
-
-                  <td className="border-t px-2 py-1">
+                  <td className="px-3 py-2">{b.attendees}</td>
+                  <td className="px-3 py-2">{b.requested_by}</td>
+                  <td className="px-3 py-2">
                     <button
                       onClick={() => handleApprove(b.id)}
-                      className="bg-green-500 text-white px-2 py-1 rounded mr-2 hover:bg-green-600"
+                      className="bg-green-600 text-white px-3 py-1 rounded mr-2"
                     >
                       Approve
                     </button>
 
                     <button
                       onClick={() => handleReject(b.id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                      className="bg-red-600 text-white px-3 py-1 rounded"
                     >
                       Reject
                     </button>
@@ -179,128 +197,72 @@ const PrincipalAuditoriumManagement = () => {
           </table>
         )}
 
-        <br/>
-        <br/>
-
         {/* ============================= */}
-        {/* ⭐ NOW BUTTONS BELOW PENDING  */}
+        {/* BUTTONS */}
         {/* ============================= */}
-
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 my-6">
           <button
             onClick={() => setShowSlots(!showSlots)}
-            className="bg-white border px-4 py-2 rounded shadow flex items-center gap-2 hover:bg-gray-100"
+            className="border px-6 py-2 rounded-lg shadow hover:bg-gray-100"
           >
-            Auditorium Availability
+            📅 Auditorium Availability
           </button>
 
           <button
             onClick={() => setShowAllocations(!showAllocations)}
-            className="bg-white border px-4 py-2 rounded shadow flex items-center gap-2 hover:bg-gray-100"
+            className="border px-6 py-2 rounded-lg shadow hover:bg-gray-100"
           >
-            Allocation List
+            📘 Allocation List
           </button>
         </div>
 
         {/* ============================= */}
-        {/* ⭐ DROPDOWN 1: AVAILABILITY   */}
+        {/* ALLOCATION LIST */}
         {/* ============================= */}
+        {showAllocations && (
+          <div className="bg-white border rounded-lg p-4 shadow mb-6">
+            <h3 className="font-bold text-lg mb-4">Allocation List</h3>
 
-        {showSlots && (
-          <div className="bg-white p-4 rounded shadow mb-6">
-            <h3 className="text-lg font-semibold mb-2">Auditorium Availability</h3>
-            {/* <p className="text-sm mb-4 text-gray-600">
-              Green = Available • Red = Booked
-            </p> */}
-
-            <div className="flex flex-wrap gap-2">
-              {slots.map((slot, i) => (
-                <div
-                  key={i}
-                  onClick={() => {
-                    setSelectedDate(slot.date);
-                    setSelectedBookings(slot.bookings || []);
-                  }}
-                  className={`px-4 py-2 rounded cursor-pointer text-sm font-medium ${
-                    slot.status === "booked"
-                      ? "bg-red-200 text-red-800"
-                      : "bg-green-200 text-green-800"
-                  }`}
-                >
-                  {slot.date}
-                </div>
-              ))}
+            {/* ⭐ FILTER BAR */}
+            <div className="flex gap-4 mb-6">
+              <FilterPill label="Approved" statusKey="approved" />
+              <FilterPill label="Pending" statusKey="pending" />
+              <FilterPill label="Rejected" statusKey="rejected" />
             </div>
 
-            {selectedDate && (
-              <div className="mt-4">
-                <h4 className="font-semibold mb-2">
-                  Bookings on {selectedDate}
-                </h4>
-
-                {selectedBookings.length === 0 ? (
-                  <p className="text-gray-500">No bookings.</p>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {selectedBookings.map((b, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-red-100 text-red-700 px-3 py-1 rounded"
-                      >
-                        {b.start_time.slice(0, 5)} – {b.end_time.slice(0, 5)}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ============================= */}
-        {/* ⭐ DROPDOWN 2: ALLOCATION LIST */}
-        {/* ============================= */}
-
-        {showAllocations && (
-          <div className="bg-white p-4 rounded shadow mb-6">
-            <h3 className="text-lg font-semibold mb-2">Auditorium Allocation List</h3>
-
+            {/* ⭐ TABLE */}
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="px-2 py-1 text-left">Event</th>
-                  <th className="px-2 py-1 text-left">Date</th>
-                  <th className="px-2 py-1 text-left">Time</th>
-                  <th className="px-2 py-1 text-left">Attendees</th>
-                  <th className="px-2 py-1 text-left">Requester</th>
-                  <th className="px-2 py-1 text-left">Status</th>
+                  <th className="px-3 py-2 text-left">Event</th>
+                  <th className="px-3 py-2 text-left">Date</th>
+                  <th className="px-3 py-2 text-left">Time</th>
+                  <th className="px-3 py-2 text-left">Attendees</th>
+                  <th className="px-3 py-2 text-left">Requester</th>
+                  <th className="px-3 py-2 text-left">Status</th>
                 </tr>
               </thead>
 
               <tbody>
-                {bookings.map((b) => (
-                  <tr key={b.id}>
-                    <td className="border-t px-2 py-1">{b.event_name}</td>
+                {filteredAllocations.map((b) => (
+                  <tr key={b.id} className="border-t">
+                    <td className="px-3 py-2">{b.event_name}</td>
 
-                    <td className="border-t px-2 py-1">
-                      {typeof b.event_date === "string"
-                        ? b.event_date.split("T")[0]
-                        : new Date(b.event_date)
-                            .toISOString()
-                            .split("T")[0]}
+                    <td className="px-3 py-2">
+                      {b.event_date?.split("T")[0]}
                     </td>
 
-                    <td className="border-t px-2 py-1">
-                      {b.start_time?.slice(0, 5)} -
-                      {b.end_time?.slice(0, 5)}
+                    <td className="px-3 py-2">
+                      {b.start_time?.slice(0, 5)} – {b.end_time?.slice(0, 5)}
                     </td>
 
-                    <td className="border-t px-2 py-1">{b.attendees}</td>
-                    <td className="border-t px-2 py-1">{b.requested_by}</td>
+                    <td className="px-3 py-2">{b.attendees}</td>
 
-                    <td className="border-t px-2 py-1">
+                    <td className="px-3 py-2">{b.requested_by}</td>
+
+                    <td className="px-3 py-2">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        className={`px-2 py-1 rounded-full text-xs font-bold ${
                           b.status === "approved"
                             ? "bg-green-200 text-green-800"
                             : b.status === "pending"
@@ -308,12 +270,19 @@ const PrincipalAuditoriumManagement = () => {
                             : "bg-red-200 text-red-800"
                         }`}
                       >
-                        {b.status.charAt(0).toUpperCase() +
-                          b.status.slice(1)}
+                        {b.status.toUpperCase()}
                       </span>
                     </td>
                   </tr>
                 ))}
+
+                {filteredAllocations.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4 text-gray-600">
+                      No matching records.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

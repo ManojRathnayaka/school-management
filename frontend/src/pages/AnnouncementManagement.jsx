@@ -48,7 +48,7 @@ export default function AnnouncementManagement() {
     setEditingId(null);
     setShowForm(false);
     setError("");
-    setSuccess("");
+    // Don't clear success message here - let it display
   };
 
   const handleSubmit = async (e) => {
@@ -77,6 +77,9 @@ export default function AnnouncementManagement() {
       
       await fetchAnnouncements();
       resetForm();
+      
+      // Auto-dismiss success message after 3 seconds
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err.response?.data?.message || "Operation failed");
     }
@@ -98,6 +101,9 @@ export default function AnnouncementManagement() {
       await announcementAPI.delete(deleteId);
       setSuccess("Announcement deleted successfully!");
       await fetchAnnouncements();
+      
+      // Auto-dismiss success message after 3 seconds
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError("Failed to delete announcement");
     } finally {
