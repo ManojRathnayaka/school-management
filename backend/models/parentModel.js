@@ -50,3 +50,15 @@ export async function deleteParentRecord(parent_id) {
 
   return result;
 }
+
+export async function updateParentInfo(parent_id, parentData) {
+  const { contact_number } = parentData;
+  
+  const [result] = await pool.query(`
+    UPDATE parents
+    SET contact_number = ?
+    WHERE parent_id = ?
+  `, [contact_number, parent_id]);
+  
+  return result;
+}

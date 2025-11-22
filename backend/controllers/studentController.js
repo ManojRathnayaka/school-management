@@ -14,7 +14,7 @@ import {
   deleteStudentOnly,
   getStudentWithParents
 } from "../models/studentModel.js";
-import { createParent, linkStudentToParent, deleteParentRecord, findParentById } from "../models/parentModel.js";
+import { createParent, linkStudentToParent, deleteParentRecord, findParentById, updateParentInfo } from "../models/parentModel.js";
 import crypto from "crypto";
 
 export async function registerStudent(req, res) {
@@ -177,7 +177,7 @@ export async function getStudents(req, res) {
 export async function updateStudent(req, res) {
   try {
     const { studentId } = req.params;
-    const { student } = req.body;
+    const { student, parent } = req.body;
 
     // Validate required fields
     if (!student) {
@@ -188,17 +188,24 @@ export async function updateStudent(req, res) {
       return res.status(400).json({ message: "Student email, name, and admission number are required" });
     }
 
+    // Validate parent fields if provided
+    if (parent) {
+      if (!parent.email || !parent.first_name || !parent.last_name || !parent.contact_number) {
+        return res.status(400).json({ message: "Parent email, name, and contact number are required" });
+      }
+    }
+
     // Get current student data to find user_id
     const currentStudent = await findStudentById(studentId);
     if (!currentStudent) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // Check if email is being changed and if new email already exists
+    // Check if student email is being changed and if new email already exists
     if (student.email !== currentStudent.email) {
       const existingUser = await findUserByEmail(student.email);
       if (existingUser && existingUser.user_id !== currentStudent.user_id) {
-        return res.status(409).json({ message: "Email already exists" });
+        return res.status(409).json({ message: "Student email already exists" });
       }
     }
 
@@ -210,7 +217,7 @@ export async function updateStudent(req, res) {
       }
     }
 
-    // Update user information
+    // Update student user information
     await updateUser(currentStudent.user_id, {
       first_name: student.first_name,
       last_name: student.last_name,
@@ -226,11 +233,45 @@ export async function updateStudent(req, res) {
       address: student.address
     });
 
+    // Update parent information if provided
+    if (parent) {
+      // Get parent information
+      const parentIds = await getParentIdsByStudentId(studentId);
+      
+      if (parentIds.length > 0) {
+        const parentRecord = await findParentById(parentIds[0]);
+        
+        if (parentRecord) {
+          // Check if parent email is being changed and if new email already exists
+          const currentParentUser = await findUserByEmail(parentRecord.email);
+          
+          if (parent.email !== parentRecord.email) {
+            const existingParentUser = await findUserByEmail(parent.email);
+            if (existingParentUser && existingParentUser.user_id !== parentRecord.user_id) {
+              return res.status(409).json({ message: "Parent email already exists" });
+            }
+          }
+
+          // Update parent user information
+          await updateUser(parentRecord.user_id, {
+            first_name: parent.first_name,
+            last_name: parent.last_name,
+            email: parent.email
+          });
+
+          // Update parent contact number
+          await updateParentInfo(parentRecord.parent_id, {
+            contact_number: parent.contact_number
+          });
+        }
+      }
+    }
+
     // Get updated student data
     const updatedStudent = await findStudentById(studentId);
 
     res.status(200).json({
-      message: "Student updated successfully",
+      message: "Student and parent updated successfully",
       student: {
         id: updatedStudent.student_id,
         admission_number: updatedStudent.admission_number,
