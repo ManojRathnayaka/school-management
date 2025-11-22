@@ -39,12 +39,12 @@ const sidebarConfig = {
     { path: "/HostelAdmin", label: "Hostel management" },
   ],
   [USER_ROLES.STUDENT]: [
-    { path: "/achievements", label: "Achievements", icon: Award },
+    { path: "/Academic&sportsachiv", label: "Achievements", icon: Award },
     { path: "/scholarships", label: "Scholarships", icon: GraduationCap },
     { path: "/hostal-application", label: "Hostel Application", icon: Home },
   ],
   [USER_ROLES.PARENT]: [
-    { path: "Academic&sportsachiv", label: "Achievements", icon: Award },
+    { path: "/Academic&sportsachiv", label: "Achievements", icon: Award },
     { path: "/scholarships", label: "Scholarships", icon: GraduationCap },
     { path: "/parent-portal", label: "Parent Portal", icon: UserCheck },
   ],
