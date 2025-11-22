@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import { useAuth } from "../context/AuthContext";
+
+import axios from "axios";
+
 import {
   Trophy,
   Medal,
@@ -21,6 +25,7 @@ import {
   Eye,
   Users,
 } from 'lucide-react';
+
 
 // Achievement card component
 const AchievementCard = ({ achievement, activeTab, isAdmin, handleEdit, handleView, index }) => (
@@ -274,53 +279,59 @@ const AchievementsSystem = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('view'); // 'view', 'edit', 'add'
   const [selectedAchievement, setSelectedAchievement] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
+
   const [academicAchievements, setAcademicAchievements] = useState([]);
   const [sportsAchievements, setSportsAchievements] = useState([]);
   const [extraAchievements, setExtraAchievements] = useState([]);
 
   // New states for Add/Edit
-  const [isEditing, setIsEditing] = useState(false);
+
   const [editingItem, setEditingItem] = useState(null);
 
   const levels = ['School', 'District', 'Provincial', 'National', 'International'];
   const years = ['2024', '2023', '2022', '2021', '2020'];
 
   const mapToMainCategory = (cat) => {
-    const academicList = ['Science', 'Mathematics', 'Literature', 'Art', 'Music', 'Technology'];
+    const academicList = ['Science', 'Mathematics', 'Literature', 'Arts', 'Music', 'Technology'];
     const sportsList = ['Swimming', 'Netball', 'Athletics', 'Basketball', 'Volleyball', 'Tennis', 'Sports'];
     if (academicList.includes(cat)) return 'academic';
     if (sportsList.includes(cat)) return 'sports';
     return 'extra';
   };
 
-  useEffect(() => {
-    fetch("http://localhost:4000/api/achievements/")
-      .then(res => res.json())
-      .then(data => {
-        const updated = data.data.map(a => ({
-          ...a,
-          image: `http://localhost:4000${a.image}`,
-          date: a.date.split("T")[0]
-        }));
+useEffect(() => {
+  axios
+    .get("/api/achievements/")
+    .then(res => {
+      const data = res.data.data;
 
-        const academic = [];
-        const sports = [];
-        const extra = [];
+      const updated = data.map(a => ({
+        ...a,
+        image: `http://localhost:4000${a.image}`,
+        date: a.date.split("T")[0]
+      }));
 
-        updated.forEach(a => {
-          const mainCat = mapToMainCategory(a.category);
-          if (mainCat === 'academic') academic.push(a);
-          else if (mainCat === 'sports') sports.push(a);
-          else extra.push(a);
-        });
+      const academic = [];
+      const sports = [];
+      const extra = [];
 
-        setAcademicAchievements(academic);
-        setSportsAchievements(sports);
-        setExtraAchievements(extra);
-      })
-      .catch(err => console.error("Error loading achievements:", err));
-  }, []);
+      updated.forEach(a => {
+        const mainCat = mapToMainCategory(a.category);
+        if (mainCat === "academic") academic.push(a);
+        else if (mainCat === "sports") sports.push(a);
+        else extra.push(a);
+      });
+
+      setAcademicAchievements(academic);
+      setSportsAchievements(sports);
+      setExtraAchievements(extra);
+    })
+    .catch(err =>
+      console.error("Error loading achievements:", err)
+    );
+}, []);
+
+
 
   const getCurrentAchievements = () => {
     if (activeTab === 'academic') return academicAchievements;
@@ -342,7 +353,7 @@ const AchievementsSystem = () => {
   });
 
   const handleAdd = () => {
-    setIsEditing(true);
+
     setEditingItem(null);
     setFormData({
       title: '',
@@ -366,7 +377,7 @@ const AchievementsSystem = () => {
     setEditingItem(achievement);
     setFormData(achievement);
     setModalType('edit');
-    setIsEditing(true);
+
     setShowModal(true);
   };
 
@@ -391,21 +402,47 @@ const AchievementsSystem = () => {
     records: ''
   });
 
-  const handleSave = () => {
-    if (modalType === 'add') {
-      const newAchievement = { ...formData, id: Date.now() };
-      if (activeTab === 'academic') setAcademicAchievements([...academicAchievements, newAchievement]);
-      else if (activeTab === 'sports') setSportsAchievements([...sportsAchievements, newAchievement]);
-      else setExtraAchievements([...extraAchievements, newAchievement]);
-    } else if (modalType === 'edit') {
-      if (activeTab === 'academic') setAcademicAchievements(academicAchievements.map(item => item.id === editingItem.id ? formData : item));
-      else if (activeTab === 'sports') setSportsAchievements(sportsAchievements.map(item => item.id === editingItem.id ? formData : item));
-      else setExtraAchievements(extraAchievements.map(item => item.id === editingItem.id ? formData : item));
-    }
+const handleSave = async () => {
+  try {
+    // Build correct data object for backend
+    const data = {
+      title: formData.title,
+      student: formData.student,
+      grade: formData.grade,
+      date: formData.date,
+      category: formData.category,
+      description: formData.description,
+      image: formData.image,
+      level: formData.level,
+      position: formData.position,
+      points: formData.points,
+      teacher: formData.teacher
+    };
 
+    console.log("Sending data:", data);
+
+    const res = await axios.post(
+      "http://localhost:4000/api/achievements",
+      data
+    );
+
+    console.log("Saved:", res.data);
+
+    // Add new achievement to UI list
+    setAcademicAchievements((prev) => [...prev, res.data.data]);
+
+    // Close modal
     setShowModal(false);
-    setIsEditing(false);
-  };
+
+    alert("Achievement saved successfully!");
+
+  } catch (err) {
+    console.error("Error saving achievement:", err.response?.data || err);
+    alert("Error: " + (err.response?.data?.message || "Could not save"));
+  }
+};
+
+  const { user } = useAuth();
 
   return (
     <Layout activePage="achievements">
@@ -418,18 +455,18 @@ const AchievementsSystem = () => {
                 <h1 className="text-3xl font-bold text-gray-900">Academic & Sports Achievements</h1>
                 <p className="text-gray-600 mt-1">Mahamaya Girls College, Kandy</p>
               </div>
-
               <div className="flex items-center space-x-4">
-                <label className="flex items-center">
-                  <input type="checkbox" checked={isAdmin} onChange={e => setIsAdmin(e.target.checked)} className="mr-2"/>
-                  <span className="text-sm font-medium">Admin Mode</span>
-                </label>
 
-                {isAdmin && (
-                  <button onClick={handleAdd} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                {(user?.role === "principal" || user?.role === "teacher") && (
+                  <button
+                    onClick={handleAdd}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                  >
                     <Plus className="w-5 h-5 mr-2" /> Add Achievement
                   </button>
                 )}
+
+
               </div>
             </div>
           </div>
@@ -437,16 +474,16 @@ const AchievementsSystem = () => {
 
         {/* Tabs */}
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit mx-4 mt-6">
-          <button onClick={() => setActiveTab('academic')} className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center ${activeTab === 'academic' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}><GraduationCap className="w-5 h-5 mr-2"/> Academic</button>
-          <button onClick={() => setActiveTab('sports')} className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center ${activeTab === 'sports' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}><Trophy className="w-5 h-5 mr-2"/> Sports</button>
-          <button onClick={() => setActiveTab('extra')} className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center ${activeTab === 'extra' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}><Star className="w-5 h-5 mr-2"/> Extra</button>
+          <button onClick={() => setActiveTab('academic')} className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center ${activeTab === 'academic' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}><GraduationCap className="w-5 h-5 mr-2" /> Academic</button>
+          <button onClick={() => setActiveTab('sports')} className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center ${activeTab === 'sports' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}><Trophy className="w-5 h-5 mr-2" /> Sports</button>
+          <button onClick={() => setActiveTab('extra')} className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center ${activeTab === 'extra' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}><Star className="w-5 h-5 mr-2" /> Extra</button>
         </div>
 
         {/* Search and Filters */}
         <div className="flex flex-wrap items-center justify-between px-4 mt-4 space-y-2">
           <div className="flex items-center space-x-2">
-            <Search className="w-5 h-5 text-gray-500"/>
-            <input type="text" placeholder="Search" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            <Search className="w-5 h-5 text-gray-500" />
+            <input type="text" placeholder="Search" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
           </div>
 
           <div className="flex items-center space-x-2">

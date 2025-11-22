@@ -17,10 +17,10 @@ router.post("/apply", applyForHostel);
 router.get("/my/:student_id", getMyApplications);
 
 // Admin views all applications
-router.get("/",authenticateJWT, authorizeRoles("principle","teacher"), getAllApplications);
+router.get("/",authenticateJWT, authorizeRoles("principal","teacher"), getAllApplications);
 
 // Admin approves/rejects application
-router.patch("/:id/status",authenticateJWT,authorizeRoles("principle","teacher"), updateApplicationStatus);
+router.patch("/:id/status",authenticateJWT,authorizeRoles("principal","teacher"), updateApplicationStatus);
 
 
 export default router;
