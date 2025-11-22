@@ -8,7 +8,7 @@ const sidebarConfig = {
     { path: "/student-registration", label: "Student Registration" },
     { path: "/students", label: "Students" },
     { path: "/announcements", label: "Announcements" },
-    { path: "/Academic&sportsachiv", label: "Achievements" },
+    { path: "Academic&sportsachiv", label: "Achievements" },
     { path: "/auditorium-booking-principal", label: "Auditorium Booking" },
     { path: "/scholarship-list", label: "Scholarship Management" },
     { path: "/HostelAdmin", label: "Hostel management" },
