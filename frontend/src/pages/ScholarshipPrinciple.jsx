@@ -2,6 +2,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 
+import {
+  BookOpen,
+  Users,
+  Star,
+  Lightbulb,
+  Trophy,
+  School,
+  HeartPulse,
+  Award,
+  Wallet,
+} from "lucide-react";
+
 
 export default function ScholarshipList() {
   const [applications, setApplications] = useState([]);
@@ -88,49 +100,49 @@ export default function ScholarshipList() {
   };
 
   if (loading) {
-    return (
-      <Layout activePage="scholarship-list">
-        <div className="flex justify-center items-center h-64 bg-gradient-to-br from-blue-50 via-white to-yellow-50">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto mb-4"></div>
-            <p className="text-xl text-blue-700 font-semibold">Loading applications...</p>
-          </div>
-        </div>
-      </Layout>
-    );
+     return (
+          <Layout activePage="scholarship-list">
+            <div className="flex justify-center items-center h-64 bg-gradient-to-br from-blue-50 via-white to-yellow-50">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto mb-4"></div>
+                <p className="text-xl text-blue-700 font-semibold">Loading applications...</p>
+              </div>
+            </div>
+          </Layout>
+        );
   }
 
   return (
     <Layout activePage="scholarship-list">
-      <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
-        <div className="bg-white rounded-xl shadow-lg p-6 ">
+      <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50  p-6">       
           {/* Header with School Colors */}
-          <div className="bg-[#0D47A1] text-white p-6 rounded-lg mb-6 shadow-md">
+          <div className="bg-gradient-to-r from-[#0D47A1] to-blue-800 text-white p-8 rounded-2xl shadow-lg mb-8 border border-blue-900/40">
             <h2 className="text-3xl font-bold mb-2">Scholarship Applications</h2>
             <p className="text-blue-100">Mahamaya Girls' College, Kandy</p>
           </div>
         
           {/* Statistics Bar */}
-          <div className="mb-6 p-5 bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg border-l-4 border-yellow-500 shadow-sm">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Total Applications</p>
+            <div className="mb-6 p-5 bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg border-l-4 border-yellow-500 shadow-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-6">
+              <div className="bg-white shadow-md rounded-xl p-6 border border-gray-200 text-center">
+                <p className="text-gray-500 text-sm font-medium">Total Applications</p>
                 <p className="text-2xl font-bold text-blue-700">{applications.length}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Pending</p>
+              <div className="bg-white shadow-md rounded-xl p-6 border border-gray-200 text-center">
+                <p className="text-gray-500 text-sm font-medium">Pending</p>
                 <p className="text-2xl font-bold text-amber-600">{applications.filter(a => a.status === 'pending').length}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Approved</p>
+              <div className="bg-white shadow-md rounded-xl p-6 border border-gray-200 text-center">
+                <p className="text-gray-500 text-sm font-medium">Approved</p>
                 <p className="text-2xl font-bold text-green-600">{applications.filter(a => a.status === 'approved').length}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Rejected</p>
+              <div className="bg-white shadow-md rounded-xl p-6 border border-gray-200 text-center">
+                <p className="text-gray-500 text-sm font-medium">Rejected</p>
                 <p className="text-2xl font-bold text-red-600">{applications.filter(a => a.status === 'rejected').length}</p>
               </div>
             </div>
-          </div>
+        </div>
+        
 
           {applications.length === 0 ? (
             <div className="text-center py-12 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg">
@@ -141,41 +153,41 @@ export default function ScholarshipList() {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg shadow-md">
-              <table className="min-w-full bg-white border border-gray-200">
-                <thead className="bg-[#0D47A1] text-white">
+              <table className="w-full mt-6 rounded-xl overflow-hidden shadow-lg">
+                <thead className="bg-blue-800 text-white">
                   <tr>
-                    <th className="border border-blue-600 px-4 py-3 text-left font-semibold">ID</th>
-                    <th className="border border-blue-600 px-4 py-3 text-left font-semibold">Student Name</th>
-                    <th className="border border-blue-600 px-4 py-3 text-left font-semibold">Admission No</th>
-                    <th className="border border-blue-600 px-4 py-3 text-left font-semibold">Grade</th>
-                    <th className="border border-blue-600 px-4 py-3 text-left font-semibold">Status</th>
-                    <th className="border border-blue-600 px-4 py-3 text-left font-semibold">Submitted Date</th>
-                    <th className="border border-blue-600 px-4 py-3 text-center font-semibold">Actions</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">ID</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">Student Name</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">Admission No</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">Grade</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">Status</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">Submitted Date</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white text-sm">
                   {applications.map((app, index) => (
-                    <tr key={app.scholarship_id} className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                      <td className="border border-gray-200 px-4 py-3 text-blue-700 font-semibold">{app.scholarship_id}</td>
-                      <td className="border border-gray-200 px-4 py-3 font-medium">
+                    <tr key={app.scholarship_id} className={`hover:bg-blue-50 border-b transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                      <td className=" px-4 py-3 text-blue-700 font-semibold">{app.scholarship_id}</td>
+                      <td className=" px-4 py-3 font-medium">
                         {app.first_name} {app.last_name}
                       </td>
-                      <td className="border border-gray-200 px-4 py-3">{app.admission_number}</td>
-                      <td className="border border-gray-200 px-4 py-3 font-semibold text-blue-600">
+                      <td className=" px-4 py-3">{app.admission_number}</td>
+                      <td className=" px-4 py-3 font-semibold text-blue-600">
                         {app.grade}{app.section}
                       </td>
-                      <td className="border border-gray-200 px-4 py-3">
+                      <td className=" px-4 py-3">
                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(app.status)}`}>
                           {app.status.toUpperCase()}
                         </span>
                       </td>
-                      <td className="border border-gray-200 px-4 py-3 text-gray-700">
+                      <td className=" px-4 py-3 text-gray-700">
                         {new Date(app.created_at).toLocaleDateString()}
                       </td>
-                      <td className="border border-gray-200 px-4 py-3 text-center">
+                      <td className=" py-3 px-4 flex gap-3">
                         <button
                           onClick={() => viewDetails(app)}
-                          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg mr-2 text-sm font-semibold shadow-md transition-all"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
                         >
                           View Details
                         </button>
@@ -183,13 +195,13 @@ export default function ScholarshipList() {
                           <>
                             <button
                               onClick={() => handleApprove(app.scholarship_id)}
-                              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-lg mr-2 text-sm font-semibold shadow-md transition-all"
+                              className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
                             >
                               Approve
                             </button>
                             <button
                               onClick={() => handleReject(app.scholarship_id)}
-                              className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition-all"
+                              className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700"
                             >
                               Reject
                             </button>
@@ -225,7 +237,9 @@ export default function ScholarshipList() {
                   {/* Student Information */}
                   <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-blue-600">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                      <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">📚</span>
+                      <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
+                        <BookOpen className="w-5 h-5" />
+                      </span>
                       Student Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -263,7 +277,9 @@ export default function ScholarshipList() {
                   {/* Parent Information */}
                   <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-yellow-500">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                      <span className="bg-yellow-100 text-yellow-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">👨‍👩‍👧</span>
+                      <span className="bg-yellow-100 text-yellow-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
+                         <Users className="w-5 h-5" />
+                      </span>
                       Parent/Guardian Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -321,7 +337,9 @@ export default function ScholarshipList() {
                   {/* Medical Challenges */}
                   <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-blue-600">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                      <span className="bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">🏥</span>
+                      <span className="bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
+                        <HeartPulse className="w-5 h-5" />
+                      </span>
                       Medical or Physical Challenges
                     </h4>
                     <div className="bg-gray-50 p-4 rounded-lg">
@@ -332,7 +350,9 @@ export default function ScholarshipList() {
                   {/* Extra-Curricular Activities */}
                   <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-yellow-500">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                      <span className="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">⭐</span>
+                      <span className="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
+                        <Star className="w-5 h-5" />
+                      </span>
                       Extra-Curricular Involvement
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -350,28 +370,30 @@ export default function ScholarshipList() {
                   {/* Reasons for Applying */}
                   <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-blue-600">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                      <span className="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">💡</span>
+                      <span className="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
+                         <Lightbulb className="w-5 h-5" />
+                      </span>
                       Reasons for Applying
                     </h4>
                     <div className="flex flex-wrap gap-3 mb-4">
                       {selectedApplication.reason_financial_need && (
-                        <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
-                          💰 Financial Need
+                        <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md flex items-center gap-2">
+                          <Wallet className="w-4 h-4" /> Financial Need
                         </span>
                       )}
                       {selectedApplication.reason_academic && (
-                        <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
-                          📖 Academic Excellence
+                        <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md items-center gap-2">
+                          <School className="w-4 h-4" /> Academic Excellence
                         </span>
                       )}
                       {selectedApplication.reason_sports && (
-                        <span className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
-                          🏆 Sports Achievement
+                        <span className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md items-center gap-2">
+                          <Trophy className="w-4 h-4" /> Sports Achievement
                         </span>
                       )}
                       {selectedApplication.reason_cultural && (
-                        <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
-                          🎭 Cultural/Arts Achievement
+                        <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md items-center gap-2">
+                          <Award className="w-4 h-4" /> Cultural/Arts Achievement
                         </span>
                       )}
                     </div>
@@ -404,7 +426,7 @@ export default function ScholarshipList() {
               </div>
             </div>
           )}
-        </div>
+        
       </div>
     </Layout>
   );
