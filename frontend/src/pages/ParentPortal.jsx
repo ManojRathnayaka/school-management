@@ -1,7 +1,7 @@
            // React imports
 import { useState } from "react";
 import axios from "axios";
-import { Search ,User2 ,Phone ,BookOpen,Trophy,Star,Crown,BarChart3} from "lucide-react";
+import { Search ,User2 ,Phone ,BookOpen,Trophy,Star,Crown,BarChart3,Award } from "lucide-react";
 
 // Component imports
 import Layout from "../components/Layout";
@@ -233,17 +233,17 @@ export default function ParentPortal() {
                     <Trophy className="w-8 h-8 mb-2" />
                     Sports Performance
                   </button>
-                  {/*<button
+                  <button
                     onClick={() => handleCategoryChange("extracurricular")}
-                    className={`p-5 rounded-lg border-2 font-bold transition-all transform hover:scale-105 ${
+                    className={`p-6 rounded-xl border-2 flex flex-col items-center font-semibold transition-all hover:scale-105 ${
                       selectedCategory === "extracurricular"
-                        ? "bg-gradient-to-r from-yellow-600 to-yellow-700 text-white border-yellow-700 shadow-lg"
+                        ? "bg-yellow-700 text-white border-yellow-800 shadow-md"
                         : "bg-white text-yellow-700 border-yellow-300 hover:border-yellow-500"
                     }`}
                   >
-                    <div className="text-3xl mb-2">⭐</div>
-                    Extracurricular Activities
-                  </button> */}
+                    <Award className="w-8 h-8 mb-2"  />
+                    Scholarship Status
+                  </button> 
                 </div>
               </div>
             </div>
@@ -259,8 +259,8 @@ export default function ParentPortal() {
 
           {/* Academic Performance */}
           {selectedCategory === "academic" && performance && !loading && (
-            <div className="bg-white rounded-xl shadow-xl p-8 border border-blue-200">
-              <h3 className="text-3xl font-extrabold text-[#0D47A1] mb-8 flex items-center gap-3">
+            <div className="bg-white rounded-xl shadow-xl p-8 border ">
+              <h3 className="text-2xl font-bold text-[#0D47A1] mb-8 flex items-center gap-3">
                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100 text-[#0D47A1] shadow">
                    <BookOpen className="w-7 h-7" />
                 </div>
@@ -346,7 +346,7 @@ export default function ParentPortal() {
 
           {/* Sports Performance */}
           {selectedCategory === "sports" && performance && !loading && (
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-600">
+            <div className="bg-white rounded-xl shadow-xl p-8 border ">
               <h3 className="text-2xl font-bold text-green-700 mb-5 flex items-center">
                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-700 shadow">
                    <Trophy className="w-7 h-7" />
@@ -397,12 +397,14 @@ export default function ParentPortal() {
             </div>
           )}
 
-          {/* Extracurricular Activities */}
+          {/* Scholarship Status */}
           {selectedCategory === "extracurricular" && activities && !loading && (
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-600">
+            <div className="bg-white rounded-xl shadow-xl p-8 border">
               <h3 className="text-2xl font-bold text-yellow-700 mb-5 flex items-center">
-                <span className="bg-yellow-100 text-yellow-700 rounded-full w-10 h-10 flex items-center justify-center mr-3">⭐</span>
-                Extracurricular Activities
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-700 shadow">
+                   <Award className="w-8 h-8 mb-2"  />
+                 </div>
+                Scholarship Status
               </h3>
 
               {activities.scholarships && activities.scholarships.length > 0 ? (
@@ -414,7 +416,7 @@ export default function ParentPortal() {
                     >
                       <div className="flex justify-between items-start mb-4">
                         <h4 className="text-lg font-bold text-blue-700">
-                          Scholarship Application #{scholarship.scholarship_id}
+                          Scholarship Application No {scholarship.scholarship_id}
                         </h4>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-bold ${
@@ -429,7 +431,7 @@ export default function ParentPortal() {
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      {/*<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         {scholarship.sports && (
                           <div className="bg-white p-4 rounded-lg border border-blue-200">
                             <p className="text-sm text-gray-600 mb-1">🏆 Sports Activities</p>
@@ -460,7 +462,7 @@ export default function ParentPortal() {
                             🎭 Cultural Achievement
                           </span>
                         )}
-                      </div>
+                      </div> */}
 
                       <p className="text-sm text-gray-600">
                         Submitted: {new Date(scholarship.created_at).toLocaleDateString()}
@@ -471,7 +473,7 @@ export default function ParentPortal() {
               ) : (
                 <div className="text-center py-12 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg">
                   <div className="text-6xl mb-4">📋</div>
-                  <p className="text-gray-600 text-lg">No extracurricular activities recorded yet.</p>
+                  <p className="text-gray-600 text-lg">No Scholarship Status yet.</p>
                 </div>
               )}
             </div>
