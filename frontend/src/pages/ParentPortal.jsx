@@ -1,6 +1,16 @@
 // React imports
 import { useState } from "react";
 import axios from "axios";
+import { Search ,  User2,
+  IdCard,
+  GraduationCap,
+  Building2,
+  Phone,
+  Candle,
+  BookOpen,
+  Trophy,
+  Star,
+  FileText,} from "lucide-react";
 
 // Component imports
 import Layout from "../components/Layout";
@@ -29,7 +39,7 @@ export default function ParentPortal() {
 
    try {
      // API call to backend with credentials (JWT cookie)
-  const response = await axios.get(
+    const response = await axios.get(
     `http://localhost:4000/api/parent-portal/student/${studentId}`,
     { withCredentials: true }  // Sends JWT cookie for authentication
   );
@@ -115,24 +125,30 @@ export default function ParentPortal() {
 
             {/* Student ID Input */}
             <form onSubmit={handleSubmit} className="mt-6">
-              <div className="bg-gradient-to-r from-yellow-50 to-blue-50  p-5 rounded-lg  ">
-                <label className="block mb-3 font-bold text-gray-700 flex items-center">
-                  <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center mr-3">🔍</span>
+              <div className="bg-gradient-to-r from-[#FFFDE7] to-[#E3F2FD] p-6 rounded-2xl shadow-md">
+                <label className="font-semibold text-gray-700 flex items-center gap-3 mb-4">
+                  <span className="p-2 bg-blue-100 text-blue-700 rounded-full">
+                     <Search className="w-5 h-5" />
+                  </span>
                   Enter Student Admission Number
                 </label>
-                <div className="flex gap-3">
-                  <input
+                <div className="flex gap-4">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 absolute top-1/2 left-4 -translate-y-1/2 text-gray-500" />
+                    <input
                     type="text"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    placeholder="Enter Student Admission Number (e.g., 20250001)"
-                    className="border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg px-4 py-3 flex-1 transition-all"
+                    placeholder="e.g., ADM2025XXX"
+                    className="w-full border border-gray-300 rounded-xl py-3 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-600"
                     required
                   />
+                  </div>
+                  
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={loading || studentId === ''}
+                    className="bg-gradient-to-r from-blue-700 to-blue-900 text-white px-8 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition disabled:opacity-50"
                   >
                     {loading ? "Searching..." : "Search"}
                   </button>
