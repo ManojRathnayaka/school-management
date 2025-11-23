@@ -118,26 +118,7 @@ export default function ScholarshipList() {
         
           {/* Statistics Bar */}
           <StatisticsBar applications={applications} />
-          {/* <div className="mb-6 p-5 bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg border-l-4 border-yellow-500 shadow-sm">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Total Applications</p>
-                <p className="text-2xl font-bold text-blue-700">{applications.length}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Pending</p>
-                <p className="text-2xl font-bold text-amber-600">{applications.filter(a => a.status === 'pending').length}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Approved</p>
-                <p className="text-2xl font-bold text-green-600">{applications.filter(a => a.status === 'approved').length}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Rejected</p>
-                <p className="text-2xl font-bold text-red-600">{applications.filter(a => a.status === 'rejected').length}</p>
-              </div>
-            </div>
-          </div> */}
+        
 
           {applications.length === 0 ? (
             <div className="text-center py-12 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg">

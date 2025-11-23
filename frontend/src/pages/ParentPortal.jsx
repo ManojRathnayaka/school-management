@@ -1,16 +1,7 @@
 // React imports
 import { useState } from "react";
 import axios from "axios";
-import { Search ,  User2,
-  IdCard,
-  GraduationCap,
-  Building2,
-  Phone,
-  Candle,
-  BookOpen,
-  Trophy,
-  Star,
-  FileText,} from "lucide-react";
+import { Search ,User2 ,Phone ,BookOpen,Trophy,Star,Crown,BarChart3} from "lucide-react";
 
 // Component imports
 import Layout from "../components/Layout";
@@ -166,42 +157,47 @@ export default function ParentPortal() {
 
           {/* Student Information Card */}
           {studentInfo && (
-            <div className="bg-white rounded-xl shadow-lg p-6 mb-6 ">
+            <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100 ">
               <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
-                <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center mr-3">👧</span>
+                <span className="bg-blue-100 text-blue-700 rounded-full w-11 h-11 flex items-center justify-center mr-3 shadow-inner">
+                  <User2 className="w-6 h-6" /> 
+                </span>
                 Student Information
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="bg-yellow-50 p-5 rounded-xl border border-yellow-200">
                   <p className="text-sm text-gray-600 mb-1">Student Name</p>
                   <p className="font-bold text-blue-900 text-lg">
                     {studentInfo.first_name} {studentInfo.last_name}
                   </p>
                 </div>
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <div className="bg-yellow-50 p-5 rounded-xl border border-yellow-200">
                   <p className="text-sm text-gray-600 mb-1">Admission Number</p>
                   <p className="font-bold text-gray-800">{studentInfo.admission_number}</p>
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                   <p className="text-sm text-gray-600 mb-1">Grade & Section</p>
                   <p className="font-bold text-blue-700 text-lg">
+                    
                     {studentInfo.grade}{studentInfo.section}
                   </p>
                 </div>
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <div className="bg-blue-50 p-5 rounded-xl border border border-blue-200">
                   <p className="text-sm text-gray-600 mb-1">Class</p>
                   <p className="font-bold text-gray-800">{studentInfo.class_name || "N/A"}</p>
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                   <p className="text-sm text-gray-600 mb-1">Class Teacher</p>
                   <p className="font-bold text-gray-800">{studentInfo.class_teacher || "N/A"}</p>
                 </div>
-                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                  <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                      <p className="text-sm text-gray-600 mb-1">Teacher Contact</p>
-                     <p className="font-bold text-blue-700">{studentInfo.teacher_contact && studentInfo.teacher_contact !== 'N/A' ? `📞 ${studentInfo.teacher_contact}` : 'N/A'}
+                     <p className="font-bold text-blue-700">
+                      <Phone className="w-4 h-4 text-red-700" />
+                      {studentInfo.teacher_contact && studentInfo.teacher_contact !== 'N/A' ? ` ${studentInfo.teacher_contact}` : 'N/A'}
                      </p>
                 </div>
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                   <p className="text-sm text-gray-600 mb-1">Date of Birth</p>
                   <p className="font-bold text-gray-800">
                     {new Date(studentInfo.date_of_birth).toLocaleDateString()}
@@ -211,30 +207,30 @@ export default function ParentPortal() {
 
               {/* Category Selection */}
               <div className="mt-6">
-                <label className="block mb-3 font-bold text-gray-700">
+                <label className="block mb-3 font-semibold text-gray-700 text-lg">
                   Select Information to View:
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <button
                     onClick={() => handleCategoryChange("academic")}
-                    className={`p-5 rounded-lg border-2 font-bold transition-all transform hover:scale-105 ${
+                    className={`p-6 rounded-xl border-2 flex flex-col items-center font-semibold transition-all hover:scale-105 ${
                       selectedCategory === "academic"
-                        ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-700 shadow-lg"
+                        ? "bg-blue-700 text-white border-blue-800 shadow-md"
                         : "bg-white text-blue-700 border-blue-300 hover:border-blue-500"
                     }`}
                   >
-                    <div className="text-3xl mb-2">📚</div>
+                    <BookOpen className="w-8 h-8 mb-2" />
                     Academic Performance
                   </button>
                   <button
                     onClick={() => handleCategoryChange("sports")}
-                    className={`p-5 rounded-lg border-2 font-bold transition-all transform hover:scale-105 ${
+                    className={`p-6 rounded-xl border-2 flex flex-col items-center font-semibold transition-all hover:scale-105 ${
                       selectedCategory === "sports"
-                        ? "bg-gradient-to-r from-green-600 to-green-700 text-white border-green-700 shadow-lg"
+                        ? "bg-green-700 text-white border-green-800 shadow-md"
                         : "bg-white text-green-700 border-green-300 hover:border-green-500"
                     }`}
                   >
-                    <div className="text-3xl mb-2">🏆</div>
+                    <Trophy className="w-8 h-8 mb-2" />
                     Sports Performance
                   </button>
                   {/*<button
@@ -263,14 +259,16 @@ export default function ParentPortal() {
 
           {/* Academic Performance */}
           {selectedCategory === "academic" && performance && !loading && (
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-600">
-              <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center">
-                <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center mr-3">📖</span>
+            <div className="bg-white rounded-xl shadow-xl p-8 border border-blue-200">
+              <h3 className="text-3xl font-extrabold text-[#0D47A1] mb-8 flex items-center gap-3">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100 text-[#0D47A1] shadow">
+                   <BookOpen className="w-7 h-7" />
+                </div>
                 Academic Performance
               </h3>
 
               {/* Overall Score */}
-              <div className="mb-6 p-6 bg-gradient-to-r from-blue-100 to-yellow-100 rounded-lg border-2 border-blue-300 text-center">
+              <div className="mb-6 p-6 bg-blue-100 rounded-lg border-2 border-blue-300 text-center">
                 <p className="text-gray-700 font-semibold mb-2">Overall Performance Score</p>
                 <p className={`text-5xl font-bold ${getScoreColor(calculateOverallScore())}`}>
                   {calculateOverallScore()}%
@@ -281,12 +279,13 @@ export default function ParentPortal() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className={`p-5 rounded-lg border-2 ${getScoreBgColor(performance.academic_score)}`}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-gray-700">📚 Academic Score</span>
+                    <BookOpen className="w-6 h-6 text-blue-700" />
+                     Academic Score
                     <span className={`text-2xl font-bold ${getScoreColor(performance.academic_score)}`}>
                       {performance.academic_score}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all"
                       style={{ width: `${performance.academic_score}%` }}
@@ -296,7 +295,8 @@ export default function ParentPortal() {
 
                 <div className={`p-5 rounded-lg border-2 ${getScoreBgColor(performance.discipline_score)}`}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-gray-700">⭐ Discipline Score</span>
+                    <Star className="w-6 h-6 text-yellow-600" />
+                      Discipline Score
                     <span className={`text-2xl font-bold ${getScoreColor(performance.discipline_score)}`}>
                       {performance.discipline_score}%
                     </span>
@@ -311,7 +311,8 @@ export default function ParentPortal() {
 
                 <div className={`p-5 rounded-lg border-2 ${getScoreBgColor(performance.leadership_score)}`}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-gray-700">👑 Leadership Score</span>
+                    <Crown className="w-6 h-6 text-yellow-500" />
+                       Leadership Score
                     <span className={`text-2xl font-bold ${getScoreColor(performance.leadership_score)}`}>
                       {performance.leadership_score}%
                     </span>
@@ -347,7 +348,9 @@ export default function ParentPortal() {
           {selectedCategory === "sports" && performance && !loading && (
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-600">
               <h3 className="text-2xl font-bold text-green-700 mb-5 flex items-center">
-                <span className="bg-green-100 text-green-700 rounded-full w-10 h-10 flex items-center justify-center mr-3">🏆</span>
+                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-700 shadow">
+                   <Trophy className="w-7 h-7" />
+                 </div>
                 Sports Performance
               </h3>
 
@@ -477,8 +480,8 @@ export default function ParentPortal() {
           {/* No Data Found */}
           {selectedCategory && !loading && !performance && !activities && (
             <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-              <div className="text-6xl mb-4">📊</div>
-              <p className="text-gray-600 text-lg">No data available for this category.</p>
+              <BarChart3 className="w-8 h-8 text-blue-700" />
+              <p className="text-gray-500 mt-1">No data available for this category.</p>
             </div>
           )}
         </div>
