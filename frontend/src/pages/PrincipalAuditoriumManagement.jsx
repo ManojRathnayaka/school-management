@@ -200,25 +200,97 @@ const PrincipalAuditoriumManagement = () => {
         {/* ============================= */}
         {/* BUTTONS */}
         {/* ============================= */}
-        <div className="flex gap-4 my-6">
-          <button
-            onClick={() => setShowSlots(!showSlots)}
-            className="border px-6 py-2 rounded-lg shadow hover:bg-gray-100"
-          >
-            📅 Auditorium Availability
-          </button>
+        {/* BUTTONS */}
+          <div className="flex gap-3 mb-6">
+            <button
+              onClick={() => setShowSlots(!showSlots)}
+              className={`px-4 py-2 rounded-xl shadow text-sm font-semibold transition ${
+                showSlots
+                  ? "bg-indigo-600 text-white"
+                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              📆 View Available Time Slots
+            </button>
 
-          <button
-            onClick={() => setShowAllocations(!showAllocations)}
-            className="border px-6 py-2 rounded-lg shadow hover:bg-gray-100"
-          >
-            📘 Allocation List
-          </button>
-        </div>
+            <button
+              onClick={() => setShowAllocations(!showAllocations)}
+              className={`px-4 py-2 rounded-xl shadow text-sm font-semibold transition ${
+                showAllocations
+                  ? "bg-indigo-600 text-white"
+                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              📋 View Allocation List
+            </button>
+          </div>
 
-        {/* ============================= */}
-        {/* ALLOCATION LIST */}
-        {/* ============================= */}
+          {/* ⭐ AVAILABILITY SECTION */}
+          {showSlots && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow mb-6">
+              <h3 className="text-xl font-semibold mb-3 text-gray-900">
+                Auditorium Availability
+              </h3>
+
+              {/* COLOR INDICATOR */}
+              <p className="text-sm text-gray-500 mb-4">
+                <span className="inline-flex items-center mr-4">
+                  <span className="w-3 h-3 bg-green-500 rounded-full mr-1" />
+                  Available
+                </span>
+                <span className="inline-flex items-center">
+                  <span className="w-3 h-3 bg-red-500 rounded-full mr-1" />
+                  Booked
+                </span>
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {slots.map((slot, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setSelectedDate(slot.date);
+                      setSelectedBookings(slot.bookings || []);
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm font-medium border shadow-sm transition ${
+                      slot.status === "booked"
+                        ? "bg-red-50 text-red-700 border-red-200"
+                        : "bg-green-50 text-green-700 border-green-200"
+                    } ${
+                      selectedDate === slot.date ? "ring-2 ring-indigo-500" : ""
+                    }`}
+                  >
+                    {slot.date}
+                  </button>
+                ))}
+              </div>
+
+              {/* BOOKINGS ON SELECTED DATE */}
+              {selectedDate && (
+                <div className="mt-5">
+                  <h4 className="font-semibold text-lg mb-2">
+                    Bookings on{" "}
+                    <span className="text-indigo-600">{selectedDate}</span>
+                  </h4>
+
+                  {selectedBookings.length === 0 ? (
+                    <p className="text-sm text-gray-500">No bookings.</p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {selectedBookings.map((b, idx) => (
+                        <div
+                          key={idx}
+                          className="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-full text-sm"
+                        >
+                          {b.start_time.slice(0, 5)} – {b.end_time.slice(0, 5)}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         {showAllocations && (
           <div className="bg-white border rounded-lg p-4 shadow mb-6">
             <h3 className="font-bold text-lg mb-4">Allocation List</h3>
