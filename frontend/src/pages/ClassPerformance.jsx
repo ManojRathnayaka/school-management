@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast"; // ⭐ Toast added
 
 // School Branding Colors
 const SCHOOL_BLUE = "#0D47A1";
@@ -60,7 +61,7 @@ const ClassPerformance = () => {
         });
         setClasses(res.data || []);
       } catch (err) {
-        alert("Failed to load classes");
+        toast.error("Failed to load classes");
       }
     };
 
@@ -89,7 +90,7 @@ const ClassPerformance = () => {
 
         setStudents(res.data || []);
       } catch {
-        alert("Failed to load students");
+        toast.error("Failed to load students");
       } finally {
         setLoadingStudents(false);
       }
@@ -128,11 +129,10 @@ const ClassPerformance = () => {
           setLastUpdated(p.updated_at ?? null);
           setUpdatedByName(p.updated_by_name ?? null);
 
-          // ⭐ Load student photo
           loadStudentPhoto(p.admission_number);
         }
       } catch {
-        alert("Failed to load performance");
+        toast.error("Failed to load performance");
       } finally {
         setLoadingPerformance(false);
       }
@@ -142,7 +142,7 @@ const ClassPerformance = () => {
   }, [selectedStudentId]);
 
   // ───────────────────────────────────────────────
-  // ⭐ CORRECTED STUDENT PHOTO LOADER (final working)
+  // PHOTO LOADER
   // ───────────────────────────────────────────────
   const loadStudentPhoto = (admission) => {
     if (!admission) {
@@ -158,7 +158,7 @@ const ClassPerformance = () => {
         return;
       }
 
-      const path = `/src/assets/${admission}.${formats[i]}`;
+      const path = `/src/assets/default_user.jpg`;
       const img = new Image();
       img.src = path;
 
@@ -178,21 +178,22 @@ const ClassPerformance = () => {
     setDisciplineScore(0);
     setLeadershipScore(0);
     setComments("");
-
     setLastUpdated(null);
     setUpdatedByName(null);
-
     setStudentPhoto("/src/assets/default_user.jpg");
   };
 
   // ───────────────────────────────────────────────
-  // SAVE PERFORMANCE
+  // SAVE PERFORMANCE (updated to toast)
   // ───────────────────────────────────────────────
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!selectedClassId || !selectedStudentId) return alert("Select class and student");
+    if (!selectedClassId || !selectedStudentId)
+      return toast.error("Please select class & student first");
 
     setSaving(true);
+    const loader = toast.loading("Saving...");
+
     try {
       await axios.put(
         `/api/class-performance/classes/${selectedClassId}/students/${selectedStudentId}`,
@@ -206,11 +207,12 @@ const ClassPerformance = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("Saved!");
+      toast.success("Saved successfully!", { id: loader });
+
       setLastUpdated(new Date().toISOString());
       setUpdatedByName("You");
     } catch (err) {
-      alert("Save failed");
+      toast.error("Save failed", { id: loader });
     } finally {
       setSaving(false);
     }
@@ -245,7 +247,6 @@ const ClassPerformance = () => {
     </div>
   );
 
-  // FORMAT LAST UPDATED
   const formatDateTime = (iso) => {
     if (!iso) return "";
     const d = new Date(iso);
@@ -263,9 +264,9 @@ const ClassPerformance = () => {
   // ───────────────────────────────────────────────
   return (
     <Layout activePage="classPerformance">
-      <div className="bg-white p-8 rounded-lg shadow max-w-4xl mx-auto mt-6">
+      <Toaster position="top-right" /> {/* ⭐ Add toast UI */}
 
-        {/* HEADER */}
+      <div className="bg-white p-8 rounded-lg shadow max-w-4xl mx-auto mt-6">
         <h1
           className="text-3xl font-bold text-white p-4 mb-6 rounded-lg text-center"
           style={{ backgroundColor: SCHOOL_BLUE }}
@@ -276,7 +277,6 @@ const ClassPerformance = () => {
         {/* CLASS & STUDENT SELECT */}
         <div className="flex flex-wrap gap-4 mb-10 items-center">
 
-          {/* Student Photo */}
           {selectedStudentId && (
             <img
               src={studentPhoto}
@@ -324,7 +324,6 @@ const ClassPerformance = () => {
           <ScoreField label="Discipline Score" value={disciplineScore} setValue={setDisciplineScore} />
           <ScoreField label="Leadership Score" value={leadershipScore} setValue={setLeadershipScore} />
 
-          {/* COMMENTS */}
           <div className="mb-6">
             <p className="font-semibold text-gray-700 mb-2">Comments</p>
             <textarea
@@ -335,12 +334,10 @@ const ClassPerformance = () => {
             />
           </div>
 
-          {/* OVERALL */}
           <p className="text-xl font-bold mb-4">
             Overall Score: <span className="text-blue-700">{overallScore}</span>
           </p>
 
-          {/* SAVE BUTTON */}
           <button
             type="submit"
             disabled={saving}
@@ -351,7 +348,6 @@ const ClassPerformance = () => {
           </button>
         </form>
 
-        {/* LAST UPDATED INFO */}
         {lastUpdated && (
           <div
             className="mt-10 p-4 rounded-lg shadow border"
@@ -374,12 +370,10 @@ const ClassPerformance = () => {
           </div>
         )}
 
-        {/* PHOTO MODAL */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
             <div className="bg-white p-4 rounded-xl shadow-xl relative">
               <img src={studentPhoto} className="max-h-[80vh] rounded-xl" alt="Student" />
-
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded"
