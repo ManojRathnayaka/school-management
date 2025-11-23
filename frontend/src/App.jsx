@@ -27,6 +27,9 @@ import ScholarshipList from "./pages/ScholarshipPrinciple";
 import HostelApplication from './pages/HostelApply';
 import AdminDashboard from './pages/HostelAdminDashboard';
 import Achievements from './pages/Achievements';
+import AchievementsSystem from'./pages/Academic&SportsAchivements';
+
+
 
 function LoginWrapper() {
   const { user, loading } = useAuth();
@@ -76,6 +79,7 @@ function App() {
             <Route path="/class-performance" element={<ProtectedRoute allowedRoles={['teacher']}><ClassPerformance/></ProtectedRoute>}/>
             <Route path="/hostal-application" element={<HostelApplication />} />
             <Route path="/HostelAdmin" element={<AdminDashboard />} />
+            <Route path="/Academic&sportsachiv" element={<AchievementsSystem />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>

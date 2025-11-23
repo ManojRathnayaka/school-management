@@ -15,6 +15,7 @@ import {
   Users,
   GraduationCap,
   Megaphone,
+  Building2
 } from "lucide-react";
 
 const dashboardCardConfig = [
@@ -74,7 +75,7 @@ const dashboardCardConfig = [
     path: "/scholarships",
     roles: [USER_ROLES.STUDENT, USER_ROLES.PARENT],
   },
-  {
+   {
     title: "Hostel Application",
     description: "Apply for or manage your hostel accommodation",
     icon: Home,
@@ -85,7 +86,7 @@ const dashboardCardConfig = [
     title: "Achievements",
     description: "Track and celebrate student achievements",
     icon: Award,
-    path: "/achievements",
+    path: "/Academic&sportsachiv",
     roles: [
       USER_ROLES.PRINCIPAL,
       USER_ROLES.TEACHER,
@@ -93,6 +94,17 @@ const dashboardCardConfig = [
       USER_ROLES.PARENT,
     ],
   },
+  {
+    title: "Hostel Application Review",
+    description: "Review and manage student hostel applications",
+    icon: Building2, // you can change the icon if needed
+    path: "/HostelAdmin",
+    roles: [
+      USER_ROLES.PRINCIPAL,
+      USER_ROLES.TEACHER
+    ],
+},
+
   {
     title: "Parent Portal",
     description: "Access information and track student progress",
