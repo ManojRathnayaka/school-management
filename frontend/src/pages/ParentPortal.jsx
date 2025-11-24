@@ -111,7 +111,7 @@ export default function ParentPortal() {
             <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6 rounded-lg shadow-md">
               <h2 className="text-3xl font-bold mb-2">Parent Portal</h2>
               <p className="text-blue-100">Mahamaya Girls' College, Kandy</p>
-              <p className="text-sm text-blue-200 mt-2">View your child's academic performance and activities</p>
+              <p className="text-sm text-blue-200 mt-2">View your child's academic and performance  </p>
             </div>
 
             {/* Student ID Input */}
