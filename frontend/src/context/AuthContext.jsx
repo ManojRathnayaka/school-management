@@ -29,6 +29,12 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const res = await api.post("/auth/login", { email, password });
+    
+    // Check if setup is needed
+    if (res.data.needsSetup) {
+      throw new Error("Setup required");
+    }
+    
     // Only set user if login is successful and not mustResetPassword
     if (!res.data.mustResetPassword) {
       setUser(res.data.user);
