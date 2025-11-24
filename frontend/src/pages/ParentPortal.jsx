@@ -1,7 +1,7 @@
            // React imports
 import { useState } from "react";
 import axios from "axios";
-import { Search ,User2 ,Phone ,BookOpen,Trophy,Star,Crown,BarChart3,Award } from "lucide-react";
+import { Search ,User2 ,Phone ,BookOpen,Trophy,Star,Crown,BarChart3,Award,Calendar,Clipboard,FileEdit } from "lucide-react";
 
 // Component imports
 import Layout from "../components/Layout";
@@ -61,7 +61,7 @@ export default function ParentPortal() {
           { withCredentials: true }
         );
         setPerformance(response.data);
-      } else if (category === "extracurricular") {
+      } else if (category === "scholarship") {
         // Fetch activities data
         const response = await axios.get(
           `http://localhost:4000/api/parent-portal/student/${studentId}/activities`,
@@ -234,9 +234,9 @@ export default function ParentPortal() {
                     Sports Performance
                   </button>
                   <button
-                    onClick={() => handleCategoryChange("extracurricular")}
+                    onClick={() => handleCategoryChange("scholarship")}
                     className={`p-6 rounded-xl border-2 flex flex-col items-center font-semibold transition-all hover:scale-105 ${
-                      selectedCategory === "extracurricular"
+                      selectedCategory === "scholarship"
                         ? "bg-yellow-700 text-white border-yellow-800 shadow-md"
                         : "bg-white text-yellow-700 border-yellow-300 hover:border-yellow-500"
                     }`}
@@ -329,7 +329,10 @@ export default function ParentPortal() {
               {/* Teacher Comments */}
               {performance.comments && (
                 <div className="bg-yellow-50 p-5 rounded-lg border-l-4 border-yellow-500">
-                  <p className="font-bold text-gray-700 mb-2">📝 Teacher's Comments</p>
+                  <p className="font-bold text-gray-700 mb-2">
+                    <FileEdit className="w-5 h-5 " /> 
+                    Teacher's Comments
+                  </p>
                   <p className="text-gray-800">{performance.comments}</p>
                 </div>
               )}
@@ -383,7 +386,10 @@ export default function ParentPortal() {
 
               {performance.comments && (
                 <div className="mt-6 bg-green-50 p-5 rounded-lg border-l-4 border-green-500">
-                  <p className="font-bold text-gray-700 mb-2">📝 Teacher's Comments</p>
+                  <p className="font-bold text-gray-700 mb-2">
+                    <FileEdit className="w-5 h-5 " /> 
+                     Teacher's Comments
+                  </p>
                   <p className="text-gray-800">{performance.comments}</p>
                 </div>
               )}
@@ -398,13 +404,13 @@ export default function ParentPortal() {
           )}
 
           {/* Scholarship Status */}
-          {selectedCategory === "extracurricular" && activities && !loading && (
+          {selectedCategory === "scholarship" && activities && !loading && (
             <div className="bg-white rounded-xl shadow-xl p-8 border">
               <h3 className="text-2xl font-bold text-yellow-700 mb-5 flex items-center">
                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-700 shadow">
                    <Award className="w-8 h-8 mb-2"  />
                  </div>
-                Scholarship Status
+                Scholarship Applications Status
               </h3>
 
               {activities.scholarships && activities.scholarships.length > 0 ? (
@@ -414,7 +420,7 @@ export default function ParentPortal() {
                       key={scholarship.scholarship_id}
                       className="bg-gradient-to-r from-blue-50 to-yellow-50 p-5 rounded-lg border border-gray-200 shadow-sm"
                     >
-                      <div className="flex justify-between items-start mb-4">
+                       <div className="flex justify-between items-start mb-4">
                         <h4 className="text-lg font-bold text-blue-700">
                           Scholarship Application No {scholarship.scholarship_id}
                         </h4>
@@ -429,50 +435,23 @@ export default function ParentPortal() {
                         >
                           {scholarship.status.toUpperCase()}
                         </span>
-                      </div>
-
-                      {/*<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        {scholarship.sports && (
-                          <div className="bg-white p-4 rounded-lg border border-blue-200">
-                            <p className="text-sm text-gray-600 mb-1">🏆 Sports Activities</p>
-                            <p className="font-semibold text-gray-800">{scholarship.sports}</p>
-                          </div>
-                        )}
-                        {scholarship.social_works && (
-                          <div className="bg-white p-4 rounded-lg border border-yellow-200">
-                            <p className="text-sm text-gray-600 mb-1">🤝 Social Works</p>
-                            <p className="font-semibold text-gray-800">{scholarship.social_works}</p>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {scholarship.reason_academic && (
-                          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
-                            📖 Academic Excellence
-                          </span>
-                        )}
-                        {scholarship.reason_sports && (
-                          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
-                            🏆 Sports Achievement
-                          </span>
-                        )}
-                        {scholarship.reason_cultural && (
-                          <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">
-                            🎭 Cultural Achievement
-                          </span>
-                        )}
-                      </div> */}
-
-                      <p className="text-sm text-gray-600">
-                        Submitted: {new Date(scholarship.created_at).toLocaleDateString()}
-                      </p>
+                       </div>
+                      
+                          <div className="text-sm text-gray-600 bg-white p-3 rounded border border-gray-200 flex justify-between items-start mb-4">
+                         
+                            <p className="font-semibold">
+                              <Calendar className="w-5 h-5" />
+                              Application Submitted Date: {new Date(scholarship.created_at).toLocaleDateString()}
+                            </p>
+                          </div> 
+                      
+                       
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-12 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg">
-                  <div className="text-6xl mb-4">📋</div>
+                  <Clipboard className="w-5 h-5 " />
                   <p className="text-gray-600 text-lg">No Scholarship Status yet.</p>
                 </div>
               )}

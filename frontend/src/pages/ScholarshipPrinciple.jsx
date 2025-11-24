@@ -156,7 +156,7 @@ export default function ScholarshipList() {
               <table className="w-full mt-6 rounded-xl overflow-hidden shadow-lg">
                 <thead className="bg-blue-800 text-white">
                   <tr>
-                    <th className="py-3 px-4 text-left font-medium text-sm">ID</th>
+                    <th className="py-3 px-4 text-left font-medium text-sm">No</th>
                     <th className="py-3 px-4 text-left font-medium text-sm">Student Name</th>
                     <th className="py-3 px-4 text-left font-medium text-sm">Admission No</th>
                     <th className="py-3 px-4 text-left font-medium text-sm">Grade</th>
@@ -235,7 +235,7 @@ export default function ScholarshipList() {
 
                 <div className="p-6 space-y-6 bg-gradient-to-br from-white via-blue-50 to-yellow-50">
                   {/* Student Information */}
-                  <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-blue-600">
+                  <section className="bg-white rounded-lg p-5 shadow-md">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
                       <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
                         <BookOpen className="w-5 h-5" />
@@ -243,19 +243,16 @@ export default function ScholarshipList() {
                       Student Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="bg-yellow-50 p-3 rounded-lg">
                         <p className="text-sm text-gray-600 mb-1">Student Name</p>
                         <p className="font-bold text-blue-900">{selectedApplication.student_name}</p>
                       </div>
+                     
                       <div className="bg-yellow-50 p-3 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Student ID</p>
-                        <p className="font-bold text-gray-800">{selectedApplication.student_id}</p>
-                      </div>
-                      <div className="bg-blue-50 p-3 rounded-lg">
                         <p className="text-sm text-gray-600 mb-1">Admission Number</p>
                         <p className="font-bold text-gray-800">{selectedApplication.admission_number}</p>
                       </div>
-                      <div className="bg-yellow-50 p-3 rounded-lg">
+                      <div className="bg-blue-50 p-3 rounded-lg">
                         <p className="text-sm text-gray-600 mb-1">Grade</p>
                         <p className="font-bold text-blue-700 text-lg">
                           {selectedApplication.grade}{selectedApplication.section}
@@ -267,7 +264,7 @@ export default function ScholarshipList() {
                           {selectedApplication.status.toUpperCase()}
                         </p>
                       </div>
-                      <div className="bg-yellow-50 p-3 rounded-lg">
+                      <div className="bg-blue-50 p-3 rounded-lg">
                         <p className="text-sm text-gray-600 mb-1">Submitted Date</p>
                         <p className="font-bold text-gray-800">{new Date(selectedApplication.created_at).toLocaleString()}</p>
                       </div>
@@ -275,7 +272,7 @@ export default function ScholarshipList() {
                   </section>
 
                   {/* Parent Information */}
-                  <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-yellow-500">
+                  <section className="bg-white rounded-lg p-5 shadow-md ">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
                       <span className="bg-yellow-100 text-yellow-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
                          <Users className="w-5 h-5" />
@@ -304,8 +301,8 @@ export default function ScholarshipList() {
                           </div>
                         </div>
                       </div>
-                      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                        <h5 className="font-bold text-yellow-700 mb-3 text-lg">Mother's Details</h5>
+                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h5 className="font-bold text-blue-700 mb-3 text-lg">Mother's Details</h5>
                         <div className="space-y-2">
                           <div>
                             <p className="text-sm text-gray-600">Name</p>
@@ -317,7 +314,7 @@ export default function ScholarshipList() {
                           </div>
                           <div>
                             <p className="text-sm text-gray-600">Monthly Income</p>
-                            <p className="font-bold text-yellow-700">Rs. {selectedApplication.mother_income || "N/A"}</p>
+                            <p className="font-bold text-blue-700">Rs. {selectedApplication.mother_income || "N/A"}</p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-600">Contact</p>
@@ -326,7 +323,7 @@ export default function ScholarshipList() {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-4 bg-gradient-to-r from-blue-100 to-yellow-100 p-4 rounded-lg border-2 border-blue-300">
+                    <div className="mt-4 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
                       <p className="text-sm text-gray-700 mb-1">Total Family Income</p>
                       <p className="font-bold text-2xl text-blue-700">
                         Rs. {(parseFloat(selectedApplication.father_income || 0) + parseFloat(selectedApplication.mother_income || 0)).toFixed(2)}
@@ -335,20 +332,20 @@ export default function ScholarshipList() {
                   </section>
 
                   {/* Medical Challenges */}
-                  <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-blue-600">
+                  <section className="bg-white rounded-lg p-5 shadow-md">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
                       <span className="bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
                         <HeartPulse className="w-5 h-5" />
                       </span>
                       Medical or Physical Challenges
                     </h4>
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-blue-50 p-4 rounded-lg">
                       <p className="text-gray-800">{selectedApplication.medical_or_Physical_Challenges || "None mentioned"}</p>
                     </div>
                   </section>
 
                   {/* Extra-Curricular Activities */}
-                  <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-yellow-500">
+                  <section className="bg-white rounded-lg p-5 shadow-md ">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
                       <span className="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
                         <Star className="w-5 h-5" />
@@ -360,7 +357,7 @@ export default function ScholarshipList() {
                         <p className="text-sm text-gray-600 mb-2 font-semibold">Sports</p>
                         <p className="font-semibold text-gray-800">{selectedApplication.sports || "None"}</p>
                       </div>
-                      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                         <p className="text-sm text-gray-600 mb-2 font-semibold">Social Works</p>
                         <p className="font-semibold text-gray-800">{selectedApplication.social_works || "None"}</p>
                       </div>
@@ -368,7 +365,7 @@ export default function ScholarshipList() {
                   </section>
 
                   {/* Reasons for Applying */}
-                  <section className="bg-white rounded-lg p-5 shadow-md border-l-4 border-blue-600">
+                  <section className="bg-red-50 rounded-lg p-5 shadow-md ">
                     <h4 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
                       <span className="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 font-bold">
                          <Lightbulb className="w-5 h-5" />
@@ -398,7 +395,7 @@ export default function ScholarshipList() {
                       )}
                     </div>
                     {selectedApplication.reason_other && (
-                      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                      <div className="bg-blue-50  p-4 rounded-lg border border-blue-200">
                         <p className="text-sm text-gray-600 mb-2 font-semibold">Other Reasons</p>
                         <p className="font-semibold text-gray-800">{selectedApplication.reason_other}</p>
                       </div>
@@ -412,13 +409,13 @@ export default function ScholarshipList() {
                         onClick={() => handleApprove(selectedApplication.scholarship_id)}
                         className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-all transform hover:scale-105"
                       >
-                        ✓ Approve Application
+                         Approve Application
                       </button>
                       <button
                         onClick={() => handleReject(selectedApplication.scholarship_id)}
                         className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-all transform hover:scale-105"
                       >
-                        ✗ Reject Application
+                         Reject Application
                       </button>
                     </div>
                   )}
