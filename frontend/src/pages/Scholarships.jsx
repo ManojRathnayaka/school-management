@@ -358,7 +358,7 @@ export default function Scholarships() {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Admission Number <span className="text-red-500">*</span>
                     </label>
-                    <input type="text" name="admission_number" placeholder="e.g., ADM2025001"
+                    <input type="text" name="admission_number" placeholder="e.g., ADM2025XXX"
                       value={formData.admission_number} onChange={handleChange} onBlur={handleBlur}
                       className={inputClass("admission_number")} />
                     <ErrorMsg error={touched.admission_number && errors.admission_number} />

@@ -116,13 +116,13 @@ export default function ScholarshipList() {
     <Layout activePage="scholarship-list">
       <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50  p-6">       
           {/* Header with School Colors */}
-          <div className="bg-gradient-to-r from-[#0D47A1] to-blue-800 text-white p-8 rounded-2xl shadow-lg mb-8 border border-blue-900/40">
+          <div className="bg-[#0D47A1] text-white p-8 rounded-2xl shadow-sm mb-6">
             <h2 className="text-3xl font-bold mb-2">Scholarship Applications</h2>
-            <p className="text-blue-100">Mahamaya Girls' College, Kandy</p>
+            <p className="text-sm mt-1 opacity-80">Mahamaya Girls' College, Kandy</p>
           </div>
         
           {/* Statistics Bar */}
-            <div className="mb-6 p-5 bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg border-l-4 border-yellow-500 shadow-sm">
+            <div className="mb-6 p-5  bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg  shadow-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-6">
               <div className="bg-white shadow-md rounded-xl p-6 border border-gray-200 text-center">
                 <p className="text-gray-500 text-sm font-medium">Total Applications</p>
@@ -153,16 +153,16 @@ export default function ScholarshipList() {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg shadow-md">
-              <table className="w-full mt-6 rounded-xl overflow-hidden shadow-lg">
-                <thead className="bg-blue-800 text-white">
+              <table className="w-full mt-6  overflow-hidden shadow-lg">
+                <thead className="bg-blue-50 ">
                   <tr>
-                    <th className="py-3 px-4 text-left font-medium text-sm">No</th>
-                    <th className="py-3 px-4 text-left font-medium text-sm">Student Name</th>
-                    <th className="py-3 px-4 text-left font-medium text-sm">Admission No</th>
-                    <th className="py-3 px-4 text-left font-medium text-sm">Grade</th>
-                    <th className="py-3 px-4 text-left font-medium text-sm">Status</th>
-                    <th className="py-3 px-4 text-left font-medium text-sm">Submitted Date</th>
-                    <th className="py-3 px-4 text-left font-medium text-sm">Actions</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">No</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Student Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Admission No</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Grade</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800 ">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Submitted Date</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white text-sm">
