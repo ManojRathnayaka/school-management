@@ -12,6 +12,7 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  countAllUsers,
 } from "../models/userModel.js";
 import { createTeacher, deleteTeacher } from "../models/teacherModel.js";
 
@@ -38,10 +39,95 @@ function generateToken(user) {
   );
 }
 
+function isStrongPassword(password) {
+  const pattern = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+  return pattern.test(password);
+}
+
+// Check if system needs initial setup
+export async function checkSetupStatus(req, res) {
+  try {
+    const userCount = await countAllUsers();
+    res.json({ needsSetup: userCount === 0 });
+  } catch (err) {
+    console.error("Check setup status error:", err);
+    res.status(500).json({ message: "Failed to check setup status" });
+  }
+}
+
+// Initial admin setup
+export async function initialSetup(req, res) {
+  const { first_name, last_name, email, password, confirmPassword } = req.body;
+
+  try {
+    // Verify no users exist
+    const userCount = await countAllUsers();
+    if (userCount > 0) {
+      return res.status(400).json({ message: "Setup already completed" });
+    }
+
+    // Validate inputs
+    if (!first_name || !last_name || !email || !password || !confirmPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    if (!isStrongPassword(password)) {
+      return res.status(400).json({
+        message: "Password needs at least 6 characters including letters and numbers"
+      });
+    }
+
+    // Create the first admin user
+    const password_hash = await bcrypt.hash(password, 10);
+    const userResult = await createUser({
+      first_name,
+      last_name,
+      email,
+      password_hash,
+      role: "admin",
+      must_reset_password: false,
+    });
+
+    // Fetch the created user
+    const user = await getUserById(userResult.insertId);
+    
+    // Generate token and log them in
+    const token = generateToken(user);
+    res.cookie("token", token, COOKIE_OPTIONS);
+    
+    res.status(201).json({
+      message: "Admin account created successfully",
+      user: {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        role: user.role,
+        token: token,
+      },
+    });
+  } catch (err) {
+    console.error("Initial setup error:", err);
+    res.status(500).json({ message: "Setup failed. Please try again" });
+  }
+}
+
 export async function login(req, res) {
   const { email, password } = req.body;
 
   try {
+    // Check if system needs setup first
+    const userCount = await countAllUsers();
+    if (userCount === 0) {
+      return res.status(403).json({ 
+        needsSetup: true,
+        message: "System requires initial setup" 
+      });
+    }
+
     const user = await findUserByEmail(email);
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
@@ -154,7 +240,6 @@ export async function bulkCreateAdminUsers(req, res) {
 
     const results = { successes: [], failures: [] };
 
-    // Parse CSV with BOM handling
     const stream = fs.createReadStream(filePath).pipe(
       csvParser({
         skipEmptyLines: true,
@@ -165,7 +250,6 @@ export async function bulkCreateAdminUsers(req, res) {
 
     for await (const row of stream) {
       try {
-        // Normalize headers - handle various formats
         const getField = (field) => {
           const variations = {
             first_name: ['first_name', 'First Name', 'firstName', 'firstname'],
@@ -187,7 +271,6 @@ export async function bulkCreateAdminUsers(req, res) {
         const contact_number = getField('contact_number');
         const grade = getField('grade');
 
-        // Validate required fields
         if (!first_name || !last_name || !email) {
           results.failures.push({
             email: email || "N/A",
@@ -196,7 +279,6 @@ export async function bulkCreateAdminUsers(req, res) {
           continue;
         }
 
-        // Validate teacher requirements
         if (role === "teacher" && !contact_number) {
           results.failures.push({
             email,
@@ -205,14 +287,12 @@ export async function bulkCreateAdminUsers(req, res) {
           continue;
         }
 
-        // Check existing user
         const existingUser = await findUserByEmail(email);
         if (existingUser) {
           results.failures.push({ email, reason: "Email already exists" });
           continue;
         }
 
-        // Generate temp password
         const tempPassword = crypto
           .randomBytes(5)
           .toString("base64")
@@ -221,7 +301,6 @@ export async function bulkCreateAdminUsers(req, res) {
 
         const password_hash = await bcrypt.hash(tempPassword, 10);
 
-        // Create user
         const userResult = await createUser({
           first_name,
           last_name,
@@ -231,7 +310,6 @@ export async function bulkCreateAdminUsers(req, res) {
           must_reset_password: true,
         });
 
-        // Create teacher record if needed
         if (role === "teacher") {
           await createTeacher({ 
             user_id: userResult.insertId, 
@@ -260,11 +338,6 @@ export async function bulkCreateAdminUsers(req, res) {
       fs.promises.unlink(filePath).catch(console.error);
     }
   }
-}
-
-function isStrongPassword(password) {
-  const pattern = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/; // at least 6 characters, one letter and one number
-  return pattern.test(password);
 }
 
 export async function resetPasswordFirstLogin(req, res) {
@@ -315,7 +388,6 @@ export async function resetPasswordFirstLogin(req, res) {
   }
 }
 
-// User management functions
 export async function getAllUsers(req, res) {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -328,7 +400,7 @@ export async function getAllUsers(req, res) {
       limit, 
       roles, 
       search,
-      excludeRoles: ['parent', 'student'] // Exclude parents and students from user management
+      excludeRoles: ['parent', 'student']
     });
     
     res.json(result);
@@ -343,7 +415,6 @@ export async function updateUserDetails(req, res) {
     const { id } = req.params;
     const { first_name, last_name, email } = req.body;
 
-    // Check if email is already taken by another user
     if (email) {
       const existingUser = await findUserByEmail(email);
       if (existingUser && existingUser.user_id != id) {
@@ -364,7 +435,6 @@ export async function resetUserPassword(req, res) {
   try {
     const { id } = req.params;
     
-    // Generate new temp password
     const tempPassword = crypto
       .randomBytes(5)
       .toString("base64")
@@ -386,23 +456,19 @@ export async function deleteUserAccount(req, res) {
     const { id } = req.params;
     const currentUserId = req.user.user_id;
 
-    // Prevent self-deletion
     if (parseInt(id) === currentUserId) {
       return res.status(400).json({ message: "Cannot delete your own account" });
     }
 
-    // Get user details to check role
     const user = await getUserById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Handle cascade deletion based on role
     if (user.role === 'teacher') {
       await deleteTeacher(id);
     }
 
-    // Finally delete from users table
     await deleteUser(id);
     
     res.json({ message: "User deleted successfully" });
