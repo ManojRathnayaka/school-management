@@ -26,7 +26,7 @@ router.get("/slots",
    handleGetAvailableSlotss);
 
 router.get("/pending",
-   authenticateJWT, authorizeRoles("principal", "principal"),
+   authenticateJWT, authorizeRoles("principal"),
     handleGetPendingBookings);
 
 router.put("/:id/approve",

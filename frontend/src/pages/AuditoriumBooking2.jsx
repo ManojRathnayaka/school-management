@@ -35,6 +35,9 @@ const AuditoriumBookingForm = () => {
     rejected: true,
   });
 
+  // ✅ approved bookings for the selected date in form
+  const [dateConflicts, setDateConflicts] = useState([]);
+
   const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
@@ -67,11 +70,17 @@ const AuditoriumBookingForm = () => {
         equipment: "",
         notes: "",
       });
+
+      // Optional: clear conflicts when form reset
+      setDateConflicts([]);
     } catch (err) {
       toast.error("Booking submission failed");
     }
   };
 
+  // ====================
+  // FETCH DATA
+  // ====================
   const fetchBookings = async () => {
     try {
       const res = await axios.get("/api/auditorium/approved", {
@@ -94,11 +103,20 @@ const AuditoriumBookingForm = () => {
     }
   };
 
+  // ✅ Load bookings once on mount (so we can check conflicts for date)
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  // Re-fetch when dropdowns opened (kept from your previous logic)
   useEffect(() => {
     if (showSlots) fetchSlots();
     if (showAllocations) fetchBookings();
   }, [showSlots, showAllocations]);
 
+  // =============================
+  // FILTER PILL COMPONENT
+  // =============================
   const FilterPill = ({ label, keyName }) => (
     <div
       onClick={() =>
@@ -113,11 +131,37 @@ const AuditoriumBookingForm = () => {
           : "bg-white text-indigo-600 border-indigo-600"
       }`}
     >
-      {statusFilter[keyName] && <span>✔</span>} {label}
+      {statusFilter[keyName] && <span>✔ </span>}
+      {label}
     </div>
   );
 
-  const filteredAllocations = bookings.filter((b) => statusFilter[b.status]);
+  const filteredAllocations = bookings.filter(
+    (b) => statusFilter[b.status]
+  );
+
+  // =============================
+  // ✅ CHECK CONFLICTS FOR SELECTED EVENT DATE
+  // =============================
+  useEffect(() => {
+    if (!formData.eventDate) {
+      setDateConflicts([]);
+      return;
+    }
+
+    const conflicts = bookings.filter((b) => {
+      if (b.status !== "approved") return false;
+
+      const dateStr =
+        typeof b.event_date === "string"
+          ? b.event_date.split("T")[0]
+          : new Date(b.event_date).toISOString().split("T")[0];
+
+      return dateStr === formData.eventDate;
+    });
+
+    setDateConflicts(conflicts);
+  }, [formData.eventDate, bookings]);
 
   return (
     <Layout activePage="events">
@@ -133,10 +177,10 @@ const AuditoriumBookingForm = () => {
                 📅
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-yellow-blue-900">
                   Auditorium Booking
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-red-500">
                   Check availability & submit booking requests.
                 </p>
               </div>
@@ -156,15 +200,17 @@ const AuditoriumBookingForm = () => {
           {/* AVAILABILITY SECTION */}
           {showSlots && (
             <div className="bg-white border rounded-lg p-6 shadow mb-6">
-              <h3 className="text-xl font-semibold mb-3">Auditorium Availability</h3>
+              <h3 className="text-xl font-semibold mb-3">
+                Auditorium Availability
+              </h3>
 
               <p className="text-sm text-gray-500 mb-3">
                 <span className="mr-4">
-                  <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>
+                  <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-1" />
                   Available
                 </span>
                 <span>
-                  <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-1"></span>
+                  <span className="inline-block w-3 h-3 bg-red-800 rounded-full mr-1" />
                   Booked
                 </span>
               </p>
@@ -179,10 +225,12 @@ const AuditoriumBookingForm = () => {
                     }}
                     className={`px-4 py-2 rounded-full text-sm border transition ${
                       slot.status === "booked"
-                        ? "bg-red-100 text-red-700"
+                        ? "bg-red-100 text-red-1000"
                         : "bg-green-100 text-green-700"
                     } ${
-                      selectedDate === slot.date ? "ring-2 ring-indigo-500" : ""
+                      selectedDate === slot.date
+                        ? "ring-2 ring-indigo-500"
+                        : ""
                     }`}
                   >
                     {slot.date}
@@ -193,7 +241,8 @@ const AuditoriumBookingForm = () => {
               {selectedDate && (
                 <div className="mt-4">
                   <h4 className="text-lg font-semibold mb-2">
-                    Bookings on <span className="text-indigo-600">{selectedDate}</span>
+                    Bookings on{" "}
+                    <span className="text-red-600">{selectedDate}</span>
                   </h4>
 
                   {selectedBookings.length === 0 ? (
@@ -205,7 +254,8 @@ const AuditoriumBookingForm = () => {
                           key={idx}
                           className="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-full text-sm"
                         >
-                          {b.start_time.slice(0, 5)} – {b.end_time.slice(0, 5)}
+                          {b.start_time.slice(0, 5)} –{" "}
+                          {b.end_time.slice(0, 5)}
                         </div>
                       ))}
                     </div>
@@ -218,7 +268,9 @@ const AuditoriumBookingForm = () => {
           {/* ALLOCATION LIST */}
           {showAllocations && (
             <div className="bg-white border rounded-xl p-6 shadow mb-6">
-              <h3 className="text-xl font-semibold mb-4">Auditorium Allocation List</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                Auditorium Allocation List
+              </h3>
 
               <div className="flex gap-4 mb-4">
                 <FilterPill label="Approved" keyName="approved" />
@@ -242,7 +294,10 @@ const AuditoriumBookingForm = () => {
                   <tbody>
                     {filteredAllocations.length === 0 ? (
                       <tr>
-                        <td colSpan="6" className="text-center py-4 text-gray-500">
+                        <td
+                          colSpan="6"
+                          className="text-center py-4 text-gray-500"
+                        >
                           No matching records.
                         </td>
                       </tr>
@@ -250,9 +305,16 @@ const AuditoriumBookingForm = () => {
                       filteredAllocations.map((b) => (
                         <tr key={b.id} className="hover:bg-gray-50">
                           <td className="px-3 py-2">{b.event_name}</td>
-                          <td className="px-3 py-2">{b.event_date?.split("T")[0]}</td>
                           <td className="px-3 py-2">
-                            {b.start_time?.slice(0, 5)} – {b.end_time?.slice(0, 5)}
+                            {typeof b.event_date === "string"
+                              ? b.event_date.split("T")[0]
+                              : new Date(b.event_date)
+                                  .toISOString()
+                                  .split("T")[0]}
+                          </td>
+                          <td className="px-3 py-2">
+                            {b.start_time?.slice(0, 5)} –{" "}
+                            {b.end_time?.slice(0, 5)}
                           </td>
                           <td className="px-3 py-2">{b.attendees}</td>
                           <td className="px-3 py-2">{b.requested_by}</td>
@@ -280,13 +342,16 @@ const AuditoriumBookingForm = () => {
 
           {/* BOOKING FORM */}
           <div className="bg-white border rounded-2xl shadow p-6">
-            <h3 className="text-xl font-semibold mb-4">Book the Auditorium</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              Book the Auditorium
+            </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-
               {/* Event Name */}
               <div>
-                <label className="block text-sm font-medium mb-1">Event Name</label>
+                <label className="block text-sm font-medium mb-1">
+                  Event Name
+                </label>
                 <input
                   type="text"
                   name="eventName"
@@ -301,7 +366,9 @@ const AuditoriumBookingForm = () => {
               {/* Date + Time */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Event Date</label>
+                  <label className="block text-sm font-semibold mb-1">
+                    Event Date
+                  </label>
                   <input
                     type="date"
                     name="eventDate"
@@ -313,7 +380,9 @@ const AuditoriumBookingForm = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Start Time</label>
+                  <label className="block text-sm font-semibold mb-1">
+                    Start Time
+                  </label>
                   <input
                     type="time"
                     name="startTime"
@@ -325,7 +394,9 @@ const AuditoriumBookingForm = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-1">End Time</label>
+                  <label className="block text-sm font-semibold mb-1">
+                    End Time
+                  </label>
                   <input
                     type="time"
                     name="endTime"
@@ -337,11 +408,32 @@ const AuditoriumBookingForm = () => {
                 </div>
               </div>
 
+              {/* ✅ Existing bookings for selected date */}
+              {formData.eventDate && dateConflicts.length > 0 && (
+                <div className="mt-2 bg-yellow-50 border border-yellow-300 text-yellow-900 rounded-lg p-3 text-xs sm:text-sm">
+                  <p className="font-semibold mb-1">
+                    Approved bookings already on {formData.eventDate}:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {dateConflicts.map((b) => (
+                      <span
+                        key={b.id}
+                        className="px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-700"
+                      >
+                        {b.start_time?.slice(0, 5)} –{" "}
+                        {b.end_time?.slice(0, 5)} ({b.event_name})
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Attendees + Event Type */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Attendees</label>
+                  <label className="block text-sm font-semibold mb-1">
+                    Attendees
+                  </label>
                   <input
                     type="number"
                     name="attendees"
@@ -353,7 +445,9 @@ const AuditoriumBookingForm = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Event Type</label>
+                  <label className="block text-sm font-semibold mb-1">
+                    Event Type
+                  </label>
                   <select
                     name="eventType"
                     value={formData.eventType}
@@ -367,12 +461,13 @@ const AuditoriumBookingForm = () => {
                     <option value="Rehearsal">Rehearsal</option>
                   </select>
                 </div>
-
               </div>
 
               {/* Equipment */}
               <div>
-                <label className="block text-sm font-semibold mb-1">Equipment</label>
+                <label className="block text-sm font-semibold mb-1">
+                  Equipment
+                </label>
                 <input
                   type="text"
                   name="equipment"
@@ -385,7 +480,9 @@ const AuditoriumBookingForm = () => {
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-semibold mb-1">Notes</label>
+                <label className="block text-sm font-semibold mb-1">
+                  Notes
+                </label>
                 <textarea
                   name="notes"
                   value={formData.notes}
@@ -401,7 +498,6 @@ const AuditoriumBookingForm = () => {
               >
                 Submit Booking Request
               </button>
-
             </form>
           </div>
 
