@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 import { 
   User, Users, Heart, Star, Lightbulb, AlertTriangle, Check, Edit3, 
   Eye, Send, Phone, Briefcase, DollarSign, Trophy, BookOpen, Palette,
-  HandHeart, Activity, FileText, ChevronRight, AlertCircle
+  HandHeart, FileText, AlertCircle
 } from "lucide-react";
 
 export default function Scholarships() {
@@ -199,7 +199,7 @@ export default function Scholarships() {
 
               <div className="mb-6 bg-white p-6 rounded-xl shadow-md border border-blue-100">
                 <h3 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">
-                  <span className="bg-yellow-100 text-yellow-700 rounded-full w-8 h-8 flex items-center justify-center">
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center">
                     <User size={18} />
                   </span>
                   Father's Details
@@ -226,7 +226,7 @@ export default function Scholarships() {
 
               <div className="mb-6 bg-white p-6 rounded-xl shadow-md border border-blue-100">
                 <h3 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">
-                  <span className="bg-pink-100 text-pink-700 rounded-full w-8 h-8 flex items-center justify-center">
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center">
                     <User size={18} />
                   </span>
                   Mother's Details
@@ -253,8 +253,8 @@ export default function Scholarships() {
 
               <div className="mb-6 bg-white p-6 rounded-xl shadow-md border border-blue-100">
                 <h3 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">
-                  <span className="bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center">
-                    <Activity size={18} />
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center">
+                    <Heart size={18} />
                   </span>
                   Medical/Physical Challenges
                 </h3>
@@ -265,7 +265,7 @@ export default function Scholarships() {
 
               <div className="mb-6 bg-white p-6 rounded-xl shadow-md border border-blue-100">
                 <h3 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">
-                  <span className="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center">
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center">
                     <Star size={18} />
                   </span>
                   Extra-Curricular Activities
@@ -284,7 +284,7 @@ export default function Scholarships() {
 
               <div className="mb-6 bg-white p-6 rounded-xl shadow-md border border-blue-100">
                 <h3 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">
-                  <span className="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center">
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center">
                     <Lightbulb size={18} />
                   </span>
                   Reasons for Applying
@@ -377,7 +377,7 @@ export default function Scholarships() {
 
               <section className="bg-white p-6 rounded-xl shadow-md">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center gap-3">
-                  <span className="bg-yellow-100 text-yellow-700 rounded-full w-10 h-10 flex items-center justify-center">
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center">
                     <Users size={20} />
                   </span>
                   Parent / Guardian Information
@@ -468,8 +468,8 @@ export default function Scholarships() {
 
               <section className="bg-white p-6 rounded-xl shadow-md">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center gap-3">
-                  <span className="bg-red-100 text-red-600 rounded-full w-10 h-10 flex items-center justify-center">
-                    <Activity size={20} />
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center">
+                    <Heart size={20} />
                   </span>
                   Medical or Physical Challenges
                 </h3>
@@ -480,7 +480,7 @@ export default function Scholarships() {
 
               <section className="bg-white p-6 rounded-xl shadow-md">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center gap-3">
-                  <span className="bg-green-100 text-green-600 rounded-full w-10 h-10 flex items-center justify-center">
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center">
                     <Star size={20} />
                   </span>
                   Extra-Curricular Involvement
@@ -507,7 +507,7 @@ export default function Scholarships() {
 
               <section className="bg-white p-6 rounded-xl shadow-md">
                 <h3 className="text-2xl font-bold text-blue-700 mb-5 flex items-center gap-3">
-                  <span className="bg-purple-100 text-purple-600 rounded-full w-10 h-10 flex items-center justify-center">
+                  <span className="bg-blue-100 text-blue-700 rounded-full w-10 h-10 flex items-center justify-center">
                     <Lightbulb size={20} />
                   </span>
                   Reason for Applying <span className="text-red-500 ml-1">*</span>
