@@ -114,17 +114,21 @@ export default function ScholarshipList() {
 
   return (
     <Layout activePage="scholarship-list">
-      <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50  p-6">       
+      <div className="bg-base-100"> 
+         <div className="card-body   ">     
           {/* Header with School Colors */}
-          <div className="bg-[#0D47A1] text-white p-8 rounded-2xl shadow-sm mb-6">
-            <h2 className="text-3xl font-bold mb-2">Scholarship Applications</h2>
-            <p className="text-sm mt-1 opacity-80">Mahamaya Girls' College, Kandy</p>
+          <div className="mb-6 flex items-center gap-5 ">
+             <BookOpen className="w-8 h-8 text-[#0D47A1]" />
+               <div>
+                <h2 className="card-title text-3xl text-base-content">Scholarship Applications</h2>
+                <p className="text-sm mt-1 opacity-80">Mahamaya Girls' College, Kandy</p>
+              </div>
           </div>
         
           {/* Statistics Bar */}
-            <div className="mb-6 p-5  bg-gradient-to-r from-yellow-50 to-blue-50 rounded-lg  shadow-sm">
+            <div className="mb-6 p-5  bg-gradient-to-r from-yellow-100 to-blue-100 rounded-lg  shadow-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-6">
-              <div className="bg-white shadow-md rounded-xl p-6 border border-gray-200 text-center">
+              <div className="bg-white shadow-md rounded-xl p-6 border border-gray-300 text-center">
                 <p className="text-gray-500 text-sm font-medium">Total Applications</p>
                 <p className="text-2xl font-bold text-blue-700">{applications.length}</p>
               </div>
@@ -154,15 +158,15 @@ export default function ScholarshipList() {
           ) : (
             <div className="overflow-x-auto rounded-lg shadow-md">
               <table className="w-full mt-6  overflow-hidden shadow-lg">
-                <thead className="bg-blue-50 ">
+                <thead className="bg-blue-100 border border-blue-200">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">No</th>
-                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Student Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Admission No</th>
-                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Grade</th>
-                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800 ">Status</th>
-                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800">Submitted Date</th>
-                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-800 text-center">Actions</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-900">No</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-900">Student Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-900">Admission No</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-900">Grade</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-900 ">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-900">Submitted Date</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-blue-900 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white text-sm">
@@ -423,7 +427,7 @@ export default function ScholarshipList() {
               </div>
             </div>
           )}
-        
+        </div> 
       </div>
     </Layout>
   );
