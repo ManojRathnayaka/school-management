@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 import { 
   User, Users, Heart, Star, Lightbulb, AlertTriangle, Check, Edit3, 
   Eye, Send, Phone, Briefcase, DollarSign, Trophy, BookOpen, Palette,
-  HandHeart, FileText, AlertCircle
+  HandHeart, FileText, AlertCircle,CheckCircle, XCircle, X
 } from "lucide-react";
 
 export default function Scholarships() {
@@ -32,6 +32,12 @@ export default function Scholarships() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [showPreview, setShowPreview] = useState(false);
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (type, message) => {
+  setNotification({ type, message });
+  setTimeout(() => setNotification(null), 5000);
+};
 
   const validateField = (name, value) => {
     switch (name) {
@@ -118,7 +124,7 @@ export default function Scholarships() {
   const handleConfirmSubmit = async () => {
     try {
       await axios.post("http://localhost:4000/api/scholarships", formData, { withCredentials: true });
-      alert("Scholarship application submitted successfully!");
+      showNotification('success', 'Scholarship application submitted successfully!');
       setFormData({
         admission_number: "", student_name: "", father_name: "", father_occupation: "",
         father_income: "", father_contact: "", mother_name: "", mother_occupation: "",
@@ -126,15 +132,13 @@ export default function Scholarships() {
         sports: "", social_works: "", reason_financial_need: false, reason_academic: false,
         reason_sports: false, reason_cultural: false, reason_other: ""
       });
-      setErrors({});
-      setTouched({});
       setShowPreview(false);
     } catch (err) {
       console.error(err);
       if (err.response?.status === 404) {
-        alert(err.response.data.message || "Invalid admission number.");
+        showNotification('error', err.response.data.message || "Invalid admission number. Please check and try again.");
       } else {
-        alert("Error submitting application");
+        showNotification('error', "Error submitting application. Please try again.");
       }
     }
   };
@@ -162,9 +166,43 @@ export default function Scholarships() {
       : `${base} border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200`;
   };
 
+   const NotificationToast = () => {
+    if (!notification) return null;
+
+    return (
+      <div className="fixed top-4 right-4 z-50 animate-slide-in">
+        <div className={`flex items-center gap-3 px-6 py-4 rounded-lg shadow-lg max-w-md ${
+          notification.type === 'success' 
+            ? 'bg-green-50 border-l-4 border-green-500' 
+            : 'bg-red-50 border-l-4 border-red-500'
+        }`}>
+          {notification.type === 'success' ? (
+            <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
+          ) : (
+            <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
+          )}
+          <p className={`text-sm font-medium ${
+            notification.type === 'success' ? 'text-green-800' : 'text-red-800'
+          }`}>
+            {notification.message}
+          </p>
+          <button
+            onClick={() => setNotification(null)}
+            className={`ml-auto flex-shrink-0 ${
+              notification.type === 'success' ? 'text-green-600 hover:text-green-800' : 'text-red-600 hover:text-red-800'
+            }`}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   if (showPreview) {
     return (
       <Layout activePage="scholarships">
+        <NotificationToast />
         <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
           <div className="max-w-4xl mx-auto bg-white rounded-2xl overflow-hidden shadow-xl">
             <div className="bg-[#0D47A1] text-white p-8 text-center">
@@ -317,6 +355,7 @@ export default function Scholarships() {
 
   return (
     <Layout activePage="scholarships">
+       <NotificationToast />
       <div className="bg-gradient-to-br from-blue-50 via-white to-yellow-50 min-h-screen p-6">
         <div className="max-w-4xl mx-auto bg-white rounded-2xl overflow-hidden">
           <div className="bg-[#0D47A1] text-white p-8 text-center">
