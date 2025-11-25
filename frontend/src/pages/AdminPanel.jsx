@@ -4,6 +4,7 @@ import CreateUserForm from "../components/CreateUserForm";
 import BulkUserForm from "../components/BulkUserForm";
 import UserManagement from "../components/UserManagement";
 import { UserPlus, Users, LogOut, Menu, X } from "lucide-react";
+import logo from "../assets/logo.png";
 
 export default function AdminPanel() {
   const { logout } = useAuth();
@@ -18,33 +19,41 @@ export default function AdminPanel() {
 
   return (
     <div className="h-screen flex bg-base-200 overflow-hidden">
-      
       {/* MOBILE OVERLAY BACKDROP */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-20 lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* SIDEBAR */}
-      <div className={`
+      <div
+        className={`
         fixed inset-y-0 left-0 z-30 w-64 bg-base-100 shadow-lg flex flex-col transition-transform duration-300 ease-in-out
         lg:static lg:translate-x-0 
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
-      `}>
+      `}
+      >
         {/* Header */}
         <div className="h-14 px-4 flex items-center justify-between border-b border-base-300">
-          <h1 className="text-lg font-bold text-base-content">Admin Panel</h1>
+          <div className="flex items-center gap-3">
+            <img
+              src={logo}
+              alt="School Logo"
+              className="h-8 w-8 object-contain"
+            />
+            <h1 className="text-lg font-bold text-base-content">Admin Panel</h1>
+          </div>
           {/* Close button for mobile */}
-          <button 
+          <button
             onClick={() => setIsMobileMenuOpen(false)}
             className="btn btn-ghost btn-sm btn-square lg:hidden"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4">
           <ul className="space-y-1">
@@ -82,16 +91,15 @@ export default function AdminPanel() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Content Header */}
         <div className="h-14 bg-base-100 px-4 flex items-center justify-between border-b border-base-300">
-          
           <div className="flex items-center gap-3">
             {/* Hamburger Menu Button (Visible only on mobile) */}
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="btn btn-ghost btn-sm btn-square lg:hidden"
             >
               <Menu className="w-5 h-5" />
             </button>
-            
+
             <h2 className="text-lg font-semibold text-base-content truncate">
               {activeTab === "create" ? "Create User" : "Manage Users"}
             </h2>
@@ -110,7 +118,9 @@ export default function AdminPanel() {
               {/* Tabs for Single vs Bulk Creation */}
               <div className="tabs tabs-boxed mb-6 w-fit">
                 <button
-                  className={`tab ${createTab === "single" ? "tab-active" : ""}`}
+                  className={`tab ${
+                    createTab === "single" ? "tab-active" : ""
+                  }`}
                   onClick={() => setCreateTab("single")}
                 >
                   Single User
