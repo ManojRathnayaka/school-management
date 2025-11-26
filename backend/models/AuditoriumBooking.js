@@ -45,7 +45,7 @@ export async function getPendingBookings() {
   return rows;
 }
 
-// Update a booking’s status and optionally add a rejection reason
+
 export async function updateBookingStatus(id, newStatus, rejectionReason) {
   await pool.query(
     "UPDATE auditorium_bookings SET status = ?, rejection_reason = ? WHERE id = ?",

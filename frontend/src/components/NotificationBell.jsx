@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-// You can use any bell icon you like; here's a simple SVG:
+
 const BellIcon = () => (
   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -33,7 +33,7 @@ const NotificationBell = () => {
 
     setNotifications(notifications.filter((n) => n.id !== id));
 
-    setOpen(false);   // 🔥 FIX — close dropdown
+    setOpen(false);   
   } catch (err) {
     console.error("Failed to mark notification as read", err);
   }
@@ -68,7 +68,7 @@ const NotificationBell = () => {
     <div className="flex justify-between items-center p-2 border-b">
       <h4 className="font-bold">Notifications</h4>
 
-      {/* 🔥 CLOSE BUTTON */}
+      
       <button
         onClick={() => setOpen(false)}
         className="text-gray-500 hover:text-gray-700 text-xl leading-none"
@@ -77,7 +77,7 @@ const NotificationBell = () => {
       </button>
     </div>
 
-          {/* <h4 className="font-bold p-2 border-b">Notifications</h4> */}
+         
           {notifications.length === 0 ? (
             <p className="p-2 text-gray-500">No notifications</p>
           ) : (

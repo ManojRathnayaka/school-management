@@ -102,7 +102,7 @@ const AuditoriumBookingForm = () => {
     }
   };
 
-  //Load bookings once on mount (so we can check conflicts for date)
+  
   useEffect(() => {
     fetchBookings();
   }, []);
