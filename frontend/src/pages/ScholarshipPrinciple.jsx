@@ -116,7 +116,7 @@ export default function ScholarshipList() {
     <Layout activePage="scholarship-list">
       <div className="bg-base-100"> 
          <div className="card-body   ">     
-          {/* Header with School Colors */}
+          {/* Header */}
           <div className="mb-6 flex items-center gap-5 ">
              <BookOpen className="w-8 h-8 text-[#0D47A1]" />
                <div>
@@ -223,7 +223,7 @@ export default function ScholarshipList() {
           {selectedApplication && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-                {/* Modal Header with School Colors */}
+                {/* Modal Header  */}
                 <div className="sticky top-0 bg-[#0D47A1] text-white p-6 flex justify-between items-center rounded-t-xl shadow-lg">
                   <div>
                     <h3 className="text-2xl font-bold">Application Details</h3>
