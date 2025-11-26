@@ -182,7 +182,7 @@ export default function ParentPortal() {
                     {studentInfo.grade}{studentInfo.section}
                   </p>
                 </div>
-                <div className="bg-blue-50 p-5 rounded-xl border border border-blue-200">
+                <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                   <p className="text-sm text-gray-600 mb-1">Class</p>
                   <p className="font-bold text-gray-800">{studentInfo.class_name || "N/A"}</p>
                 </div>

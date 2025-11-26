@@ -7,7 +7,7 @@
      discipline_score DECIMAL(5, 2) NOT NULL,
      leadership_score DECIMAL(5, 2) NOT NULL,
      comments TEXT,
-     updated_by INT NOT NULL,  -- Foreign key to users (teacher who updated)
+     updated_by INT,  -- Foreign key to users (teacher who updated)
      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
      FOREIGN KEY (updated_by) REFERENCES users(user_id) ON DELETE SET NULL ON UPDATE CASCADE,

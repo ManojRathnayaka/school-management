@@ -3,6 +3,6 @@ CREATE TABLE notifications (
   user_id INT NOT NULL,
   message TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  read_at TIMESTAMP NULL
+  read_at TIMESTAMP NULL,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
