@@ -5,6 +5,6 @@ CREATE TABLE announcements (
     created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE, ON UPDATE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     INDEX idx_created_at (created_at DESC)
 );
