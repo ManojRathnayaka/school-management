@@ -1,10 +1,21 @@
-// 2️⃣ controllers/auditoriumController.js
-import { createBooking as createBookingModel, getApprovedAndPendingBookings, getApprovedBookingSlots,  getPendingBookings, updateBookingStatus} from "../models/AuditoriumBooking.js";
-import {pool} from "../config/db.js";
+import {
+  createBooking as createBookingModel,
+  getApprovedAndPendingBookings,
+  getApprovedBookingSlots,
+  getPendingBookings,
+  updateBookingStatus
+} from "../models/AuditoriumBooking.js";
+
+import { pool } from "../config/db.js";
+
+//CREATE BOOKING
+
 export const createBookings = async (req, res) => {
   try {
     const tokenUser = req.user || {};
-    const requested_by = tokenUser?.email || tokenUser?.username || "unknown_user";
+    const requested_by =
+      tokenUser?.email || tokenUser?.username || "unknown_user";
+
     const {
       eventName,
       eventDate,
@@ -17,7 +28,6 @@ export const createBookings = async (req, res) => {
     } = req.body;
 
     const bookingId = await createBookingModel({
-      
       eventName,
       eventDate,
       startTime,
@@ -36,30 +46,28 @@ export const createBookings = async (req, res) => {
   }
 };
 
+//GET APPROVED + PENDING BOOKINGS
+
 export async function handleGetApprovedAndPendingBookingss(req, res) {
   try {
-    // get the raw result from the DB helper
     const result = await getApprovedAndPendingBookings();
 
-    // If your helper returns [rows, fields], take the first element; otherwise use the result directly
-    const rows = Array.isArray(result) && Array.isArray(result[0])
-      ? result[0]
-      : result;
+    const rows =
+      Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
 
-    // Send the array of bookings directly; res.json can accept arrays:contentReference[oaicite:2]{index=2}
     res.json(rows);
   } catch (err) {
-    console.error('Error fetching bookings:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error fetching bookings:", err);
+    res.status(500).json({ message: "Server error" });
   }
 }
 
+//GET AVAILABLE SLOTS 
 
 export async function handleGetAvailableSlotss(req, res) {
   try {
     const rows = await getApprovedBookingSlots();
 
-    // Helper to format Date objects as YYYY-MM-DD in local time
     const formatDate = (d) => {
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -67,36 +75,33 @@ export async function handleGetAvailableSlotss(req, res) {
       return `${y}-${m}-${day}`;
     };
 
-    // Build lookup of bookings by local date
     const bookedMap = {};
+
     rows.forEach((row) => {
-      // row.event_date can be a Date object or a string; handle both
       const dateKey =
         row.event_date instanceof Date
           ? formatDate(row.event_date)
           : String(row.event_date).split("T")[0];
+
       if (!bookedMap[dateKey]) bookedMap[dateKey] = [];
+
       bookedMap[dateKey].push({
         start_time: row.start_time,
-        end_time: row.end_time,
+        end_time: row.end_time
       });
     });
 
-    // Build 14-day window using local dates
     const today = new Date();
     const slots = [];
-    for (let i = 0; i < 14; i++) {
-      const date = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() + i
-      );
-      const dateStr = formatDate(date);
-      const bookings = bookedMap[dateStr] || [];
+
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+      const dateStr = formatDate(d);
+
       slots.push({
         date: dateStr,
-        status: bookings.length > 0 ? "booked" : "available",
-        bookings,
+        status: bookedMap[dateStr]?.length ? "booked" : "available",
+        bookings: bookedMap[dateStr] || []
       });
     }
 
@@ -108,8 +113,8 @@ export async function handleGetAvailableSlotss(req, res) {
 }
 
 
+//GET PENDING BOOKINGS
 
-// principal GET /api/auditorium/pending
 export async function handleGetPendingBookings(req, res) {
   try {
     const rows = await getPendingBookings();
@@ -120,13 +125,38 @@ export async function handleGetPendingBookings(req, res) {
   }
 }
 
+//GET APPROVED BOOKINGS FOR A SPECIFIC DATE
+
+export async function handleGetApprovedBookingsByDate(req, res) {
+  const { date } = req.params;
+
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT event_name, start_time, end_time, attendees, requested_by
+      FROM auditorium_bookings
+      WHERE event_date = ? AND status = 'approved'
+      ORDER BY start_time ASC
+      `,
+      [date]
+    );
+    console.log("done specific date")
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching bookings for date:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+//APPROVE / REJECT BOOKING 
 
 export async function handleUpdateBookingStatus(req, res) {
   const { id } = req.params;
   const { status, reason } = req.body;
 
   try {
-    // Fetch booking
     const [rows] = await pool.query(
       "SELECT requested_by, event_name, event_date FROM auditorium_bookings WHERE id = ?",
       [id]
@@ -138,7 +168,6 @@ export async function handleUpdateBookingStatus(req, res) {
 
     const booking = rows[0];
 
-    // 🔥 FIXED: lookup teacher in USERS table, not bookings
     const [[user]] = await pool.query(
       "SELECT user_id FROM users WHERE email = ?",
       [booking.requested_by]
@@ -150,19 +179,15 @@ export async function handleUpdateBookingStatus(req, res) {
 
     const teacherId = user.user_id;
 
-    // Update booking
     await updateBookingStatus(id, status, reason);
 
-    // Notification message
+    const formattedDate = new Date(booking.event_date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+
     let message = "";
-
-    const formattedDate = new Date(booking.event_date)
-  .toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  });
-
 
     if (status === "approved") {
       message = `Your booking '${booking.event_name}' on ${formattedDate} has been approved.`;
@@ -170,7 +195,6 @@ export async function handleUpdateBookingStatus(req, res) {
       message = `Your booking '${booking.event_name}' on ${formattedDate} was rejected.`;
     }
 
-    // Save notification
     if (message) {
       await pool.query(
         "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
@@ -179,15 +203,8 @@ export async function handleUpdateBookingStatus(req, res) {
     }
 
     res.json({ message: `Booking ${status}` });
-
   } catch (err) {
     console.error("Error updating booking status:", err);
     res.status(500).json({ message: "Server error" });
   }
 }
-
-
-
-
-
-

@@ -1,7 +1,4 @@
 
-
-
-// models/classPerformanceModel.js
 import {pool} from '../config/db.js';
 
 // Check that the logged-in teacher actually owns this class
@@ -77,7 +74,7 @@ export const getPerformanceForStudent = async (studentId, classId) => {
   return rows[0] || null;
 };
 
-// Insert or update performance (upsert by student_id + class_id)
+//update performance (upsert by student_id + class_id)
 export const upsertPerformance = async ({
   studentId,
   classId,
