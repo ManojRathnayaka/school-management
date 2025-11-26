@@ -73,7 +73,7 @@ const dashboardCardConfig = [
     description: "View and apply for available scholarships",
     icon: GraduationCap,
     path: "/scholarships",
-    roles: [USER_ROLES.STUDENT, USER_ROLES.PARENT],
+    roles: [USER_ROLES.STUDENT],
   },
    {
     title: "Hostel Application",
