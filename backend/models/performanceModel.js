@@ -15,7 +15,7 @@ export const teacherOwnsClass = async (userId, classId) => {
   return rows.length > 0;
 };
 
-// Get all classes assigned to this teacher (by user_id from JWT)
+// Get all classes assigned to this teacher 
 export const getClassesForTeacher = async (userId) => {
   const [rows] = await pool.query(
     `
@@ -74,7 +74,7 @@ export const getPerformanceForStudent = async (studentId, classId) => {
   return rows[0] || null;
 };
 
-//update performance (upsert by student_id + class_id)
+//update performance 
 export const upsertPerformance = async ({
   studentId,
   classId,

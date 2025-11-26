@@ -9,7 +9,7 @@ const SCHOOL_YELLOW = "#FBC02D";
 
 const ClassPerformance = () => {
   
-  // STATE
+  
   
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
@@ -32,7 +32,7 @@ const ClassPerformance = () => {
   const [loadingPerformance, setLoadingPerformance] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Student Photo State
+
   const [studentPhoto, setStudentPhoto] = useState("/src/assets/default_user.jpg");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -142,7 +142,7 @@ const ClassPerformance = () => {
   }, [selectedStudentId]);
 
   
-  // PHOTO LOADER
+  
   
   const loadStudentPhoto = (admission) => {
     if (!admission) {
@@ -183,8 +183,7 @@ const ClassPerformance = () => {
     setStudentPhoto("/src/assets/default_user.jpg");
   };
 
-  
-  // SAVE PERFORMANCE (updated to toast)
+
   
   const handleSave = async (e) => {
     e.preventDefault();

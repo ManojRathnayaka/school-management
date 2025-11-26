@@ -10,12 +10,12 @@ import {handleGetUnreadNotifications, handleMarkNotificationRead} from "../contr
 router.get(
   "/unread",
   authenticateJWT,
-  authorizeRoles("teacher", "principal"),  // 🔥 FIXED
+  authorizeRoles("teacher", "principal"), 
   handleGetUnreadNotifications
 );
 
 router.put(
-  "/read/:id",            // 🔥 FIXED — removed the extra `/read`
+  "/read/:id",          
   authenticateJWT,
   authorizeRoles("teacher", "principal"),
   handleMarkNotificationRead

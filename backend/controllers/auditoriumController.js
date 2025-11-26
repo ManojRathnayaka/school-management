@@ -168,17 +168,9 @@ export async function handleUpdateBookingStatus(req, res) {
 
     const booking = rows[0];
 
-    const [[user]] = await pool.query(
-      "SELECT user_id FROM users WHERE email = ?",
-      [booking.requested_by]
-    );
+    const teacherId = booking.requested_by;
 
-    if (!user) {
-      return res.status(404).json({ message: "Teacher not found" });
-    }
-
-    const teacherId = user.user_id;
-
+    // Update booking
     await updateBookingStatus(id, status, reason);
 
     const formattedDate = new Date(booking.event_date).toLocaleDateString("en-US", {
@@ -197,7 +189,7 @@ export async function handleUpdateBookingStatus(req, res) {
 
     if (message) {
       await pool.query(
-        "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
+        "INSERT INTO notifications (user_email, message) VALUES (?, ?)",
         [teacherId, message]
       );
     }
@@ -208,3 +200,4 @@ export async function handleUpdateBookingStatus(req, res) {
     res.status(500).json({ message: "Server error" });
   }
 }
+
