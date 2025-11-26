@@ -210,7 +210,7 @@ export default function UserManagement() {
                       <div className="flex gap-2">
                         <input
                           type="text"
-                          className="input input-bordered input-sm flex-1"
+                          className="input input-bordered input-sm w-28"
                           value={editForm.first_name}
                           onChange={(e) =>
                             setEditForm({
@@ -222,7 +222,7 @@ export default function UserManagement() {
                         />
                         <input
                           type="text"
-                          className="input input-bordered input-sm flex-1"
+                          className="input input-bordered input-sm w-28"
                           value={editForm.last_name}
                           onChange={(e) =>
                             setEditForm({
@@ -243,7 +243,7 @@ export default function UserManagement() {
                     {editingUser === userItem.user_id ? (
                       <input
                         type="email"
-                        className="input input-bordered input-sm w-full"
+                        className="input input-bordered input-sm w-48"
                         value={editForm.email}
                         onChange={(e) =>
                           setEditForm({ ...editForm, email: e.target.value })
