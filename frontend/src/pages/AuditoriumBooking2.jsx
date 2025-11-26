@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import NotificationBell from "../components/NotificationBell";
 
-// Shared component + confirm dialog
+
 import AuditoriumActionButtons from "../components/AuditoriumActionButtons";
 import { showConfirm } from "../utils/confirmDialogs";
 
@@ -35,7 +35,7 @@ const AuditoriumBookingForm = () => {
     rejected: true,
   });
 
-  //approved bookings for the selected date in form
+  
   const [dateConflicts, setDateConflicts] = useState([]);
 
   const token = localStorage.getItem("token");
@@ -70,7 +70,7 @@ const AuditoriumBookingForm = () => {
         notes: "",
       });
 
-      // Optional: clear conflicts when form reset
+      
       setDateConflicts([]);
     } catch (err) {
       toast.error("Booking submission failed");
@@ -114,7 +114,7 @@ const AuditoriumBookingForm = () => {
   }, [showSlots, showAllocations]);
 
   
-  // FILTER PILL COMPONENT
+  
   
   const FilterPill = ({ label, keyName }) => (
     <div
@@ -261,7 +261,7 @@ const AuditoriumBookingForm = () => {
             </div>
           )}
 
-          {/* ALLOCATION LIST */}
+      
           {showAllocations && (
             <div className="bg-white border rounded-xl p-6 shadow mb-6">
               <h3 className="text-xl font-semibold mb-4">
@@ -343,7 +343,7 @@ const AuditoriumBookingForm = () => {
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Event Name */}
+              
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Event Name
@@ -424,7 +424,7 @@ const AuditoriumBookingForm = () => {
                 </div>
               )}
 
-              {/* Attendees + Event Type */}
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-1">
@@ -459,7 +459,7 @@ const AuditoriumBookingForm = () => {
                 </div>
               </div>
 
-              {/* Equipment */}
+              
               <div>
                 <label className="block text-sm font-semibold mb-1">
                   Equipment
@@ -474,7 +474,7 @@ const AuditoriumBookingForm = () => {
                 />
               </div>
 
-              {/* Notes */}
+             
               <div>
                 <label className="block text-sm font-semibold mb-1">
                   Notes
@@ -490,7 +490,7 @@ const AuditoriumBookingForm = () => {
 
               <button
                 type="submit"
-                className="bg-indigo-600 text-white px-6 py-2 rounded-xl shadow hover:bg-indigo-700"
+                className="bg-indigo-500 text-white px-10 py-2 rounded-xl shadow hover:bg-indigo-900"
               >
                 Submit Booking Request
               </button>

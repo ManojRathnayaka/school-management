@@ -1,10 +1,10 @@
-// 🔔 Toast Notifications
+
 import toast, { Toaster } from "react-hot-toast";
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
 
-// ⭐ Shared components
+
 import AuditoriumActionButtons from "../components/AuditoriumActionButtons";
 import { showConfirm, showPrompt } from "../utils/confirmDialogs.jsx";
 
@@ -30,9 +30,9 @@ const PrincipalAuditoriumManagement = () => {
 
   const token = localStorage.getItem("token");
 
-  // ================================
+ 
   // LOAD DATA
-  // ================================
+
   const fetchPendingBookings = async () => {
     try {
       const res = await axios.get("/api/auditorium/pending", {
@@ -66,9 +66,9 @@ const PrincipalAuditoriumManagement = () => {
     fetchOverview();
   }, []);
 
-  // ================================
+  
   // APPROVE / REJECT ACTIONS
-  // ================================
+ 
   const handleApprove = async (id) => {
     const ok = await showConfirm("Approve this booking?");
     if (!ok) return;
@@ -109,9 +109,9 @@ const PrincipalAuditoriumManagement = () => {
     }
   };
 
-  // ================================
+  
   // FILTER BADGE
-  // ================================
+
   const FilterPill = ({ label, statusKey }) => (
     <div
       onClick={() =>
@@ -139,8 +139,8 @@ const PrincipalAuditoriumManagement = () => {
 
       {/* HEADER */}
       <div
-        className="text-white text-3xl font-bold px-6 py-4 rounded-lg shadow mb-6"
-        style={{ backgroundColor: SCHOOL_BLUE }}
+        className="text-black-900 text-3xl font-bold px-6 py-4 rounded-lg shadow mb-6"
+        style={{ backgroundColor: "white"}}
       >
         Auditorium Management
       </div>
@@ -197,7 +197,7 @@ const PrincipalAuditoriumManagement = () => {
           </table>
         )}
 
-        {/* SHARED BUTTONS */}
+        
         <AuditoriumActionButtons
           showSlots={showSlots}
           showAllocations={showAllocations}

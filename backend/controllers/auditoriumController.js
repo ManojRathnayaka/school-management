@@ -1,5 +1,3 @@
-// controllers/auditoriumController.js
-
 import {
   createBooking as createBookingModel,
   getApprovedAndPendingBookings,
@@ -10,9 +8,8 @@ import {
 
 import { pool } from "../config/db.js";
 
-/* ---------------------------------------------------
-   1️⃣ CREATE BOOKING
------------------------------------------------------*/
+//CREATE BOOKING
+
 export const createBookings = async (req, res) => {
   try {
     const tokenUser = req.user || {};
@@ -49,9 +46,8 @@ export const createBookings = async (req, res) => {
   }
 };
 
-/* ---------------------------------------------------
-   2️⃣ GET APPROVED + PENDING BOOKINGS (unchanged name)
------------------------------------------------------*/
+//GET APPROVED + PENDING BOOKINGS
+
 export async function handleGetApprovedAndPendingBookingss(req, res) {
   try {
     const result = await getApprovedAndPendingBookings();
@@ -66,9 +62,8 @@ export async function handleGetApprovedAndPendingBookingss(req, res) {
   }
 }
 
-/* ---------------------------------------------------
-   3️⃣ GET AVAILABLE SLOTS (unchanged name)
------------------------------------------------------*/
+//GET AVAILABLE SLOTS 
+
 export async function handleGetAvailableSlotss(req, res) {
   try {
     const rows = await getApprovedBookingSlots();
@@ -117,9 +112,9 @@ export async function handleGetAvailableSlotss(req, res) {
   }
 }
 
-/* ---------------------------------------------------
-   4️⃣ GET PENDING BOOKINGS
------------------------------------------------------*/
+
+//GET PENDING BOOKINGS
+
 export async function handleGetPendingBookings(req, res) {
   try {
     const rows = await getPendingBookings();
@@ -130,10 +125,8 @@ export async function handleGetPendingBookings(req, res) {
   }
 }
 
-/* ---------------------------------------------------
-   ⭐ NEW FUNCTION
-   5️⃣ GET APPROVED BOOKINGS FOR A SPECIFIC DATE
------------------------------------------------------*/
+//GET APPROVED BOOKINGS FOR A SPECIFIC DATE
+
 export async function handleGetApprovedBookingsByDate(req, res) {
   const { date } = req.params;
 
@@ -147,6 +140,7 @@ export async function handleGetApprovedBookingsByDate(req, res) {
       `,
       [date]
     );
+    console.log("done specific date")
 
     res.json(rows);
   } catch (err) {
@@ -155,9 +149,9 @@ export async function handleGetApprovedBookingsByDate(req, res) {
   }
 }
 
-/* ---------------------------------------------------
-   6️⃣ APPROVE / REJECT BOOKING (unchanged)
------------------------------------------------------*/
+
+//APPROVE / REJECT BOOKING 
+
 export async function handleUpdateBookingStatus(req, res) {
   const { id } = req.params;
   const { status, reason } = req.body;

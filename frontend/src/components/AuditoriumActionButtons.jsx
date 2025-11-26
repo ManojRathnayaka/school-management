@@ -16,7 +16,7 @@ const AuditoriumActionButtons = ({
             : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
         }`}
       >
-        📆 View Available Time Slots
+         View Available Time Slots
       </button>
 
       <button
@@ -27,7 +27,7 @@ const AuditoriumActionButtons = ({
             : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
         }`}
       >
-        📋 View Allocation List
+         View Allocation List
       </button>
     </div>
   );
