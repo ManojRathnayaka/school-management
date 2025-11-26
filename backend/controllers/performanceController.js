@@ -1,6 +1,3 @@
-
-
-// controllers/classPerformanceController.js
 import {
   teacherOwnsClass,
   getClassesForTeacher,

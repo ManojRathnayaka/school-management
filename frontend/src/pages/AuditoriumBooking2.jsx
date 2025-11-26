@@ -35,7 +35,7 @@ const AuditoriumBookingForm = () => {
     rejected: true,
   });
 
-  // ✅ approved bookings for the selected date in form
+  //approved bookings for the selected date in form
   const [dateConflicts, setDateConflicts] = useState([]);
 
   const token = localStorage.getItem("token");
@@ -44,9 +44,8 @@ const AuditoriumBookingForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ====================
   // SUBMIT BOOKING
-  // ====================
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -78,9 +77,9 @@ const AuditoriumBookingForm = () => {
     }
   };
 
-  // ====================
+  
   // FETCH DATA
-  // ====================
+  
   const fetchBookings = async () => {
     try {
       const res = await axios.get("/api/auditorium/approved", {
@@ -103,20 +102,20 @@ const AuditoriumBookingForm = () => {
     }
   };
 
-  // ✅ Load bookings once on mount (so we can check conflicts for date)
+  //Load bookings once on mount (so we can check conflicts for date)
   useEffect(() => {
     fetchBookings();
   }, []);
 
-  // Re-fetch when dropdowns opened (kept from your previous logic)
+  
   useEffect(() => {
     if (showSlots) fetchSlots();
     if (showAllocations) fetchBookings();
   }, [showSlots, showAllocations]);
 
-  // =============================
+  
   // FILTER PILL COMPONENT
-  // =============================
+  
   const FilterPill = ({ label, keyName }) => (
     <div
       onClick={() =>
@@ -140,9 +139,9 @@ const AuditoriumBookingForm = () => {
     (b) => statusFilter[b.status]
   );
 
-  // =============================
-  // ✅ CHECK CONFLICTS FOR SELECTED EVENT DATE
-  // =============================
+  
+  //CHECK CONFLICTS FOR SELECTED EVENT DATE
+ 
   useEffect(() => {
     if (!formData.eventDate) {
       setDateConflicts([]);
@@ -173,9 +172,7 @@ const AuditoriumBookingForm = () => {
           {/* HEADER */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-2xl">
-                📅
-              </div>
+              
               <div>
                 <h1 className="text-3xl font-bold text-yellow-blue-900">
                   Auditorium Booking
@@ -189,7 +186,7 @@ const AuditoriumBookingForm = () => {
             <NotificationBell />
           </div>
 
-          {/* SHARED BUTTON COMPONENT */}
+          
           <AuditoriumActionButtons
             showSlots={showSlots}
             showAllocations={showAllocations}
@@ -197,8 +194,7 @@ const AuditoriumBookingForm = () => {
             onToggleAllocations={() => setShowAllocations(!showAllocations)}
           />
 
-          {/* AVAILABILITY SECTION */}
-          {showSlots && (
+          {/* AVAILABILITY SECTION */}{showSlots && (
             <div className="bg-white border rounded-lg p-6 shadow mb-6">
               <h3 className="text-xl font-semibold mb-3">
                 Auditorium Availability
@@ -363,7 +359,7 @@ const AuditoriumBookingForm = () => {
                 />
               </div>
 
-              {/* Date + Time */}
+             
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-1">
@@ -408,7 +404,7 @@ const AuditoriumBookingForm = () => {
                 </div>
               </div>
 
-              {/* ✅ Existing bookings for selected date */}
+              {/*Existing bookings for selected date */}
               {formData.eventDate && dateConflicts.length > 0 && (
                 <div className="mt-2 bg-yellow-50 border border-yellow-300 text-yellow-900 rounded-lg p-3 text-xs sm:text-sm">
                   <p className="font-semibold mb-1">

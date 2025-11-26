@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast"; // ⭐ Toast added
+import toast, { Toaster } from "react-hot-toast";
 
-// School Branding Colors
+
 const SCHOOL_BLUE = "#0D47A1";
 const SCHOOL_YELLOW = "#FBC02D";
 
 const ClassPerformance = () => {
-  // ───────────────────────────────────────────────
+  
   // STATE
-  // ───────────────────────────────────────────────
+  
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
 
@@ -38,9 +38,9 @@ const ClassPerformance = () => {
 
   const token = localStorage.getItem("token");
 
-  // ───────────────────────────────────────────────
+  
   // CALCULATE FINAL SCORE
-  // ───────────────────────────────────────────────
+ 
   useEffect(() => {
     const a = Number(academicScore) || 0;
     const b = Number(sportsScore) || 0;
@@ -50,9 +50,9 @@ const ClassPerformance = () => {
     setOverallScore(Math.round((a + b + c + d) / 4));
   }, [academicScore, sportsScore, disciplineScore, leadershipScore]);
 
-  // ───────────────────────────────────────────────
+  
   // FETCH CLASSES
-  // ───────────────────────────────────────────────
+  
   useEffect(() => {
     const loadClasses = async () => {
       try {
@@ -68,9 +68,9 @@ const ClassPerformance = () => {
     loadClasses();
   }, [token]);
 
-  // ───────────────────────────────────────────────
+ 
   // FETCH STUDENTS
-  // ───────────────────────────────────────────────
+ 
   useEffect(() => {
     if (!selectedClassId) {
       setStudents([]);
@@ -99,9 +99,9 @@ const ClassPerformance = () => {
     loadStudents();
   }, [selectedClassId]);
 
-  // ───────────────────────────────────────────────
+
   // FETCH PERFORMANCE + PHOTO
-  // ───────────────────────────────────────────────
+  
   useEffect(() => {
     if (!selectedClassId || !selectedStudentId) {
       resetPerformance();
@@ -141,9 +141,9 @@ const ClassPerformance = () => {
     loadPerformance();
   }, [selectedStudentId]);
 
-  // ───────────────────────────────────────────────
+  
   // PHOTO LOADER
-  // ───────────────────────────────────────────────
+  
   const loadStudentPhoto = (admission) => {
     if (!admission) {
       setStudentPhoto("/src/assets/default_user.jpg");
@@ -169,9 +169,9 @@ const ClassPerformance = () => {
     tryLoad(0);
   };
 
-  // ───────────────────────────────────────────────
+  
   // RESET PERFORMANCE
-  // ───────────────────────────────────────────────
+  
   const resetPerformance = () => {
     setAcademicScore(0);
     setSportsScore(0);
@@ -183,9 +183,9 @@ const ClassPerformance = () => {
     setStudentPhoto("/src/assets/default_user.jpg");
   };
 
-  // ───────────────────────────────────────────────
+  
   // SAVE PERFORMANCE (updated to toast)
-  // ───────────────────────────────────────────────
+  
   const handleSave = async (e) => {
     e.preventDefault();
     if (!selectedClassId || !selectedStudentId)
@@ -218,9 +218,9 @@ const ClassPerformance = () => {
     }
   };
 
-  // ───────────────────────────────────────────────
+  
   // SCORE FIELD COMPONENT
-  // ───────────────────────────────────────────────
+  
   const ScoreField = ({ label, value, setValue }) => (
     <div className="mb-6">
       <p className="font-semibold mb-1 text-gray-700">{label}</p>
@@ -259,17 +259,17 @@ const ClassPerformance = () => {
     });
   };
 
-  // ───────────────────────────────────────────────
+  
   // UI
-  // ───────────────────────────────────────────────
+  
   return (
     <Layout activePage="classPerformance">
-      <Toaster position="top-right" /> {/* ⭐ Add toast UI */}
+      <Toaster position="top-right" />
 
       <div className="bg-white p-8 rounded-lg shadow max-w-4xl mx-auto mt-6">
         <h1
-          className="text-3xl font-bold text-white p-4 mb-6 rounded-lg text-center"
-          style={{ backgroundColor: SCHOOL_BLUE }}
+          className="text-4xl font-bold text-black p-4 mb-6 rounded-lg text-center"
+          style={{ backgroundColor: "white" }}
         >
           Class Performance
         </h1>
@@ -319,23 +319,23 @@ const ClassPerformance = () => {
 
         {/* PERFORMANCE FORM */}
         <form onSubmit={handleSave}>
-          <ScoreField label="Academic Score" value={academicScore} setValue={setAcademicScore} />
+          <ScoreField   label="Academic Score"  value={academicScore} setValue={setAcademicScore} />
           <ScoreField label="Sports Score" value={sportsScore} setValue={setSportsScore} />
           <ScoreField label="Discipline Score" value={disciplineScore} setValue={setDisciplineScore} />
           <ScoreField label="Leadership Score" value={leadershipScore} setValue={setLeadershipScore} />
 
           <div className="mb-6">
-            <p className="font-semibold text-gray-700 mb-2">Comments</p>
+            <p className="font-semibold text-red-700 mb-2">Comments</p>
             <textarea
-              className="border w-full rounded-lg p-3 min-h-[120px]"
+              className="border w-full bg-yellow-100 rounded-lg p-3 min-h-[120px]"
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add comments..."
             />
           </div>
 
-          <p className="text-xl font-bold mb-4">
-            Overall Score: <span className="text-blue-700">{overallScore}</span>
+          <p className="text-xl font-bold mb-10">
+            Overall Score: <span className="text-red-900">{overallScore}</span>
           </p>
 
           <button
