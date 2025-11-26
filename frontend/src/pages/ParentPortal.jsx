@@ -183,10 +183,6 @@ export default function ParentPortal() {
                   </p>
                 </div>
                 <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
-                  <p className="text-sm text-gray-600 mb-1">Class</p>
-                  <p className="font-bold text-gray-800">{studentInfo.class_name || "N/A"}</p>
-                </div>
-                <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                   <p className="text-sm text-gray-600 mb-1">Class Teacher</p>
                   <p className="font-bold text-gray-800">{studentInfo.class_teacher || "N/A"}</p>
                 </div>
