@@ -45,7 +45,6 @@ const sidebarConfig = {
   ],
   [USER_ROLES.PARENT]: [
     { path: "/Academic&sportsachiv", label: "Achievements", icon: Award },
-    { path: "/scholarships", label: "Scholarships", icon: GraduationCap },
     { path: "/parent-portal", label: "Parent Portal", icon: UserCheck },
   ],
 };

@@ -275,7 +275,7 @@ const AchievementsSystem = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin,setIsAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('view'); // 'view', 'edit', 'add'
   const [selectedAchievement, setSelectedAchievement] = useState(null);
@@ -286,7 +286,7 @@ const AchievementsSystem = () => {
 
   // New states for Add/Edit
 
-  const [editingItem, setEditingItem] = useState(null);
+  const [editingItem,setEditingItem] = useState(null);
 
   const levels = ['School', 'District', 'Provincial', 'National', 'International'];
   const years = ['2024', '2023', '2022', '2021', '2020'];

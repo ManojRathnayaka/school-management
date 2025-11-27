@@ -26,14 +26,13 @@ router.get("/slots",
    handleGetAvailableSlotss);
 
 router.get("/pending",
-   authenticateJWT, authorizeRoles("principal", "principal"),
+   authenticateJWT, authorizeRoles("principal"),
     handleGetPendingBookings);
 
 router.put("/:id/approve",
   authenticateJWT,
   authorizeRoles("principal"),
   (req, res) => {
-    // 🔥 FIXED: do not replace req object
     req.body.status = "approved";
     handleUpdateBookingStatus(req, res);
   }
@@ -42,7 +41,6 @@ router.put("/:id/reject",
   authenticateJWT,
   authorizeRoles("principal"),
   (req, res) => {
-    // 🔥 FIXED
     req.body.status = "rejected";
     handleUpdateBookingStatus(req, res);
   }

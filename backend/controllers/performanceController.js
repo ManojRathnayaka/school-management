@@ -1,6 +1,3 @@
-
-
-// controllers/classPerformanceController.js
 import {
   teacherOwnsClass,
   getClassesForTeacher,
@@ -9,7 +6,6 @@ import {
   upsertPerformance,
 } from '../models/performanceModel.js';
 
-// GET /api/class-performance/classes
 export const getTeacherClasses = async (req, res) => {
   try {
     const userId = req.user.user_id;
@@ -21,7 +17,7 @@ export const getTeacherClasses = async (req, res) => {
   }
 };
 
-// GET /api/class-performance/classes/:classId/students
+
 export const getStudentsForTeacherClass = async (req, res) => {
   try {
     const userId = req.user.user_id;
@@ -40,7 +36,7 @@ export const getStudentsForTeacherClass = async (req, res) => {
   }
 };
 
-// GET /api/class-performance/classes/:classId/students/:studentId
+
 export const getStudentPerformanceHandler = async (req, res) => {
   try {
     const userId = req.user.user_id;
@@ -63,10 +59,10 @@ export const getStudentPerformanceHandler = async (req, res) => {
   }
 };
 
-// PUT /api/class-performance/classes/:classId/students/:studentId
+
 export const upsertStudentPerformanceHandler = async (req, res) => {
   try {
-    const userId = req.user.user_id; // teacher's user_id
+    const userId = req.user.user_id; 
     const { classId, studentId } = req.params;
     const {
       academic_score,
@@ -81,7 +77,7 @@ export const upsertStudentPerformanceHandler = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized for this class' });
     }
 
-    // Basic validation (0–100 range)
+   
     const toNum = (v) => (v === null || v === '' || v === undefined ? 0 : Number(v));
     const academic = toNum(academic_score);
     const sports = toNum(sports_score);

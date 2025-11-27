@@ -174,15 +174,15 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* User Table */}
-      <div className="overflow-x-auto">
-        <table className="table w-full table-fixed">
+      {/* Desktop Table View - Hidden on mobile */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="table w-full">
           <thead>
             <tr>
-              <th className="w-1/4">Name</th>
-              <th className="w-1/4">Email</th>
-              <th className="w-1/6">Role</th>
-              <th className="w-1/3">Actions</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -205,12 +205,12 @@ export default function UserManagement() {
             ) : (
               users.map((userItem) => (
                 <tr key={userItem.user_id}>
-                  <td className="w-1/3">
+                  <td>
                     {editingUser === userItem.user_id ? (
-                      <div className="flex gap-1">
+                      <div className="flex gap-2">
                         <input
                           type="text"
-                          className="input input-bordered input-sm flex-1 min-w-0"
+                          className="input input-bordered input-sm w-28"
                           value={editForm.first_name}
                           onChange={(e) =>
                             setEditForm({
@@ -222,7 +222,7 @@ export default function UserManagement() {
                         />
                         <input
                           type="text"
-                          className="input input-bordered input-sm flex-1 min-w-0"
+                          className="input input-bordered input-sm w-28"
                           value={editForm.last_name}
                           onChange={(e) =>
                             setEditForm({
@@ -234,76 +234,66 @@ export default function UserManagement() {
                         />
                       </div>
                     ) : (
-                      <div
-                        className="truncate"
-                        title={`${userItem.first_name} ${userItem.last_name}`}
-                      >
+                      <div>
                         {`${userItem.first_name} ${userItem.last_name}`}
                       </div>
                     )}
                   </td>
-                  <td className="w-1/3">
+                  <td>
                     {editingUser === userItem.user_id ? (
                       <input
                         type="email"
-                        className="input input-bordered input-sm w-full"
+                        className="input input-bordered input-sm w-48"
                         value={editForm.email}
                         onChange={(e) =>
                           setEditForm({ ...editForm, email: e.target.value })
                         }
                       />
                     ) : (
-                      <div className="truncate" title={userItem.email}>
-                        {userItem.email}
-                      </div>
+                      <div>{userItem.email}</div>
                     )}
                   </td>
-                  <td className="w-1/6">
+                  <td>
                     <div className="badge badge-outline capitalize">
                       {userItem.role}
                     </div>
                   </td>
-                  <td className="w-1/6">
-                    <div className="flex gap-1 flex-nowrap">
+                  <td>
+                    <div className="flex gap-2">
                       {editingUser === userItem.user_id ? (
                         <>
                           <button
-                            className="btn btn-primary btn-sm flex-shrink-0"
+                            className="btn btn-primary btn-sm"
                             onClick={() => saveUser(userItem.user_id)}
                           >
                             <Check className="w-4 h-4" />
-                            Save
                           </button>
                           <button
-                            className="btn btn-outline btn-sm flex-shrink-0"
+                            className="btn btn-outline btn-sm"
                             onClick={cancelEdit}
                           >
                             <X className="w-4 h-4" />
-                            Cancel
                           </button>
                         </>
                       ) : (
                         <>
                           <button
-                            className="btn btn-primary btn-sm flex-shrink-0"
+                            className="btn btn-primary btn-sm"
                             onClick={() => startEdit(userItem)}
                           >
                             <Edit className="w-4 h-4" />
-                            Edit
                           </button>
                           <button
-                            className="btn btn-secondary btn-sm flex-shrink-0"
+                            className="btn btn-secondary btn-sm"
                             onClick={() => handleResetPasswordClick(userItem)}
                           >
                             <RotateCcwKey className="w-4 h-4" />
-                            Reset
                           </button>
                           <button
-                            className="btn btn-error btn-sm flex-shrink-0"
+                            className="btn btn-error btn-sm"
                             onClick={() => handleDeleteClick(userItem)}
                           >
                             <Trash2 className="w-4 h-4" />
-                            Delete
                           </button>
                         </>
                       )}
@@ -314,6 +304,120 @@ export default function UserManagement() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View - Hidden on desktop */}
+      <div className="md:hidden space-y-4">
+        {loading ? (
+          <div className="text-center py-8">
+            <span className="loading loading-spinner loading-md"></span>
+            <div className="ml-2">Loading...</div>
+          </div>
+        ) : users.length === 0 ? (
+          <div className="text-center py-8 text-base-content/60">
+            No users found
+          </div>
+        ) : (
+          users.map((userItem) => (
+            <div key={userItem.user_id} className="card bg-base-200 shadow-md">
+              <div className="card-body p-4">
+                {editingUser === userItem.user_id ? (
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        className="input input-bordered input-sm flex-1"
+                        value={editForm.first_name}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            first_name: e.target.value,
+                          })
+                        }
+                        placeholder="First Name"
+                      />
+                      <input
+                        type="text"
+                        className="input input-bordered input-sm flex-1"
+                        value={editForm.last_name}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            last_name: e.target.value,
+                          })
+                        }
+                        placeholder="Last Name"
+                      />
+                    </div>
+                    <input
+                      type="email"
+                      className="input input-bordered input-sm w-full"
+                      value={editForm.email}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, email: e.target.value })
+                      }
+                      placeholder="Email"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => saveUser(userItem.user_id)}
+                      >
+                        <Check className="w-4 h-4" />
+                        Save
+                      </button>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={cancelEdit}
+                      >
+                        <X className="w-4 h-4" />
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-semibold text-lg">
+                          {`${userItem.first_name} ${userItem.last_name}`}
+                        </h3>
+                        <p className="text-sm text-base-content/70 break-all">
+                          {userItem.email}
+                        </p>
+                      </div>
+                      <div className="badge badge-outline capitalize">
+                        {userItem.role}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        className="btn btn-primary btn-sm flex-1"
+                        onClick={() => startEdit(userItem)}
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm flex-1"
+                        onClick={() => handleResetPasswordClick(userItem)}
+                      >
+                        <RotateCcwKey className="w-4 h-4" />
+                        Reset
+                      </button>
+                      <button
+                        className="btn btn-error btn-sm"
+                        onClick={() => handleDeleteClick(userItem)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Pagination */}

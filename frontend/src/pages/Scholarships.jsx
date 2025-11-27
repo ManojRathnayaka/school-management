@@ -88,6 +88,7 @@ export default function Scholarships() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Detects input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;

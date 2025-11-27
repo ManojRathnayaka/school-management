@@ -11,20 +11,27 @@ import {
   resetUserPassword,
   deleteUserAccount,
   bulkCreateAdminUsers,
+  checkSetupStatus,
+  initialSetup,
 } from "../controllers/authController.js";
 
 import { authenticateJWT, authorizeRoles } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-// Configure multer for file uploads
 const upload = multer({ dest: "uploads/" });
 
+// Setup routes (public)
+router.get("/setup/status", checkSetupStatus);
+router.post("/setup/initial", initialSetup);
+
+// Authentication routes
 router.post("/login", login);
 router.post("/logout", logout);
 router.get("/me", authenticateJWT, getCurrentUser);
 router.post("/reset-password-first-login", resetPasswordFirstLogin);
 
+// Admin user creation routes
 router.post(
   "/create-user",
   authenticateJWT,
@@ -32,7 +39,6 @@ router.post(
   createAdminUser,
 );
 
-// Bulk user creation route
 router.post(
   "/users/bulk-create",
   authenticateJWT,
