@@ -19,11 +19,21 @@ export default function ScholarshipList() {
   const [applications, setApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [toasts, setToasts] = useState([]);
+  const [confirmModal, setConfirmModal] = useState(null);
 
    //Fetching Applications
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  const showToast = (message, type = 'success') => {
+  const id = Date.now();
+  setToasts((prev) => [...prev, { id, message, type }]);
+  setTimeout(() => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, 5000);
+};
 
   const fetchApplications = () => {
     axios
@@ -34,51 +44,59 @@ export default function ScholarshipList() {
       })
       .catch((err) => {
         console.error(err);
-        alert("Error fetching applications");
+        showToast("Error fetching applications", "error");
         setLoading(false);
       });
   };
 
   //Approve/Reject Functions
   const handleApprove = (id) => {
-    if (!window.confirm("Are you sure you want to approve this scholarship application?")) {
-      return;
-    }
-    
-    axios
-      .put(`http://localhost:4000/api/scholarships/${id}/approve`, {}, { withCredentials: true })
-      .then(() => {
-        setApplications(applications.map((a) => (a.scholarship_id === id ? { ...a, status: "approved" } : a)));
-        alert("Scholarship approved successfully");
-        if (selectedApplication?.scholarship_id === id) {
-          setSelectedApplication({ ...selectedApplication, status: "approved" });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Error approving scholarship");
-      });
-  };
+  setConfirmModal({
+    message: "Are you sure you want to approve this scholarship application?",
+    onConfirm: () => {
+      setConfirmModal(null);
+      
+      axios
+        .put(`http://localhost:4000/api/scholarships/${id}/approve`, {}, { withCredentials: true })
+        .then(() => {
+          setApplications(applications.map((a) => (a.scholarship_id === id ? { ...a, status: "approved" } : a)));
+          showToast("Scholarship approved successfully", "success");
+          if (selectedApplication?.scholarship_id === id) {
+            setSelectedApplication({ ...selectedApplication, status: "approved" });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          showToast("Error approving scholarship", "error");
+        });
+    },
+    onCancel: () => setConfirmModal(null)
+  });
+};
 
   const handleReject = (id) => {
-    if (!window.confirm("Are you sure you want to reject this scholarship application?")) {
-      return;
-    }
-    
-    axios
-      .put(`http://localhost:4000/api/scholarships/${id}/reject`, {}, { withCredentials: true })
-      .then(() => {
-        setApplications(applications.map((a) => (a.scholarship_id === id ? { ...a, status: "rejected" } : a)));
-        alert("Scholarship rejected successfully");
-        if (selectedApplication?.scholarship_id === id) {
-          setSelectedApplication({ ...selectedApplication, status: "rejected" });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Error rejecting scholarship");
-      });
-  };
+  setConfirmModal({
+    message: "Are you sure you want to reject this scholarship application?",
+    onConfirm: () => {
+      setConfirmModal(null);
+      
+      axios
+        .put(`http://localhost:4000/api/scholarships/${id}/reject`, {}, { withCredentials: true })
+        .then(() => {
+          setApplications(applications.map((a) => (a.scholarship_id === id ? { ...a, status: "rejected" } : a)));
+          showToast("Scholarship rejected successfully", "success");
+          if (selectedApplication?.scholarship_id === id) {
+            setSelectedApplication({ ...selectedApplication, status: "rejected" });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          showToast("Error rejecting scholarship", "error");
+        });
+    },
+    onCancel: () => setConfirmModal(null)
+  });
+};
 
   const viewDetails = (app) => {
     setSelectedApplication(app);
@@ -114,9 +132,62 @@ export default function ScholarshipList() {
 
   return (
     <Layout activePage="scholarship-list">
+
+      {/* Toast Messages */}
+     <div className="fixed top-4 right-4 z-50 flex flex-col gap-3">
+          {toasts.map((toast) => (
+      <div
+       key={toast.id}
+       className={`${
+        toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-[300px] animate-slide-in`}>
+       <span className="flex-1">{toast.message}</span>
+        <button
+           onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
+           className="hover:bg-white/20 rounded p-1">
+           ✕
+        </button>
+      </div>
+        ))}
+     </div>
+
+{/* Confirmation Modal */}
+{confirmModal && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+      <h3 className="text-lg font-semibold mb-4 text-gray-900">Confirm Action</h3>
+      <p className="text-gray-600 mb-6">{confirmModal.message}</p>
+      <div className="flex gap-3 justify-end">
+        <button
+          onClick={confirmModal.onCancel}
+          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={confirmModal.onConfirm}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* CSS animation */}
+<style>{`
+  @keyframes slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .animate-slide-in { animation: slide-in 0.3s ease-out; }
+`}</style>
+
+
       <div className="bg-base-100"> 
          <div className="card-body   ">     
-          {/* Header */}
+          {/* Header  */}
           <div className="mb-6 flex items-center gap-5 ">
              <BookOpen className="w-8 h-8 text-[#0D47A1]" />
                <div>
@@ -430,5 +501,7 @@ export default function ScholarshipList() {
         </div> 
       </div>
     </Layout>
+
+    
   );
 }
