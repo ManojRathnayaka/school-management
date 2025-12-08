@@ -174,10 +174,10 @@ const AuditoriumBookingForm = () => {
             <div className="flex items-center gap-3">
               
               <div>
-                <h1 className="text-3xl font-bold text-yellow-blue-900">
+                <h1 className="text-3xl  font-bold text-blue-900">
                   Auditorium Booking
                 </h1>
-                <p className="text-sm text-red-500">
+                <p className="text-base text-red-700">
                   Check availability & submit booking requests.
                 </p>
               </div>
@@ -488,12 +488,17 @@ const AuditoriumBookingForm = () => {
                 />
               </div>
 
+              <div className="flex justify-center mt-4">
               <button
+
                 type="submit"
-                className="bg-indigo-500 text-white px-10 py-2 rounded-xl shadow hover:bg-indigo-900"
+                className="bg-red-500 text-white px-10 py-2 rounded-xl shadow hover:bg-red-900 "
               >
+                {/* <h1 class Name="text-xl font-bold"> */}
                 Submit Booking Request
+                {/* </h1> */}
               </button>
+              </div>
             </form>
           </div>
 

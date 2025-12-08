@@ -31,7 +31,7 @@ const PrincipalAuditoriumManagement = () => {
   const token = localStorage.getItem("token");
 
  
-  // LOAD DATA
+  // LOAD PENDING BOOKINGS WHEN THE PRINCIPAL MANAGEMENT PAGE LOADS
 
   const fetchPendingBookings = async () => {
     try {

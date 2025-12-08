@@ -13,7 +13,7 @@ const AuditoriumActionButtons = ({
         className={`px-4 py-2 rounded-xl shadow text-sm font-semibold transition ${
           showSlots
             ? "bg-indigo-600 text-white"
-            : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+            : "bg-gray-50 border border-gray-300 text-black-700 hover:bg-gray-300"
         }`}
       >
          View Available Time Slots
@@ -24,7 +24,7 @@ const AuditoriumActionButtons = ({
         className={`px-4 py-2 rounded-xl shadow text-sm font-semibold transition ${
           showAllocations
             ? "bg-indigo-600 text-white"
-            : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+            : "bg-gray border border-gray-300 text-black-700 hover:bg-gray-300"
         }`}
       >
          View Allocation List
