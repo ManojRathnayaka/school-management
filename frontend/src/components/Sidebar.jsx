@@ -29,6 +29,7 @@ const sidebarConfig = {
     { path: "/auditorium-booking-principal", label: "Auditorium Booking", icon: CalendarDays },
     { path: "/scholarship-list", label: "Scholarship Management", icon: BookOpenCheck },
     { path: "/HostelAdmin", label: "Hostel management",icon: Home },
+    { path: "/parent-portal", label: "Parent Portal", icon: UserCheck },
   ],
   [USER_ROLES.TEACHER]: [
     { path: "/student-registration", label: "Student Registration", icon: UserPlus },
