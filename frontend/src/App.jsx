@@ -72,7 +72,7 @@ function App() {
             <Route path="/scholarships" element={<ProtectedRoute allowedRoles={['student']}><Scholarships /></ProtectedRoute>} />
             <Route path="/events" element={<ProtectedRoute allowedRoles={['principal', 'teacher']}><Events /></ProtectedRoute>} />
             <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
-            <Route path="/parent-portal" element={<ProtectedRoute allowedRoles={['parent']}><ParentPortal /></ProtectedRoute>} />
+            <Route path="/parent-portal" element={<ProtectedRoute allowedRoles={['parent','principal']}><ParentPortal /></ProtectedRoute>} />
             <Route path="/auditorium-booking" element={<ProtectedRoute allowedRoles={['teacher']}><AuditoriumBookingForm/></ProtectedRoute>}/>
             <Route path="/auditorium-booking-principal" element={<ProtectedRoute allowedRoles={['principal']}><PrincipalAuditoriumManagement/></ProtectedRoute>}/>
             <Route path="/scholarship-list" element={<ProtectedRoute allowedRoles={['principal']}><ScholarshipList/></ProtectedRoute>}/>
